@@ -1,17 +1,11 @@
 # Graduation Project
 ## A Recommendation System and GAI App for Enhancing Co-Living Experiences Between the Young and Elderly
 
-### Preparing Your Development Environment
+### Installing Docker and Starting the Daemon
+Before setting up your development environment, it's essential to have Docker installed on your system as it will be used to build and deploy your application. Follow these steps to install Docker and start the Docker daemon.
 
-To ensure a smooth development process, it's crucial to utilize a virtual environment. This step helps in maintaining a clean workspace by segregating your project's dependencies.
+Please refer to the official Docker documentation for installation instructions tailored to your OS: [Docker](https://www.docker.com/products/docker-desktop/)
 
-```bash
-# Establishing a virtual environment
-python3 -m venv myvenv
-
-# Activating the virtual environment
-source myvenv/bin/activate
-```
 
 ### Launching the API Service Locally
 
@@ -21,6 +15,9 @@ The following commands guide you through building the Docker image, deploying co
 # Building the Docker image
 make docker-build
 
+# If there's no "make" command in your environment
+docker-compose build
+
 # Deploying the service using Docker Compose
 docker-compose up -d
 
@@ -28,7 +25,7 @@ docker-compose up -d
 docker exec -it graduation-project /bin/bash
 
 # Starting the API service with Uvicorn
-uvicorn src.main:app --host 0.0.0.0 --port 7877 --reload
+uvicorn src.main:app --host localhost --port 7877 --reload
 ```
 
 ### Setting Up Pre-commit Hooks
