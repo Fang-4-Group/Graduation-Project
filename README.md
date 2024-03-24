@@ -1,28 +1,44 @@
-# Graduation-Project
-Recommandation System and GAI App for Co-Living of Young and Ederly
+# Graduation Project
+## A Recommendation System and GAI App for Enhancing Co-Living Experiences Between the Young and Elderly
 
+### Preparing Your Development Environment
 
-### Setting Up a Virtual Environment
-
-Before running any Python-based frameworks, it's recommended to set up a virtual environment. This isolates your project dependencies and ensures that your development environment remains clean and manageable.
+To ensure a smooth development process, it's crucial to utilize a virtual environment. This step helps in maintaining a clean workspace by segregating your project's dependencies.
 
 ```bash
-# Create a virtual environment
+# Establishing a virtual environment
 python3 -m venv myvenv
 
-# Activate the virtual environment
+# Activating the virtual environment
 source myvenv/bin/activate
 ```
 
+### Launching the API Service Locally
 
-### FastAPI
-
-FastAPI is a modern, fast (high-performance) web framework for building APIs with Python 3.7+ based on standard Python type hints. To set up FastAPI:
+The following commands guide you through building the Docker image, deploying containers, and initiating the API service in your local environment. Ensure Docker is installed on your machine before proceeding.
 
 ```bash
-# Install FastAPI with all optional dependencies
-pip install "fastapi[all]"
+# Building the Docker image
+make docker-build
 
-# Start the FastAPI server with live reloading
-uvicorn main:app --reload
+# Deploying the service using Docker Compose
+docker-compose up -d
+
+# Accessing the container's shell
+docker exec -it graduation-project /bin/bash
+
+# Starting the API service with Uvicorn
+uvicorn src.main:app --host 0.0.0.0 --port 7877 --reload
+```
+
+### Setting Up Pre-commit Hooks
+
+To maintain code quality and ensure that changes adhere to best practices, install and configure pre-commit hooks.
+
+```bash
+# Installing the pre-commit package
+pip install pre-commit
+
+# Configuring pre-commit hooks
+pre-commit install --install-hooks
 ```
