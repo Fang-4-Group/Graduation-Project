@@ -10,3 +10,15 @@ services:
       - "7877:8777"
     command: uvicorn src.main:app --host 0.0.0.0 --port 8777 --reload
     container_name: graduation-project
+  db:
+    image: postgres:14  # 使用 PostgreSQL 14 版本的映像
+    environment:
+      POSTGRES_USER: riceball
+      POSTGRES_PASSWORD: gp12345
+      POSTGRES_DB: gpdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+volumes:
+  postgres-data:
