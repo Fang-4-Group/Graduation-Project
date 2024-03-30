@@ -2,11 +2,11 @@ import psycopg2
 
 # 連接到PostgreSQL
 conn = psycopg2.connect(
-    host="db",
+    host="postgres_db",
     port="5432",
-    database="gpdb",
+    database="postgres",
     user="riceball",
-    password="gp12345",  # flake8: noqa
+    password="gp12345",
 )
 
 # 創建游標對象
