@@ -4,7 +4,9 @@ ENV WORKDIR /srv/graduation-project
 WORKDIR ${WORKDIR}
 
 RUN apt-get update && apt-get install -y wget unzip
-RUN apt-get install -y postgresql postgresql-contrib
+RUN apt-get install -y postgresql postgresql-contrib python3-pymongo \
+    && rm -rf /var/lib/apt/lists/*
+
 
 # 啟動 PostgreSQL 服務
 RUN service postgresql start
@@ -30,6 +32,8 @@ USER root
 
 # 安裝 psycopg2 套件
 RUN pip install psycopg2
+
+RUN pip install pymongo
 
 COPY ./requirements.txt ./
 RUN pip install -r requirements.txt

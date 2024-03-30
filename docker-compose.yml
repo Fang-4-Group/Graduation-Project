@@ -31,6 +31,14 @@ services:
       PGADMIN_DEFAULT_PASSWORD: gp12345
     volumes:
       - pgadmin-data:/var/lib/pgadmin
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    ports:
+      - "27017:27017"  # 將 MongoDB 的 27017 端口映射到主機上的 27017 端口
+    volumes:
+      - mongodb-data:/data/db  # 映射 MongoDB 的數據目錄到容器中的 /data/db
 volumes:
   postgres-data:
   pgadmin-data:
+  mongodb-data:
