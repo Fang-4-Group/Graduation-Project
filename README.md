@@ -1,5 +1,18 @@
 # How to use the docker to run the model trainning(ml10m)
 
+```
+# Building the Docker image
+make docker-build
+
+# If there's no "make" command in your environment
+docker-compose build
+
+# Deploying the service using Docker Compose
+docker-compose up -d
+
+# Accessing the container's shell
+docker exec -it khgt_trainning /bin/bash
+```
 
 
 
