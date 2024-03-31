@@ -1,2 +1,2 @@
 docker-build:
-	docker build -t my-python-dev-env .
+	docker build -t khgt_trainning .

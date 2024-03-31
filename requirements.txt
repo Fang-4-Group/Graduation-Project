@@ -1,9 +1,3 @@
-fastapi==0.109.2
-ipython
-matplotlib==3.8.0
-matplotlib-inline==0.1.6
-numpy==1.25.2
-pandas==2.0.3
-PyYAML==6.0.1
-requests
-uvicorn
+tensorflow==1.14.0
+numpy==1.16.0
+scipy==1.5.2
