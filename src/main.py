@@ -5,7 +5,12 @@ from concurrent.futures import ProcessPoolExecutor
 
 from fastapi import FastAPI
 
+# 引入 pg api router
+from .db.pg_api import router as pg_router
+
 app = FastAPI()
+
+app.include_router(pg_router)
 
 
 @app.get("/")
