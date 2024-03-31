@@ -14,6 +14,12 @@ docker-compose up -d
 docker exec -it khgt_trainning /bin/bash
 ```
 
+```
+docker run -d  --name khgt_trainning --rm -it -v {localpath/Models}:/srv/KHGT/Models -v {localpath/History}:/srv/KHGT/History abc
+```
+
+After running the command above the models should be saved in the local Models folders once the trainning is done(if the local path is correctly mapping to the container path). If not, try to build the volume instead of bind mount method above
+
 
 
 # Knowledge-Enhanced Graph Transformer
