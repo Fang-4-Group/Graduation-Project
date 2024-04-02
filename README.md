@@ -40,10 +40,9 @@ pip install pre-commit
 pre-commit install --install-hooks
 ```
 
----
 
-## Chatbot
-### Prerequisites
+### Chatbot
+#### Prerequisites
 - Create your [LINE Developers Account](https://account.line.biz/login?redirectUri=https%3A%2F%2Fdevelopers.line.biz%2Fconsole%2Fchannel%2Fnew%3Ftype%3Dline-login) and ask me to add you to roles.
 - Download [ngrok](https://ngrok.com/download) and register an account to get your auth token.
 - Add this official account as a friend.
@@ -51,7 +50,7 @@ pre-commit install --install-hooks
   <img src="https://github.com/Fang-4-Group/Graduation-Project/assets/82760846/c369e78a-5553-424e-8ac5-8b0042772d66" width="150" height="150">
 </div>
 
-### Test
+#### Test
 ```powershell
 # Move to chatbot directory
 cd .\src\chatbot
@@ -69,7 +68,7 @@ uvicorn src.chatbot.main:app --host localhost --port 8080  --reload
 ```
 The app will run on port 8080.
 
-### ngrok
+#### ngrok
 execute `ngrok.exe` (It's in the directory you just unzipped)
 ```powershell
 # Set up your ngrok account authentication token
@@ -83,8 +82,34 @@ ngrok http 8080
 ```
 Copy the Forwarding url value (It is supposed to look like: https://xxxxxx.ngrok-free.app) and send the url to me. I will help you update to Dialog's webhook url.
 
-### Result expected
+#### Result expected
 If you run the server correctly, the message you get in the chat room will always have "( 我有經過 FastAPI Server )" as a suffix.
 <div align="center">
   <img width="260" alt="result" src="https://github.com/Fang-4-Group/Graduation-Project/assets/82760846/80f5899b-8e3b-492e-a6e2-588adff271ee">
 </div>
+
+
+### pgAdmin4 Setting Steps
+#### Prerequisite step: 
+1. switch to master branch
+2. `git pull`
+3. Run `docker-compose build` or `make docker-build`
+#### Setup and startup steps
+1. Deploying the service using Docker Compose
+    ```docker-compose up -d```
+2. Click the url: http://localhost:5050/login?next=%2F
+3. login(see the line notepad)
+4. Click **Add New Server**
+5. Setting  
+    **-General-**  
+    Name: PosgreSQL-gp  
+    
+    **-Connection-**  
+    Host Name/Address: postgres_db  
+    Port: 5432  
+    Username: riceball  
+    
+    **Click Save**
+    
+6. If you can see the picture below on the left above sidebar of your window, you made it.  
+   <img src="https://github.com/Fang-4-Group/Graduation-Project/assets/93365070/da9f4beb-60e0-4e8f-9f6f-9dfc6fb5a31a" width="230" height="120">
