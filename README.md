@@ -40,6 +40,55 @@ pip install pre-commit
 pre-commit install --install-hooks
 ```
 
+
+### Chatbot
+#### Prerequisites
+- Create your [LINE Developers Account](https://account.line.biz/login?redirectUri=https%3A%2F%2Fdevelopers.line.biz%2Fconsole%2Fchannel%2Fnew%3Ftype%3Dline-login) and ask me to add you to roles.
+- Download [ngrok](https://ngrok.com/download) and register an account to get your auth token.
+- Add this official account as a friend.
+<div align="center">
+  <img src="https://github.com/Fang-4-Group/Graduation-Project/assets/82760846/c369e78a-5553-424e-8ac5-8b0042772d66" width="150" height="150">
+</div>
+
+#### Test
+```powershell
+# Move to chatbot directory
+cd .\src\chatbot
+```
+Add an `.env` file and add the settings below. You can get these variables in LINE Developers Account's Settings.
+```env
+CHANNEL_SECRET=[YOUR_CHANNEL_SECRET]
+CHANNEL_ACCESS_TOKEN=[YOUR_CHANNEL_ACCESS_TOKEN]
+```
+Upzip the ngrok zip file and add the directory to .\src\chatbot
+```python
+# Start the server
+# Run this command in root
+uvicorn src.chatbot.main:app --host localhost --port 8080  --reload
+```
+The app will run on port 8080.
+
+#### ngrok
+execute `ngrok.exe` (It's in the directory you just unzipped)
+```powershell
+# Set up your ngrok account authentication token
+ngrok authtoken [YOUR_AUTH_TOKEN]
+
+# Save your ngrok authentication token
+ngrok config add-authtoken [YOUR_AUTH_TOKEN]
+
+# Expose port 8080
+ngrok http 8080
+```
+Copy the Forwarding url value (It is supposed to look like: https://xxxxxx.ngrok-free.app) and send the url to me. I will help you update to Dialog's webhook url.
+
+#### Result expected
+If you run the server correctly, the message you get in the chat room will always have "( 我有經過 FastAPI Server )" as a suffix.
+<div align="center">
+  <img width="260" alt="result" src="https://github.com/Fang-4-Group/Graduation-Project/assets/82760846/80f5899b-8e3b-492e-a6e2-588adff271ee">
+</div>
+
+
 ### pgAdmin4 Setting Steps
 #### Prerequisite step: 
 1. switch to master branch
