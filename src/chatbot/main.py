@@ -5,8 +5,6 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from linebot import LineBotApi
-
-# New Version of LineBotApi: from linebot.v3.messaging import Configuration
 from linebot.exceptions import InvalidSignatureError, LineBotApiError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage
 from linebot.v3.webhook import WebhookHandler
@@ -29,8 +27,9 @@ async def line_webhook(request: Request):
     try:
         handler.handle(body.decode(), signature)
     except InvalidSignatureError:
-        # content={"message": "Invalid signature"}
-        return JSONResponse(status_code=400)
+        return JSONResponse(  # noqa
+            status_code=400, content={"message": "Invalid signature"}  # noqa
+        )  # noqa
     return JSONResponse(status_code=200, content={"message": "OK"})
 
 
