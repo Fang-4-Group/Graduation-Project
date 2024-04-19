@@ -1,10 +1,7 @@
 import psycopg2
-from fastapi import APIRouter, HTTPException
-
-router = APIRouter()
+from fastapi import HTTPException
 
 
-@router.get("/access_db/")
 async def access_db():
     try:
         # 連接到PostgreSQL
@@ -23,8 +20,7 @@ async def access_db():
 
 
 # Test Create
-@router.get("/test_create/")
-async def test_create():
+async def test_create_fun():
     conn = await access_db()
     try:
         cursor = conn.cursor()
@@ -47,8 +43,7 @@ async def test_create():
 
 
 # Test Select
-@router.get("/test_select/")
-async def test_select():
+async def test_select_fun():
     conn = await access_db()
     try:
         cursor = conn.cursor()
@@ -67,8 +62,7 @@ async def test_select():
 
 
 # Test Drop
-@router.get("/test_drop/")
-async def test_drop():
+async def test_drop_fun():
     conn = await access_db()
     try:
         cursor = conn.cursor()
