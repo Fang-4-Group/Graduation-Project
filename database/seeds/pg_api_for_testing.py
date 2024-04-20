@@ -1,5 +1,6 @@
 import psycopg2
-from fastapi import HTTPException
+
+# from fastapi import HTTPException
 
 
 async def access_db():
@@ -13,10 +14,19 @@ async def access_db():
             password="gp12345",
         )
         return conn
+    except psycopg2.DatabaseError:
+        return {
+            "status": 500,
+            "message": "Database connection error",
+        }
     except Exception as e:
-        # 如果連接發生錯誤，捕獲異常並處理
-        error_msg = "Error connecting to db: " + str(e)
-        raise HTTPException(status_code=500, detail=error_msg)  # noqa
+        # 處理其他 Exception
+        return {
+            "status": 500,
+            "message": f"Other error when accessing db: {str(e)}",
+        }
+        # error_msg = "Error connecting to db: " + str(e)
+        # raise HTTPException(status_code=500, detail=error_msg)  # noqa
 
 
 # Test Create
@@ -34,10 +44,17 @@ async def test_create_fun():
                     """
         )
         conn.commit()
-        return {"message": "success to create table"}
+        return {"status": 200, "message": "success to create table"}
+    except psycopg2.OperationalError as e:
+        return {
+            "status": 500,
+            "message": f"OperationalError when creating table: {str(e)}",
+        }
     except Exception as e:
-        error_msg = "Error selecting data: " + str(e)
-        raise HTTPException(status_code=500, detail=error_msg)  # noqa
+        return {
+            "status": 500,
+            "message": f"Other error when creating table: {str(e)}",
+        }
     finally:
         conn.close()
 
@@ -52,11 +69,18 @@ async def test_select_fun():
         # 獲取查詢結果
         rows = cursor.fetchall()
         data = [{"id": row[0], "name": row[1], "age": row[2]} for row in rows]
-        return {"data": data}
+        return {"status": 200, "message": data}
 
+    except psycopg2.OperationalError as e:
+        return {
+            "status": 500,
+            "message": f"OperationalError when creating table: {str(e)}",
+        }
     except Exception as e:
-        error_msg = "Error selecting data: " + str(e)
-        raise HTTPException(status_code=500, detail=error_msg)  # noqa
+        return {
+            "status": 500,
+            "message": f"Other error when creating table: {str(e)}",
+        }
     finally:
         conn.close()
 
@@ -69,9 +93,16 @@ async def test_drop_fun():
         # 刪除table
         cursor.execute("DROP TABLE test_table;")
         conn.commit()
-        return {"message": "success to delete table"}
+        return {"status": 200, "message": "success to drop table"}
+    except psycopg2.OperationalError as e:
+        return {
+            "status": 500,
+            "message": f"OperationalError when creating table: {str(e)}",
+        }
     except Exception as e:
-        error_msg = "Error selecting data: " + str(e)
-        raise HTTPException(status_code=500, detail=error_msg)  # noqa
+        return {
+            "status": 500,
+            "message": f"Other error when creating table: {str(e)}",
+        }
     finally:
         conn.close()
