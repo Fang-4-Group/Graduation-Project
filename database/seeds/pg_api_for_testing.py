@@ -1,108 +1,79 @@
-import psycopg2
+import os
+from contextlib import asynccontextmanager
 
-# from fastapi import HTTPException
+import asyncpg
+from dotenv import load_dotenv
 
-
-async def access_db():
-    try:
-        # 連接到PostgreSQL
-        conn = psycopg2.connect(
-            host="postgres_db",
-            port="5432",
-            database="postgres",
-            user="riceball",
-            password="gp12345",
-        )
-        return conn
-    except psycopg2.DatabaseError:
-        return {
-            "status": 500,
-            "message": "Database connection error",
-        }
-    except Exception as e:
-        # 處理其他 Exception
-        return {
-            "status": 500,
-            "message": f"Other error when accessing db: {str(e)}",
-        }
-        # error_msg = "Error connecting to db: " + str(e)
-        # raise HTTPException(status_code=500, detail=error_msg)  # noqa
+load_dotenv()
 
 
-# Test Create
-async def test_create_fun():
-    conn = await access_db()
-    try:
-        cursor = conn.cursor()
-        # 建立測試資料表&資料
-        cursor.execute(
-            """CREATE TABLE test_table (id serial PRIMARY KEY,
-                    name VARCHAR(255), age INTEGER);
+class DatabaseClient:
+    def __init__(self):
+        self.host = os.getenv("POSTGRES_HOST")
+        self.port = os.getenv("POSTGRES_PORT")
+        self.database = os.getenv("POSTGRES_DB")
+        self.user = os.getenv("POSTGRES_USER")
+        self.password = os.getenv("POSTGRES_PASSWORD")
+
+    @asynccontextmanager
+    async def access_db(self):
+        conn = None
+        try:
+            conn = await asyncpg.connect(
+                host=self.host,
+                port=self.port,
+                database=self.database,
+                user=self.user,
+                password=self.password,
+            )
+            yield conn
+        except Exception as e:
+            raise Exception(f"Error when accessing db: {str(e)}")
+        finally:
+            if conn:
+                await conn.close()
+
+    async def test_create_fun(self) -> dict:
+        async with self.access_db() as conn:
+            try:
+                await conn.execute(
+                    """
+                    CREATE TABLE IF NOT EXISTS test_table (id serial PRIMARY KEY,
+                        name VARCHAR(255), age INTEGER);
                     INSERT INTO test_table (name, age) VALUES ('Alice', 25);
                     INSERT INTO test_table (name, age) VALUES ('Bob', 30);
                     INSERT INTO test_table (name, age) VALUES ('Charlie', 28);
-                    """
-        )
-        conn.commit()
-        return {"status": 200, "message": "success to create table"}
-    except psycopg2.OperationalError as e:
-        return {
-            "status": 500,
-            "message": f"OperationalError when creating table: {str(e)}",
-        }
-    except Exception as e:
-        return {
-            "status": 500,
-            "message": f"Other error when creating table: {str(e)}",
-        }
-    finally:
-        conn.close()
+                    """  # noqa
+                )
+                return {"status": 200, "message": "success to create table"}
+            except Exception as e:
+                return {
+                    "status": 500,
+                    "message": f"Error when creating table: {str(e)}",
+                }
 
+    async def test_select_fun(self) -> dict:
+        async with self.access_db() as conn:
+            try:
+                rows = await conn.fetch("SELECT * FROM test_table;")
+                data = [
+                    {"id": row["id"], "name": row["name"], "age": row["age"]}
+                    for row in rows
+                ]
+                return {"status": 200, "message": data}
+            except Exception as e:
+                return {
+                    "status": 500,
+                    "message": f"Error when selecting data: {str(e)}",
+                }
 
-# Test Select
-async def test_select_fun():
-    conn = await access_db()
-    try:
-        cursor = conn.cursor()
-        # 執行查詢
-        cursor.execute("SELECT * FROM test_table;")
-        # 獲取查詢結果
-        rows = cursor.fetchall()
-        data = [{"id": row[0], "name": row[1], "age": row[2]} for row in rows]
-        return {"status": 200, "message": data}
-
-    except psycopg2.OperationalError as e:
-        return {
-            "status": 500,
-            "message": f"OperationalError when creating table: {str(e)}",
-        }
-    except Exception as e:
-        return {
-            "status": 500,
-            "message": f"Other error when creating table: {str(e)}",
-        }
-    finally:
-        conn.close()
-
-
-# Test Drop
-async def test_drop_fun():
-    conn = await access_db()
-    try:
-        cursor = conn.cursor()
-        # 刪除table
-        cursor.execute("DROP TABLE test_table;")
-        conn.commit()
-        return {"status": 200, "message": "success to drop table"}
-    except psycopg2.OperationalError as e:
-        return {
-            "status": 500,
-            "message": f"OperationalError when creating table: {str(e)}",
-        }
-    except Exception as e:
-        return {
-            "status": 500,
-            "message": f"Other error when creating table: {str(e)}",
-        }
-    finally:
-        conn.close()
+    async def test_drop_fun(self) -> dict:
+        async with self.access_db() as conn:
+            try:
+                await conn.execute("DROP TABLE IF EXISTS test_table;")
+                return {"status": 200, "message": "success to drop table"}
+            except Exception as e:
+                return {
+                    "status": 500,
+                    "message": f"Error when dropping table: {str(e)}",
+                }

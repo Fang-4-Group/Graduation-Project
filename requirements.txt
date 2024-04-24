@@ -1,3 +1,4 @@
+asyncpg
 fastapi==0.109.2
 ipython
 line-bot-sdk
@@ -5,6 +6,9 @@ matplotlib==3.8.0
 matplotlib-inline==0.1.6
 numpy==1.25.2
 pandas==2.0.3
+psycopg2
+pymongo
+python-dotenv
 python-dotenv
 PyYAML==6.0.1
 requests

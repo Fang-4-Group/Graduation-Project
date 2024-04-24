@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   app:
-    platform: linux/amd64  # Ensure this matches your environment
+    platform: linux/amd64
     build: .
     image: my-python-dev-env
     volumes:
@@ -11,16 +11,27 @@ services:
       - "8080:8080"
     command: uvicorn src.main:app --host 0.0.0.0 --port 8777 --reload
     container_name: graduation-project
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_HOST: postgres_db
+      POSTGRES_PORT: 5432
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+
   postgres_db:
-    image: postgres:14  # 使用 PostgreSQL 14 版本的映像
+    image: postgres:14
     container_name: postgres-db
     environment:
-      POSTGRES_USER: riceball
-      POSTGRES_PASSWORD: gp12345
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     ports:
       - "5430:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
+
   pgadmin:
     image: dpage/pgadmin4
     container_name: pgadmin4
@@ -28,17 +39,19 @@ services:
     ports:
       - "5050:80"
     environment:
-      PGADMIN_DEFAULT_EMAIL: riceball@gmail.com
-      PGADMIN_DEFAULT_PASSWORD: gp12345
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
     volumes:
       - pgadmin-data:/var/lib/pgadmin
+
   mongodb:
     image: mongo
     container_name: mongodb
     ports:
-      - "27017:27017"  # 將 MongoDB 的 27017 端口映射到主機上的 27017 端口
+      - "27017:27017"
     volumes:
-      - mongodb-data:/data/db  # 映射 MongoDB 的數據目錄到容器中的 /data/db
+      - mongodb-data:/data/db
+
 volumes:
   postgres-data:
   pgadmin-data:
