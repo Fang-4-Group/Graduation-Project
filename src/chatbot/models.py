@@ -3,7 +3,8 @@ from datetime import datetime
 from pydantic import BaseModel
 
 
+# Define the structure of group messages
 class MsgDetail(BaseModel):
-    MsgText: str
     UserName: str
+    MsgText: str
     Time: datetime
