@@ -1,4 +1,5 @@
 asyncpg
+bson
 fastapi==0.109.2
 ipython
 line-bot-sdk
