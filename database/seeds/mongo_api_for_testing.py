@@ -1,6 +1,8 @@
+import json
 import os
 
 import pymongo
+from bson.json_util import dumps
 from dotenv import load_dotenv
 from fastapi import HTTPException
 
@@ -39,7 +41,7 @@ class MongoDBClient:
 
     async def test_select_fun(self):
         try:
-            data = [doc for doc in self.collection.find()]
+            data = [json.loads(dumps(doc)) for doc in self.collection.find()]
             return {"status": 200, "data": data}
         except pymongo.errors.ReadError as e:
             raise HTTPException(
