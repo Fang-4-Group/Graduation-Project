@@ -1,8 +1,9 @@
 import json
+import logging
 import os
 from datetime import datetime
-from typing import Dict, List
 
+import models
 import uvicorn
 from dotenv import load_dotenv
 from fastapi import FastAPI, Request
@@ -11,35 +12,40 @@ from linebot import LineBotApi
 from linebot.exceptions import InvalidSignatureError, LineBotApiError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage
 from linebot.v3.webhook import WebhookHandler
-from models import MsgDetail
+
+import database
 
 app = FastAPI()
 
-summary_queue: Dict[str, List[MsgDetail]] = {}
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 
-# Get environment variables
+# Load environment variables
 load_dotenv()
 line_bot_api = LineBotApi(os.getenv("CHANNEL_ACCESS_TOKEN"))
 handler = WebhookHandler(os.getenv("CHANNEL_SECRET"))
 if line_bot_api is None or handler is None:
-    print("Make sure you fill in the right environment variables.")
-    exit(1)
+    print("Make sure you have the right environment variables")
 
 
-# Deal with messages
+# Deal with incoming messages
 @app.post("/callback")
 async def line_webhook(request: Request):
     body_bytes = await request.body()
-    body = json.loads(body_bytes.decode("utf-8"))
-    events = body["events"]
+    body_str = body_bytes.decode("utf-8")
     signature = request.headers.get("X-Line-Signature")
 
     try:
-        handler.handle(body_bytes.decode("utf-8"), signature)
+        handler.handle(body_str, signature)
     except InvalidSignatureError:
         return JSONResponse(  # noqa
             status_code=400, content={"message": "Invalid signature"}  # noqa
-        )  # noqa
+        )
+
+    body = json.loads(body_str)
+    events = body["events"]
 
     for event in events:
         if (
@@ -47,11 +53,10 @@ async def line_webhook(request: Request):
             and event["message"]["type"] == "text"  # noqa
         ):
             await group_chat(event)
-            print("SUMMARY QUEUE:", summary_queue)
         elif (
             event["source"]["type"] == "user"
             and event["message"]["type"] == "text"  # noqa
-        ):  # noqa
+        ):
             await user_chat(event)
         else:
             print("The message is not in form of text.")
@@ -59,6 +64,7 @@ async def line_webhook(request: Request):
     return JSONResponse(status_code=200, content={"message": "OK"})
 
 
+# Deal with group messages
 async def group_chat(event):
     message = event["message"]
 
@@ -69,14 +75,17 @@ async def group_chat(event):
         profile = line_bot_api.get_group_member_profile(group_id, user_id)
         user_name = profile.display_name
 
-        # Append the message to the group's queue
-        msg_detail = MsgDetail(
-            MsgText=message["text"], UserName=user_name, Time=datetime.now()
+        # Build a MsgDetail instance to save the message
+        msg_detail = models.MsgDetail(
+            UserName=user_name, MsgText=message["text"], Time=datetime.now()
         )
 
-        if group_id not in summary_queue:
-            summary_queue[group_id] = []
-        summary_queue[group_id].append(msg_detail)
+        # Insert the message to MongoDB
+        try:
+            await database.add_message_to_group(group_id, msg_detail)
+            logging.info(f"Insert message to {group_id} successfully.")
+        except Exception as e:
+            logging.info(f"Failed to insert group chat message: {e}")
 
 
 async def user_chat(events):
