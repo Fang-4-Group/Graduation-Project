@@ -56,6 +56,7 @@ pre-commit install --install-hooks
 cd .\src\chatbot
 ```
 Add an `.env` file and add the settings below. You can get these variables in LINE Developers Account's Settings.
+According to the operation you use, you need to choose the architecture(amd/arm) for the project.
 ```env
 CHANNEL_SECRET=[YOUR_CHANNEL_SECRET]
 CHANNEL_ACCESS_TOKEN=[YOUR_CHANNEL_ACCESS_TOKEN]
