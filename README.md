@@ -55,7 +55,7 @@ pre-commit install --install-hooks
 # Move to chatbot directory
 cd .\src\chatbot
 ```
-Add an `.env` file and add the settings below. You can get these variables in LINE Developers Account's Settings.
+Copy the `example.env` in the root, rename the copied one to `.env`, and add the settings below. You can get these variables in LINE Developers Account's Settings.
 ```env
 CHANNEL_SECRET=[YOUR_CHANNEL_SECRET]
 CHANNEL_ACCESS_TOKEN=[YOUR_CHANNEL_ACCESS_TOKEN]
@@ -115,10 +115,10 @@ If you run the server correctly, the message you get in the chat room will alway
    <img src="https://github.com/Fang-4-Group/Graduation-Project/assets/93365070/da9f4beb-60e0-4e8f-9f6f-9dfc6fb5a31a" width="230" height="120">
 
 ### Mongodb Extension Install & Use
-#### Installing
-1. Search MongoDB in Extensions of your VSCode
-2. Install **MongoDB for VS Code**
-3. restart your VSCode
+#### 1. Installing
+(1) Search MongoDB in Extensions of your VSCode
+(2) Install **MongoDB for VS Code**
+(3) restart your VSCode
 If you see a mongodb icon(a leaf) in the left sidebar, you success to install it.
-#### Setting
+#### 2. Setting
 see the [video](https://youtu.be/3XkHMh91dtQ?si=CSQwmWVK4FGo0hVJ&t=328) from 5:28 to set the db
