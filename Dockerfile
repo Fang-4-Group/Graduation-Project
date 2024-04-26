@@ -5,17 +5,23 @@ FROM python:3.10.11-bullseye as base
 ENV WORKDIR /srv/graduation-project
 WORKDIR ${WORKDIR}
 
-# Install necessary system dependencies
-RUN apt-get update && \
-    apt-get install -y wget unzip postgresql postgresql-contrib && \
-    rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y wget unzip postgresql postgresql-contrib python3-pymongo && rm -rf /var/lib/apt/lists/*
 
-# Start PostgreSQL service (Note: This won't persist when the container is run)
-RUN service postgresql start && \
-    mkdir -p /etc/postgresql/14/main && \
-    echo "host all  all    0.0.0.0/0  md5" >> /etc/postgresql/14/main/pg_hba.conf && \
-    echo "listen_addresses='*'" >> /etc/postgresql/14/main/postgresql.conf && \
-    service postgresql stop
+# 啟動 PostgreSQL 服務
+RUN service postgresql start
+
+# 配置 PostgreSQL
+USER postgres
+
+# 創建目錄以確保路徑存在
+RUN mkdir -p /etc/postgresql/14/main
+
+# 修改配置以允許遠程訪問
+RUN echo "host all  all    0.0.0.0/0  md5" >> /etc/postgresql/14/main/pg_hba.conf
+RUN echo "listen_addresses='*'" >> /etc/postgresql/14/main/postgresql.conf
+
+# 停止 PostgreSQL 服務
+RUN service postgresql stop
 
 # Set up Python environment
 COPY ./requirements.txt ./
