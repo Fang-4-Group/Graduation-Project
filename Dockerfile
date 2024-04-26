@@ -3,10 +3,7 @@ FROM python:3.10.11-bullseye as base
 ENV WORKDIR /srv/graduation-project
 WORKDIR ${WORKDIR}
 
-RUN apt-get update && apt-get install -y wget unzip
-RUN apt-get install -y postgresql postgresql-contrib python3-pymongo \
-    && rm -rf /var/lib/apt/lists/*
-
+RUN apt-get update && apt-get install -y wget unzip postgresql postgresql-contrib python3-pymongo && rm -rf /var/lib/apt/lists/*
 
 # 啟動 PostgreSQL 服務
 RUN service postgresql start
