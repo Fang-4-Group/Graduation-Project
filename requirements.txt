@@ -1,5 +1,4 @@
 asyncpg
-bson
 fastapi==0.109.2
 ipython
 line-bot-sdk
@@ -9,7 +8,6 @@ numpy==1.25.2
 pandas==2.0.3
 psycopg2
 pymongo
-python-dotenv
 python-dotenv
 PyYAML==6.0.1
 requests
