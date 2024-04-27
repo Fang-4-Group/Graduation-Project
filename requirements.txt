@@ -1,6 +1,6 @@
 asyncpg
-bson
-fastapi==0.109.2
+fastapi[all]
+httpx
 ipython
 line-bot-sdk
 matplotlib==3.8.0
@@ -9,8 +9,10 @@ numpy==1.25.2
 pandas==2.0.3
 psycopg2
 pymongo
-python-dotenv
+pytest
 python-dotenv
 PyYAML==6.0.1
 requests
+requests
 uvicorn
+uvicorn[standard]
