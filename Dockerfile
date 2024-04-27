@@ -1,5 +1,7 @@
+# Use an official Python runtime as a parent image
 FROM python:3.10.11-bullseye as base
 
+# Set the working directory
 ENV WORKDIR /srv/graduation-project
 WORKDIR ${WORKDIR}
 
@@ -21,18 +23,12 @@ RUN echo "listen_addresses='*'" >> /etc/postgresql/14/main/postgresql.conf
 # 停止 PostgreSQL 服務
 RUN service postgresql stop
 
-# 啟動 PostgreSQL
-EXPOSE 5432
-
-# 切換回使用者 root
-USER root
-
-# 安裝 psycopg2 套件
-RUN pip install psycopg2
-
-RUN pip install pymongo
-
+# Set up Python environment
 COPY ./requirements.txt ./
 RUN pip install -r requirements.txt
 
+# Add the rest of the application
 ADD . ${WORKDIR}
+
+# Expose port 5432 for PostgreSQL
+EXPOSE 5432
