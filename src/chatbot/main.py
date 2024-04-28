@@ -1,5 +1,4 @@
 import json
-import logging
 import os
 from datetime import datetime
 
@@ -16,11 +15,6 @@ from linebot.v3.webhook import WebhookHandler
 import database
 
 app = FastAPI()
-
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
 
 # Load environment variables
 load_dotenv()
@@ -52,7 +46,10 @@ async def line_webhook(request: Request):
             event["source"]["type"] == "group"
             and event["message"]["type"] == "text"  # noqa
         ):
-            await group_chat(event)
+            group_id = await group_chat(event)
+            # Print out the records from DB
+            print("-" * 40)
+            await output_group_msg(group_id)
         elif (
             event["source"]["type"] == "user"
             and event["message"]["type"] == "text"  # noqa
@@ -83,13 +80,21 @@ async def group_chat(event):
         # Insert the message to MongoDB
         try:
             await database.add_message_to_group(group_id, msg_detail)
-            logging.info(f"Insert message to {group_id} successfully.")
+            print(f"Insert message to {group_id} successfully.")
         except Exception as e:
-            logging.info(f"Failed to insert group chat message: {e}")
+            print(f"Exception: {e}")
+    return group_id
 
 
 async def user_chat(events):
     pass
+
+
+# output group chat messages
+async def output_group_msg(group_id):
+    messages = await database.select_all_group_msg(group_id)
+    for message in messages:
+        print("FROM MONGO DB:", message)
 
 
 # Webhook endpoint for dialogflow

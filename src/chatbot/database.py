@@ -17,15 +17,15 @@ async def add_message_to_group(group_id, message_detail):
     result = await collection.update_one(
         {"groupId": group_id},
         {"$push": {"messages": msg_detail_dict}},
-        upsert=True,  # create a new document if no existing document matches
+        upsert=True,
     )
     return result
 
 
 # Query all messages from a specific group
 async def select_all_group_msg(group_id: str):
-    pass
-    # cursor = collection.find({"groupId": group_id})
-    # all_group_msg = await cursor.to_list(length=None)
-    # for message in all_group_msg:
-    #     print(message)
+    cursor = collection.find({"groupId": group_id})
+    result = []
+    for msg in cursor:
+        result.append(msg)
+    return result
