@@ -57,3 +57,13 @@ def test_drop_mongo_status_code():
     response = client.get("/test_drop_mongo/")
     assert response.status_code == 200
     assert response.json()["status"] == 200
+
+
+def pg_init_status_code():
+    response = client.get("/pg_init/")
+    assert response.status_code == 200
+
+
+def pg_init_test_status_code():
+    response = client.get("/pg_init_test/")
+    assert response.status_code == 200

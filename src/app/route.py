@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 from fastapi.responses import FileResponse
 
+from database.migrations.posgresql_init import PosgresqlInitClient
 from database.seeds.mongo_api_for_testing import MongoDBClient
 from database.seeds.pg_api_for_testing import DatabaseClient
 
@@ -71,3 +72,26 @@ async def test_drop_mg():
     client = MongoDBClient()
     result = await client.test_drop_fun()
     return result
+
+
+# posgresql init
+
+
+@router.get("/pg_init/")
+async def posgresql_init():
+    client = PosgresqlInitClient()
+    response_c = await client.create_table()
+    response_a = await client.add_fk_setting()
+    response_i = await client.insert_data()
+    return {
+        "create table": f"{response_c['message']}",
+        "add FK": f"{response_a['message']}",
+        "insert data": f"{response_i['message']}",
+    }
+
+
+@router.get("/pg_init_test/")
+async def posgresql_init_test():
+    client = PosgresqlInitClient()
+    response = await client.select_house_data()
+    return response
