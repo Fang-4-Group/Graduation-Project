@@ -23,6 +23,24 @@ def test_drop_status_code():
     assert response.json()["status"] == 200
 
 
+def test_create_img_status_code():
+    response = client.get("/test_create_img/")
+    assert response.status_code == 200
+    assert response.json()["status"] == 200
+
+
+def show_img_status_code():
+    response = client.get("/show_img/")
+    assert response.status_code == 200
+    # assert response.json()["status"] == 200
+
+
+def test_drop_img_status_code():
+    response = client.get("/test_drop_img/")
+    assert response.status_code == 200
+    assert response.json()["status"] == 200
+
+
 def test_insert_mongo_status_code():
     response = client.get("/test_insert_mongo/")
     assert response.status_code == 200
