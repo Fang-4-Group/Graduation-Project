@@ -1,4 +1,5 @@
 from fastapi import APIRouter
+from fastapi.responses import FileResponse
 
 from database.seeds.mongo_api_for_testing import MongoDBClient
 from database.seeds.pg_api_for_testing import DatabaseClient
@@ -25,6 +26,30 @@ async def test_drop():
     client = DatabaseClient()
     result = await client.test_drop_fun()
     return result
+
+
+@router.get("/test_create_img/")
+async def test_create_img():
+    client = DatabaseClient()
+    result = await client.test_create_img_fun()
+    return result
+
+
+@router.get("/show_img/")
+async def show_img():
+    client = DatabaseClient()
+    data = await client.test_select_img_fun()
+    return FileResponse(data["message"][0]["path"])
+
+
+@router.get("/test_drop_img/")
+async def test_drop_img():
+    client = DatabaseClient()
+    result = await client.test_drop_img_fun()
+    return result
+
+
+# MongoDB
 
 
 @router.get("/test_insert_mongo/")
