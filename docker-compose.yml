@@ -51,7 +51,7 @@ services:
     ports:
       - "27017:27017"
     volumes:
-      - mongodb-data:/data/db
+      - mongodb-data:/var/lib/mongodb/data
 
   frontend:
     build:

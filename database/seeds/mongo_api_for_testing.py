@@ -29,28 +29,20 @@ class MongoDBClient:
                 "status": 200,
                 "message": f"Inserted {len(result.inserted_ids)} documents",
             }
-        except pymongo.errors.WriteError as e:
-            raise HTTPException(
-                status_code=500, detail=f"Error when inserting data: {str(e)}"
-            )
         except Exception as e:
             raise HTTPException(
                 status_code=500,
-                detail=f"Other error when inserting data: {str(e)}",
+                detail=f"Error when inserting data: {str(e)}",
             )
 
     async def test_select_fun(self):
         try:
             data = [json.loads(dumps(doc)) for doc in self.collection.find()]
             return {"status": 200, "data": data}
-        except pymongo.errors.ReadError as e:
-            raise HTTPException(
-                status_code=500, detail=f"Error when selecting data: {str(e)}"
-            )
         except Exception as e:
             raise HTTPException(
                 status_code=500,
-                detail=f"Other error when selecting data: {str(e)}",
+                detail=f"Error when selecting data: {str(e)}",
             )
 
     async def test_drop_fun(self):
@@ -61,13 +53,8 @@ class MongoDBClient:
             else:
                 message = "Collection does not exist"
             return {"status": 200, "message": message}
-        except pymongo.errors.PyMongoError as e:
-            raise HTTPException(
-                status_code=500,
-                detail=f"Error when dropping collection: {str(e)}",
-            )
         except Exception as e:
             raise HTTPException(
                 status_code=500,
-                detail=f"Other error when dropping collection: {str(e)}",
+                detail=f"Error when dropping collection: {str(e)}",
             )
