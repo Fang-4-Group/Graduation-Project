@@ -9,20 +9,37 @@ project-name/
 │   ├── app/
 │   │   ├── controllers/   (adjusting the data before being used in the models)
 │   │   ├── models/   (the business logic that routes would import to use)
-│   │   └── routes/   (api routing)
+│   │   └── routes/   (API routing)
 │   ├── config/
-│   ├── services/    (if we need to use some other external services, eg: 3rd party authorization)
-│   └── utils/    (some tool funciton)
+│   ├── services/    (external services, e.g., 3rd party authorization)
+│   └── utils/    (utility functions)
 ├── public/
 │   ├── images/
 │   ├── styles/
 │   └── scripts/
 ├── database/
-│   ├── migrations/ (CRUD things)
-│   └── seeds/ (the testing data for development)
+│   ├── migrations/ (CRUD operations)
+│   └── seeds/ (testing data for development)
 ├── tests/
 │   ├── unit/
 │   ├── integration/
 │   └── e2e/
 ├── docs/
-└── scripts/
+├── scripts/
+└── frontend/                  (newly added for Vue.js)
+    ├── Dockerfile             (specific Dockerfile for frontend)
+    ├── package.json
+    ├── package-lock.json      (or yarn.lock)
+    ├── node_modules/
+    ├── src/
+    │   ├── assets/
+    │   ├── components/
+    │   ├── views/
+    │   ├── App.vue
+    │   ├── main.js
+    │   └── router.js          (if using Vue Router)
+    ├── public/
+    │   ├── index.html
+    │   └── favicon.ico
+    └── .env.local             (environment specific settings for local development)
+    └── .env.production        (environment specific settings for production)
