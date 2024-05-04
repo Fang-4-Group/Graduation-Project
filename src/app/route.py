@@ -76,6 +76,9 @@ async def test_insert_mg():
     return result
 
 
+# MongoDB
+
+
 @router.get("/test_insert_mongo/")
 async def test_insert_mg():
     result = await mg_api_t.test_insert_fun()
