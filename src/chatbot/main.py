@@ -16,6 +16,7 @@ import database
 
 app = FastAPI()
 
+
 # Load environment variables
 load_dotenv()
 line_bot_api = LineBotApi(os.getenv("CHANNEL_ACCESS_TOKEN"))
@@ -74,7 +75,10 @@ async def group_chat(event):
 
         # Build a MsgDetail instance to save the message
         msg_detail = models.MsgDetail(
-            UserName=user_name, MsgText=message["text"], Time=datetime.now()
+            UserId=user_id,
+            UserName=user_name,
+            MsgText=message["text"],
+            Time=datetime.now(),
         )
 
         # Insert the message to MongoDB
