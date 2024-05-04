@@ -172,11 +172,11 @@ class PosgresqlInitClient:
 
                     INSERT INTO "HOUSE" ("House_ID", "People_ID", "Size", "Fire", "Negotiate_Price", "Photo", "Address", "Floor", "Type")
                     VALUES
-                    (1, 1, 120.5, 0, 1, 'house1.jpg', '123 Main St', 2, 'Apartment'),
-                    (2, 3, 150.2, 1, 0, 'house2.jpg', '456 Elm St', 1, 'Condo'),
-                    (3, 5, 200.0, 0, 1, 'house3.jpg', '789 Oak St', 3, 'House'),
-                    (4, 7, 180.3, 1, 0, 'house4.jpg', '101 Pine St', 2, 'Townhouse'),
-                    (5, 9, 220.7, 0, 1, 'house5.jpg', '222 Cedar St', 1, 'Apartment');
+                    (1, 1, 12.5, 0, 1, 'house1.jpg', '123 Main St', 2, 'Apartment'),
+                    (2, 3, 15.2, 1, 0, 'house2.jpg', '456 Elm St', 1, 'Condo'),
+                    (3, 5, 10.0, 0, 1, 'house3.jpg', '789 Oak St', 3, 'House'),
+                    (4, 7, 18.3, 1, 0, 'house4.jpg', '101 Pine St', 2, 'Townhouse'),
+                    (5, 9, 9.7, 0, 1, 'house5.jpg', '222 Cedar St', 1, 'Apartment');
 
                     INSERT INTO "HOUSE_FURNITURE" ("House_ID", "Furniture")
                     VALUES
