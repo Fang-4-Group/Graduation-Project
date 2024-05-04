@@ -67,3 +67,13 @@ def test_pg_init_status_code():
 def test_pg_init_test_status_code():
     response = client.get("/pg_init_test/")
     assert response.status_code == 200
+
+
+def test_mongodb_init_status_code():
+    response = client.get("/mongo_init/")
+    assert response.status_code == 200
+
+
+def test_mongodb_init_test_status_code():
+    response = client.get("/mongo_init_test/")
+    assert response.status_code == 200
