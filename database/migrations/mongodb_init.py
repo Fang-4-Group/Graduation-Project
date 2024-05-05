@@ -5,7 +5,6 @@ import os
 # from bson.json_util import dumps
 import pymongo
 from dotenv import load_dotenv
-from fastapi import HTTPException
 
 load_dotenv()
 
@@ -74,10 +73,9 @@ class MongoDBInitClient:
                 "message": f"Inserted {len(result.inserted_ids)} documents",
             }
         except Exception as e:
-            raise HTTPException(
-                status_code=500,
-                detail=f"Other error when inserting data: {str(e)}",
-            )
+            return {
+                "message": f"Error when inserting data: {str(e)}",
+            }
 
     async def get_data_by_group_id(self, group_id):
         try:
@@ -94,7 +92,6 @@ class MongoDBInitClient:
                     "message": "Document not found",
                 }
         except Exception as e:
-            raise HTTPException(
-                status_code=500,
-                detail=f"Other error when getting data: {str(e)}",
-            )
+            return {
+                "message": f"Error when selecting data: {str(e)}",
+            }
