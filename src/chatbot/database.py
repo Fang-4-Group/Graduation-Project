@@ -4,9 +4,10 @@ import pymongo
 from dotenv import load_dotenv
 
 load_dotenv()
-mongo_host = os.getenv("MONGO_HOST")
-mongo_port = int(os.getenv("MONGO_PORT"))
-client = pymongo.MongoClient(host=mongo_host, port=mongo_port)
+mongo_uri = str(os.getenv("MONGO_URI"))
+
+# Initialize the MongoDB client
+client = pymongo.MongoClient(mongo_uri)
 db = client[os.getenv("MONGO_DB_NAME")]
 collection = db[os.getenv("MONGO_COLLECTION")]
 

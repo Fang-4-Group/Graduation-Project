@@ -80,7 +80,6 @@ async def group_chat(event):
             MsgText=message["text"],
             Time=datetime.now(),
         )
-
         # Insert the message to MongoDB
         try:
             await database.add_message_to_group(group_id, msg_detail)
