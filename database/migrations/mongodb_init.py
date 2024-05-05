@@ -14,7 +14,7 @@ class MongoDBInitClient:
         self.host = os.getenv("MONGO_HOST", "localhost")
         self.port = int(os.getenv("MONGO_PORT", 27017))
         self.db_name = "mongodb"
-        self.collection_name = "chat_record"
+        self.collection_name = "sample_chat_record"
         self.client = pymongo.MongoClient(host=self.host, port=self.port)
         self.db = self.client[self.db_name]
         self.collection = self.db[self.collection_name]
