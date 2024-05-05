@@ -1,4 +1,5 @@
 asyncpg
+datasets
 fastapi[all]
 httpx
 ipython
@@ -14,5 +15,9 @@ python-dotenv
 PyYAML==6.0.1
 requests
 requests
+transformers
+torch
+torchvision 
+torchaudio
 uvicorn
 uvicorn[standard]

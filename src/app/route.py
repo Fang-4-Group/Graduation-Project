@@ -7,6 +7,8 @@ from database.migrations.posgresql_init import PosgresqlInitClient
 from database.seeds.mongo_api_for_testing import MongoDBClient
 from database.seeds.pg_api_for_testing import PosgresqTestClient
 
+from src.service import model
+
 router = APIRouter()
 
 
@@ -142,4 +144,78 @@ async def get_preference_furniture(preference_id: int):
 async def get_preference_house_place(preference_id: int):
     client = PosgresqClient()
     result = await client.get_preference_house_place(preference_id)
+    return result
+
+
+# posgresql init
+
+
+@router.get("/pg_init/")
+async def posgresql_init():
+    client = PosgresqlInitClient()
+    response_c = await client.create_table()
+    response_a = await client.add_fk_setting()
+    response_i = await client.insert_data()
+    return {
+        "create table": f"{response_c['message']}",
+        "add FK": f"{response_a['message']}",
+        "insert data": f"{response_i['message']}",
+    }
+
+
+@router.get("/pg_init_test/")
+async def posgresql_init_test():
+    client = PosgresqlInitClient()
+    response = await client.select_house_data()
+    return response
+
+
+# mongodb init
+
+
+@router.get("/mongo_init/")
+async def mongodb_init():
+    client = MongoDBInitClient()
+    response = await client.insert_data()
+    return response
+
+
+@router.get("/mongo_init_test/")
+async def mongodb_init_test():
+    client = MongoDBInitClient()
+    response = await client.get_data_by_group_id(
+        "B1c2d3e4f5g67890hijklmnopqrstuvwx"
+    )  # noqa
+    return response
+
+
+# Posgresql CRUD
+
+
+@router.get("/get_young_info/")
+async def get_young_info():
+    client = PosgresqClient()
+    result = await client.get_young_info()
+    return result
+
+
+@router.get("/get_preference_furniture/{preference_id}")
+async def get_preference_furniture(preference_id: int):
+    client = PosgresqClient()
+    result = await client.get_preference_furniture(preference_id)
+    return result
+
+
+@router.get("/get_preference_house_place/{preference_id}")
+async def get_preference_house_place(preference_id: int):
+    client = PosgresqClient()
+    result = await client.get_preference_house_place(preference_id)
+    return result
+
+
+#model test
+
+@router.get("/test_model/")
+async def test_model():
+    result =await model.test()
     return result
