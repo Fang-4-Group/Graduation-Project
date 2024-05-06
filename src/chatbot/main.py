@@ -56,9 +56,9 @@ async def line_webhook(request: Request):
             else:
                 print("The message is not in form of text.")
 
-        return JSONResponse(status_code=200, content={"message": "OK"})
-    else:
-        print(f"Unhandled event type: {event_type}")
+            return JSONResponse(status_code=200, content={"message": "OK"})
+        else:
+            print(f"Unhandled event type: {event_type}")
 
 
 @router.post("/webhook")
