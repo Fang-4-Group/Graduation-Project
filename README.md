@@ -48,6 +48,18 @@ pip install pre-commit
 pre-commit install --install-hooks
 ```
 
+### API Testing Way
+
+To test the api you write, run the following command before you push.
+
+```bash
+# Accessing the container's shell
+docker exec -it graduation-project /bin/bash
+
+# testing command
+pytest
+```
+
 ### Chatbot Setup
 #### Prerequisites
 Before setting up the chatbot, complete the following prerequisites:
