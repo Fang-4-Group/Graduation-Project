@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <Home></Home>
+    <!--<Home></Home>-->
     <router-view></router-view>
     <!--<Edit></Edit>-->
     <div :class="userData"></div>
@@ -8,7 +8,7 @@
 </template>
 
 <script setup>
-import Home from "./components/Home.vue";
+//import Home from "./components/Home.vue";
 //import Edit from "./components/Edit.vue";
 
 </script>

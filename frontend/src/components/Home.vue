@@ -6,7 +6,7 @@
     <div class="section-boxed">
       <h2>
         基本資料
-        <button @click="goToPage('/edit')">新增</button>
+        <button @click="goToPage('/editbasic')">新增</button>
       </h2>
       <div class="data-item">
         <label>年齡：</label>
@@ -26,7 +26,7 @@
     <div class="section-boxed">
       <h2>
         個人特質
-        <button @click="goToPage('/edit')">新增</button>
+        <button @click="goToPage('/editpersonality')">新增</button>
       </h2>
       <ul class="traits-list">
         <li v-for="trait in userData.personalityTraits" :key="trait">{{ trait }}</li>
@@ -37,7 +37,7 @@
     <div class="section-boxed">
       <h2>
         興趣
-        <button @click="goToPage('/edit')">新增</button>
+        <button @click="goToPage('/editinterests')">新增</button>
       </h2>
       <ul class="interests-list">
         <li v-for="interest in userData.interests" :key="interest">{{ interest }}</li>
@@ -48,7 +48,7 @@
     <div class="section-boxed">
       <h2>
         房屋偏好
-        <button @click="goToPage('/edit')">新增</button>
+        <button @click="goToPage('/edithousepref')">新增</button>
       </h2>
       <div class="furniture-list">
         <div v-for="(item, index) in userData.housingPreferences.furniture" :key="index" class="furniture-item">
