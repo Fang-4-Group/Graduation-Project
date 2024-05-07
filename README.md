@@ -81,6 +81,10 @@ cd .\src\chatbot
 CHANNEL_SECRET=[YOUR_CHANNEL_SECRET]
 CHANNEL_ACCESS_TOKEN=[YOUR_CHANNEL_ACCESS_TOKEN]
 
+MONGO_URI=mongodb://mongodb:27017
+MONGO_DB_NAME=Graduation-Project
+MONGO_COLLECTION=group-chat-record
+
 # Depending on your operating system's architecture, choose the correct build (amd/arm).
 ```
 
@@ -89,7 +93,7 @@ Run the chatbot using the following command in the project root:
 
 ```bash
 # Start the chatbot service
-uvicorn src.chatbot.main:app --host localhost --port 8080 --reload
+python main.py
 ```
 
 #### ngrok Setup
@@ -101,13 +105,16 @@ ngrok authtoken [YOUR_AUTH_TOKEN]  # Authenticate your ngrok session
 ngrok http 8080  # Expose local port 8080 to the Internet
 ```
 
-Share the generated ngrok URL (e.g., https://xxxxxx.ngrok-free.app) with the administrator to update the webhook URL for real-time communication.
+Update the generated ngrok URL in LINE Developers Settings (e.g., https://xxxxxx.ngrok-free.app/linebot/callback) to update the webhook URL for real-time communication. 
+
+Now you can try to add the official account to a group and send some messages to the group.
 
 #### Expected Result
-If everything is set up correctly, messages received in the chat room will include the suffix "(我有經過 FastAPI Server)".
+If everything is set up correctly, every message you send will be saved to MongoDB and will be retrieved and printed to console.
 <div align="center">
-  <img width="260" alt="result" src="https://github.com/Fang-4-Group/Graduation-Project/assets/82760846/80f5899b-8e3b-492e-a6e2-588adff271ee">
+  <img width="704" alt="測試成功" src="https://github.com/Fang-4-Group/Graduation-Project/assets/82760846/1675bee8-4d68-473c-bb01-e80ae1474632">
 </div>
+
 
 ### pgAdmin4 Setup
 Follow these steps to configure pgAdmin4 for managing the PostgreSQL database:
