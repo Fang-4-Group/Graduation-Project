@@ -14,5 +14,6 @@ python-dotenv
 PyYAML==6.0.1
 requests
 requests
+services
 uvicorn
 uvicorn[standard]
