@@ -3,3 +3,4 @@ myvenv/
 .env
 *.pyc
 ./frontend/node_modules
+ngrok/
