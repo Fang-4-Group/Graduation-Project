@@ -115,6 +115,22 @@ If everything is set up correctly, every message you send will be saved to Mongo
   <img width="704" alt="測試成功" src="https://github.com/Fang-4-Group/Graduation-Project/assets/82760846/1675bee8-4d68-473c-bb01-e80ae1474632">
 </div>
 
+### Chatbot - Connect external website with LIFF
+Follow the descriptions above to run the **frontend** and start your ngrok.
+```
+ngrok http 8081
+```
+Update _Endpoint URL_ with your ngrok url in LINE Developers settings.
+(**NOTICE**: _Endpoint URL_ setting is in the User-Profile-LIFF Channel)
+
+<img width="478" alt="locate" src="https://github.com/Fang-4-Group/Graduation-Project/assets/82760846/7bcc0e2f-a04e-4024-8611-7440ea521c3d">
+
+#### Sample Result
+When you click on the menu, LIFF will open and an external website will appear. You can see the details with LIFF at the bottom of the website.
+
+  <img height="400" src="https://github.com/Fang-4-Group/Graduation-Project/assets/82760846/b0c95087-9bb4-402d-a5d8-30fe6dbf22bb">
+  <img height="400" src="https://github.com/Fang-4-Group/Graduation-Project/assets/82760846/e1f10a84-eee4-4c83-99d3-ca18db835496">
+
 
 ### pgAdmin4 Setup
 Follow these steps to configure pgAdmin4 for managing the PostgreSQL database:
