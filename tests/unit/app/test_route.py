@@ -68,3 +68,23 @@ def test_mongodb_init_status_code():
 def test_mongodb_init_test_status_code():
     response = client.get("/mongo_init_test/")
     assert response.status_code == 200
+
+
+def test_get_young_info():
+    response = client.get("/get_young_info/")
+    assert response.status_code == 200
+    assert response.json()  # 確保回應有內容
+
+
+def test_get_preference_furniture():
+    preference_id = 1
+    response = client.get(f"/get_preference_furniture/{preference_id}")
+    assert response.status_code == 200
+    assert response.json()  # 確保回應有內容
+
+
+def test_get_preference_house_place():
+    preference_id = 1
+    response = client.get(f"/get_preference_house_place/{preference_id}")
+    assert response.status_code == 200
+    assert response.json()  # 確保回應有內容
