@@ -48,17 +48,15 @@ pip install pre-commit
 pre-commit install --install-hooks
 ```
 
-### API Testing Way
+### ✨ API Testing Way ✨
 
-To test the api you write, run the following command before you push.
+The workflow of GitHub Action is completed. 
 
-```bash
-# Accessing the container's shell
-docker exec -it graduation-project /bin/bash
-
-# testing command
-pytest
-```
+The way to test your API is as follow:
+1. **Follow the example in `tests\unit\app\test_route.py` to create a testing function for your API** (‼️the function name should start with **test**)
+2. The testing steps will start after you `push` your change to GitHub, or **new a pull request**
+3. Turn to GitHub, and click **Action** (beside of Pull request)
+4. Wait to see whether your push or PR success or not
 
 ### Chatbot Setup
 #### Prerequisites

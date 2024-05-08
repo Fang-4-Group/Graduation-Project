@@ -45,10 +45,9 @@ class DatabaseClient:
                     INSERT INTO test_table (name, age) VALUES ('Charlie', 28);
                     """  # noqa
                 )
-                return {"status": 200, "message": "success to create table"}
+                return {"message": "success to create table"}
             except Exception as e:
                 return {
-                    "status": 500,
                     "message": f"Error when creating table: {str(e)}",
                 }
 
@@ -60,10 +59,9 @@ class DatabaseClient:
                     {"id": row["id"], "name": row["name"], "age": row["age"]}
                     for row in rows
                 ]
-                return {"status": 200, "message": data}
+                return {"message": data}
             except Exception as e:
                 return {
-                    "status": 500,
                     "message": f"Error when selecting data: {str(e)}",
                 }
 
@@ -71,10 +69,9 @@ class DatabaseClient:
         async with self.access_db() as conn:
             try:
                 await conn.execute("DROP TABLE IF EXISTS test_table;")
-                return {"status": 200, "message": "success to drop table"}
+                return {"message": "success to drop table"}
             except Exception as e:
                 return {
-                    "status": 500,
                     "message": f"Error when dropping table: {str(e)}",
                 }
 
@@ -92,10 +89,9 @@ class DatabaseClient:
                     INSERT INTO images (filename, path) VALUES ('test_img.jpg', '{path}');
                     """  # noqa
                 )
-                return {"status": 200, "message": "success to create table"}
+                return {"message": "success to create table"}
             except Exception as e:
                 return {
-                    "status": 500,
                     "message": f"Error when creating table: {str(e)}",
                 }
 
@@ -111,10 +107,9 @@ class DatabaseClient:
                     }  # noqa
                     for row in rows
                 ]
-                return {"status": 200, "message": data}
+                return {"message": data}
             except Exception as e:
                 return {
-                    "status": 500,
                     "message": f"Error when selecting data: {str(e)}",
                 }
 
@@ -122,9 +117,8 @@ class DatabaseClient:
         async with self.access_db() as conn:
             try:  # test_table
                 await conn.execute("DROP TABLE IF EXISTS images;")
-                return {"status": 200, "message": "success to drop table"}
+                return {"message": "success to drop table"}
             except Exception as e:
                 return {
-                    "status": 500,
                     "message": f"Error when dropping table: {str(e)}",
                 }
