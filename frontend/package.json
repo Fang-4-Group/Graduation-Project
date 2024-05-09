@@ -9,8 +9,14 @@
   },
   "dependencies": {
     "core-js": "^3.8.3",
+<<<<<<< HEAD
     "vue": "^3.2.13",
     "@line/liff": "^2.3.0"
+=======
+    "element-plus": "^2.7.2",
+    "vue": "^3.2.13",
+    "vue-router": "^4.3.2"
+>>>>>>> c758ff6 (add apis)
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
