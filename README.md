@@ -50,7 +50,7 @@ pre-commit install --install-hooks
 
 ### ✨ API Testing Way ✨
 
-The workflow of GitHub Action is completed. 
+The workflow of GitHub Action is completed.
 
 The way to test your API is as follow:
 1. **Follow the example in `tests\unit\app\test_route.py` to create a testing function for your API** (‼️the function name should start with **test**)
@@ -103,7 +103,7 @@ ngrok authtoken [YOUR_AUTH_TOKEN]  # Authenticate your ngrok session
 ngrok http 8080  # Expose local port 8080 to the Internet
 ```
 
-Update the generated ngrok URL in LINE Developers Settings (e.g., https://xxxxxx.ngrok-free.app/linebot/callback) to update the webhook URL for real-time communication. 
+Update the generated ngrok URL in LINE Developers Settings (e.g., https://xxxxxx.ngrok-free.app/linebot/callback) to update the webhook URL for real-time communication.
 
 Now you can try to add the official account to a group and send some messages to the group.
 
@@ -140,9 +140,7 @@ Follow these steps to configure pgAdmin4 for managing the PostgreSQL database:
 
 #### Setup and Start:
 1. Launch the service using Docker Compose: `docker-compose up -d`.
-2. Access pgAdmin by navigating to: [http://localhost:5050/login?next=%2F](http://localhost:5050/login
-
-?next=%2F).
+2. Access pgAdmin by navigating to: [http://localhost:5050/login?next=%2F](http://localhost:5050/login?next=%2F).
 3. Log in using the credentials provided in the project documentation.
 4. Configure the connection to the PostgreSQL database:
     - **General**: Name your connection (e.g., PostgreSQL-gp).
