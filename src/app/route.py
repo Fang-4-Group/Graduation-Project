@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 from fastapi.responses import FileResponse
+from .pg_CRUD import PosgresqClient
 
 from database.migrations.mongodb_init import MongoDBInitClient
 from database.migrations.pg_CRUD import PosgresqClient
@@ -8,7 +9,7 @@ from database.seeds.mongo_api_for_testing import MongoDBClient
 from database.seeds.pg_api_for_testing import PosgresqTestClient
 
 router = APIRouter()
-
+pg_client = PosgresqClient()
 
 # Posgresql Test
 
@@ -120,6 +121,7 @@ async def mongodb_init_test():
     )  # noqa
     return response
 
+<<<<<<< HEAD
 
 # Posgresql CRUD
 
@@ -129,17 +131,56 @@ async def get_young_info():
     client = PosgresqClient()
     result = await client.get_young_info()
     return result
+=======
+#pg_CRUD
+@router.get("/get_sleep_time/{people_id}")
+async def get_sleep_time(people_id: int):
+    return await pg_client.get_sleep_time(people_id)
+
+
+@router.get("/get_drink_or_smoke/{people_id}")
+async def get_drink_or_smoke(people_id: int):
+    return await pg_client.get_drink_or_smoke(people_id)
+
+
+@router.get("/get_clean_habit/{people_id}")
+async def get_clean_habit(people_id: int):
+    return await pg_client.get_clean_habit(people_id)
+
+
+@router.get("/get_mbti/{people_id}")
+async def get_mbti(people_id: int):
+    return await pg_client.get_mbti(people_id)
+
+
+@router.get("/get_characters/{people_id}")
+async def get_characters(people_id: int):
+    return await pg_client.get_characters(people_id)
+
+
+@router.get("/get_interests/{people_id}")
+async def get_interests(people_id: int):
+    return await pg_client.get_interests(people_id)
+>>>>>>> 91ab5b1 (apis and route)
 
 
 @router.get("/get_preference_furniture/{preference_id}")
 async def get_preference_furniture(preference_id: int):
+<<<<<<< HEAD
     client = PosgresqClient()
     result = await client.get_preference_furniture(preference_id)
     return result
+=======
+    return await pg_client.get_preference_furniture(preference_id)
+>>>>>>> 91ab5b1 (apis and route)
 
 
 @router.get("/get_preference_house_place/{preference_id}")
 async def get_preference_house_place(preference_id: int):
+<<<<<<< HEAD
     client = PosgresqClient()
     result = await client.get_preference_house_place(preference_id)
     return result
+=======
+    return await pg_client.get_preference_house_place(preference_id)
+>>>>>>> 91ab5b1 (apis and route)

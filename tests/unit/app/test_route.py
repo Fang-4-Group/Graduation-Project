@@ -124,6 +124,12 @@ def test_get_mbti():
     assert response.status_code == 200
     assert response.json()  # 確保回應有內容
 
+def test_get_characters():
+    people_id = 1
+    response = client.get(f"/get_characters/{people_id}")
+    assert response.status_code == 200
+    assert response.json()  # 確保回應有內容
+
 def test_get_interests():
     people_id = 1
     response = client.get(f"/get_interests/{people_id}")

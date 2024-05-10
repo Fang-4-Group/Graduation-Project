@@ -15,8 +15,13 @@
 =======
     "element-plus": "^2.7.2",
     "vue": "^3.2.13",
+<<<<<<< HEAD
     "vue-router": "^4.3.2"
 >>>>>>> c758ff6 (add apis)
+=======
+    "vue-router": "^4.3.2",
+    "axios": "^0.24.0"
+>>>>>>> 91ab5b1 (apis and route)
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",

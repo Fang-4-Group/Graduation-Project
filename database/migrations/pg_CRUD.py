@@ -155,6 +155,21 @@ class PosgresqClient:
                 return {"error": f"Error retrieving MBTI: {str(e)}"}
 
 
+    async def get_characters(self, people_id: int) -> dict:
+        async with self.access_db() as conn:
+            try:
+                data = await conn.fetch(
+                    """
+                    SELECT "Character" FROM "PEOPLE_CHARACTER" WHERE "People_ID" = $1;
+                    """,
+                    people_id
+                )
+                characters = [row["Character"] for row in data]
+                return {"characters": characters}
+            except Exception as e:
+                return {"error": f"Error retrieving characters: {str(e)}"}
+
+
     async def get_interests(self, people_id: int) -> dict:
         async with self.access_db() as conn:
             try:
