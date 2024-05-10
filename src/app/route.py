@@ -2,56 +2,60 @@ from fastapi import APIRouter
 from fastapi.responses import FileResponse
 
 from database.migrations.mongodb_init import MongoDBInitClient
+from database.migrations.pg_CRUD import PosgresqClient
 from database.migrations.posgresql_init import PosgresqlInitClient
 from database.seeds.mongo_api_for_testing import MongoDBClient
-from database.seeds.pg_api_for_testing import DatabaseClient
+from database.seeds.pg_api_for_testing import PosgresqTestClient
 
 router = APIRouter()
 
 
+# Posgresql Test
+
+
 @router.get("/test_create/")
 async def test_create():
-    client = DatabaseClient()
+    client = PosgresqTestClient()
     result = await client.test_create_fun()
     return result
 
 
 @router.get("/test_select/")
 async def test_select():
-    client = DatabaseClient()
+    client = PosgresqTestClient()
     result = await client.test_select_fun()
     return result
 
 
 @router.get("/test_drop/")
 async def test_drop():
-    client = DatabaseClient()
+    client = PosgresqTestClient()
     result = await client.test_drop_fun()
     return result
 
 
 @router.get("/test_create_img/")
 async def test_create_img():
-    client = DatabaseClient()
+    client = PosgresqTestClient()
     result = await client.test_create_img_fun()
     return result
 
 
 @router.get("/show_img/")
 async def show_img():
-    client = DatabaseClient()
+    client = PosgresqTestClient()
     data = await client.test_select_img_fun()
     return FileResponse(data["message"][0]["path"])
 
 
 @router.get("/test_drop_img/")
 async def test_drop_img():
-    client = DatabaseClient()
+    client = PosgresqTestClient()
     result = await client.test_drop_img_fun()
     return result
 
 
-# MongoDB
+# MongoDB Test
 
 
 @router.get("/test_insert_mongo/")
@@ -115,3 +119,27 @@ async def mongodb_init_test():
         "B1c2d3e4f5g67890hijklmnopqrstuvwx"
     )  # noqa
     return response
+
+
+# Posgresql CRUD
+
+
+@router.get("/get_young_info/")
+async def get_young_info():
+    client = PosgresqClient()
+    result = await client.get_young_info()
+    return result
+
+
+@router.get("/get_preference_furniture/{preference_id}")
+async def get_preference_furniture(preference_id: int):
+    client = PosgresqClient()
+    result = await client.get_preference_furniture(preference_id)
+    return result
+
+
+@router.get("/get_preference_house_place/{preference_id}")
+async def get_preference_house_place(preference_id: int):
+    client = PosgresqClient()
+    result = await client.get_preference_house_place(preference_id)
+    return result
