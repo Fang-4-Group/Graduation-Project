@@ -66,7 +66,9 @@ class PosgresqClient:
                         PEO."Role" = 1;
                     """  # noqa
                 )
-                return {"message": data}
+                furniture_list = [
+                    row["Preference_House_Furniture"] for row in data]
+                return {"message": furniture_list}
             except Exception as e:
                 return {
                     "message": f"Error when selecting data: {str(e)}",
@@ -88,7 +90,9 @@ class PosgresqClient:
                     """,
                     preference_id,
                 )
-                return {"message": data}
+                place_list = [
+                    row["Preference_House_Place"] for row in data]
+                return {"message": place_list}
             except Exception as e:
                 return {
                     "message": f"Error when selecting data: {str(e)}",
@@ -217,8 +221,8 @@ class PosgresqClient:
                     """,
                     people_id
                 )
-                interests = {key: value for key,
-                             value in data[0].items() if value == 1}
+                interests = [key for key, 
+                             value in data[0].items() if value == 1]
                 return {"interests": interests}
             except Exception as e:
                 return {"error": f"Error retrieving interests: {str(e)}"}
