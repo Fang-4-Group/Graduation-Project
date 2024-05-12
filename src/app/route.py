@@ -116,7 +116,7 @@ async def mongodb_init():
 async def mongodb_init_test():
     client = MongoDBInitClient()
     response = await client.get_data_by_group_id(
-        "B1c2d3e4f5g67890hijklmnopqrstuvwx"
+        "A1b2c3d4e5f67890abcdef1234567890"
     )  # noqa
     return response
 
