@@ -398,20 +398,3 @@ class MongoDBInitClient:
             return {
                 "message": f"Error when inserting data: {str(e)}",
             }
-
-    async def get_data_by_group_id(self, group_id):
-        try:
-            query = {"groupId": group_id}
-            document = self.collection.find_one(query)
-            if document:
-                return {
-                    "data": document,
-                }
-            else:
-                return {
-                    "message": "Document not found",
-                }
-        except Exception as e:
-            return {
-                "message": f"Error when selecting data: {str(e)}",
-            }

@@ -65,11 +65,6 @@ def test_mongodb_init_status_code():
     assert response.status_code == 200
 
 
-def test_mongodb_init_test_status_code():
-    response = client.get("/mongo_init_test/")
-    assert response.status_code == 200
-
-
 def test_get_young_info():
     response = client.get("/get_young_info/")
     assert response.status_code == 200
