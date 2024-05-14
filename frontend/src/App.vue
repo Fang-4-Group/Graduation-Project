@@ -1,24 +1,12 @@
 <template>
   <div>
     <router-view></router-view>
-    <!-- <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-    <LIFF></LIFF> -->
   </div>
 </template>
 
 <script>
-//import HelloWorld from './components/HelloWorld.vue'
-//import LIFF from './components/LIFF.vue'
 
 
-// export default {
-//   name: 'App',
-//   components: {
-//     HelloWorld,
-//     LIFF
-//   }
-// }
 </script>
 
 <style>

@@ -5,6 +5,7 @@ import EditBasic from '../components/EditBasic.vue'; // 導入編輯頁面組件
 import EditHousePref from '../components/EditHousePref.vue'; // 導入編輯頁面組件
 import EditInterests from '../components/EditInterests.vue'; // 導入編輯頁面組件
 import EditPersonality from '../components/EditPersonality.vue'; // 導入編輯頁面組件
+import LIFF from '../components/LIFF.vue'; // 導入編輯頁面組件
 
 const routes = [
   { path: '/', component: Home },
@@ -13,6 +14,7 @@ const routes = [
   { path: '/editpersonality', component: EditPersonality },
   { path: '/editinterests', component: EditInterests },
   { path: '/edithousepref', component: EditHousePref },
+  { path: '/liff', component: LIFF }
 ];
 
 const router = createRouter({

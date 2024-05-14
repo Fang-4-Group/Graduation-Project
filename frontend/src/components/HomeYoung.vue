@@ -94,7 +94,7 @@ const BASE_URL = 'http://localhost:7877';
 onMounted(async () => {
   try {
     const sleep_Response = await axios.get(`${BASE_URL}/get_sleep_time/1`); // 假设传入的people_id为1
-    sleepTime.value = sleep_Response.data.sleepTime;
+    sleepTime.value = sleep_Response.data.sleep_time;
 
     const drink_or_smoke_Response = await axios.get(`${BASE_URL}/get_drink_or_smoke/1`); // 假设传入的people_id为1
     drink_or_smoke.value = drink_or_smoke_Response.data.drink_or_smoke;
