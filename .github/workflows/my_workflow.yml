@@ -37,7 +37,7 @@ jobs:
 
     - name: Run and test
       run: |
-        docker-compose exec -T app pytest tests/unit/app/test_route.py
+        docker-compose exec -T app pytest
 
     - name: Cleanup
       run: docker-compose down
