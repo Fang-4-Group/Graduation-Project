@@ -112,15 +112,6 @@ async def mongodb_init():
     return response
 
 
-@router.get("/mongo_init_test/")
-async def mongodb_init_test():
-    client = MongoDBInitClient()
-    response = await client.get_data_by_group_id(
-        "B1c2d3e4f5g67890hijklmnopqrstuvwx"
-    )  # noqa
-    return response
-
-
 # Posgresql CRUD
 
 
