@@ -198,14 +198,7 @@ async def auth(request: Request):
 
 
 @router.get("/user_embedding/")
-async def embedding():
+async def embedding(k_mean: bool = 0, n_clusters: int = 3):
     client = UserEmbedding()
-    result = client.embedding()
-    return result
-
-
-@router.get("/pre_data_process/")
-async def pre_data_process():
-    client = UserEmbedding()
-    result = client.pre_data_process()
+    result = client.embedding(k_mean, n_clusters)
     return result
