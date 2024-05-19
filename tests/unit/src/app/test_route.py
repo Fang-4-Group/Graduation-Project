@@ -88,3 +88,8 @@ def test_get_preference_house_place():
     response = client.get(f"/get_preference_house_place/{preference_id}")
     assert response.status_code == 200
     assert response.json()  # assure that there are content in response
+
+
+def test_model():
+    response = client.get("/test_model/")
+    assert response.status_code == 200

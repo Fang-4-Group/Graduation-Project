@@ -1,10 +1,10 @@
 import os
 from datetime import datetime
 
-import models
 from linebot import LineBotApi
 
 import database
+import models
 
 line_bot_api = LineBotApi(os.getenv("CHANNEL_ACCESS_TOKEN"))
 

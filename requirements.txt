@@ -15,9 +15,9 @@ python-dotenv
 PyYAML==6.0.1
 requests
 requests
-transformers
 torch
-torchvision 
 torchaudio
+torchvision
+transformers
 uvicorn
 uvicorn[standard]
