@@ -115,3 +115,20 @@ class PosgresqClient:
                 return {
                     "message": f"Error when selecting data: {str(e)}",
                 }
+
+    async def get_house_info(self) -> dict:
+        async with self.access_db() as conn:
+            try:
+                data = await conn.fetch(
+                    """
+                    SELECT
+                        *
+                    FROM
+                        "HOUSE"
+                    """
+                )
+                return {"message": data}
+            except Exception as e:
+                return {
+                    "message": f"Error when selecting data: {str(e)}",
+                }
