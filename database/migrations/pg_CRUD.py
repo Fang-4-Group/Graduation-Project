@@ -221,11 +221,113 @@ class PosgresqClient:
                     """,
                     people_id
                 )
-                interests = [key for key, 
+                interests = [key for key,
                              value in data[0].items() if value == 1]
                 return {"interests": interests}
             except Exception as e:
                 return {"error": f"Error retrieving interests: {str(e)}"}
+
+    async def get_size(self, people_id: int) -> dict:
+        async with self.access_db() as conn:
+            try:
+                data = await conn.fetchval(
+                    """
+                    SELECT "Size" FROM "HOUSE" WHERE "People_ID" = $1;
+                    """,
+                    people_id
+                )
+                return {"size": data}
+            except Exception as e:
+                return {"error": f"Error retrieving size: {str(e)}"}
+
+    async def get_fire(self, people_id: int) -> dict:
+        async with self.access_db() as conn:
+            try:
+                data = await conn.fetchval(
+                    """
+                    SELECT "Fire" FROM "HOUSE" WHERE "People_ID" = $1;
+                    """,
+                    people_id
+                )
+                return {"fire": data}
+            except Exception as e:
+                return {"error": f"Error retrieving fire: {str(e)}"}
+
+    async def get_negotiate(self, people_id: int) -> dict:
+        async with self.access_db() as conn:
+            try:
+                data = await conn.fetchval(
+                    """
+                    SELECT "Negotiate_Price"
+                    FROM "HOUSE" WHERE "People_ID" = $1;
+                    """,
+                    people_id
+                )
+                return {"negotiate_price": data}
+            except Exception as e:
+                return {"error": f"Error retrieving negotiate price: {str(e)}"}
+
+    async def get_floor(self, people_id: int) -> dict:
+        async with self.access_db() as conn:
+            try:
+                data = await conn.fetchval(
+                    """
+                    SELECT "Floor" FROM "HOUSE" WHERE "People_ID" = $1;
+                    """,
+                    people_id
+                )
+                return {"floor": data}
+            except Exception as e:
+                return {"error": f"Error retrieving floor: {str(e)}"}
+
+    async def get_house_type(self, people_id: int) -> dict:
+        async with self.access_db() as conn:
+            try:
+                data = await conn.fetchval(
+                    """
+                    SELECT "Type" FROM "HOUSE" WHERE "People_ID" = $1;
+                    """,
+                    people_id
+                )
+                return {"type": data}
+            except Exception as e:
+                return {"error": f"Error retrieving house type: {str(e)}"}
+
+    async def get_house_furniture(self, people_id: int) -> dict:
+        async with self.access_db() as conn:
+            try:
+                data = await conn.fetch(
+                    """
+                    SELECT "Furniture" FROM "HOUSE_FURNITURE"
+                    WHERE "House_ID" = (
+                        SELECT "House_ID" FROM "HOUSE"
+                        WHERE "People_ID" = $1
+                    );
+                    """,
+                    people_id
+                )
+                furniture = [row["Furniture"] for row in data]
+                return {"furniture": furniture}
+            except Exception as e:
+                return {"error": f"Error retrieving house furniture: {str(e)}"}
+
+    async def get_house_traffic(self, people_id: int) -> dict:
+        async with self.access_db() as conn:
+            try:
+                data = await conn.fetch(
+                    """
+                    SELECT "Traffic" FROM "HOUSE_TRAFFIC"
+                    WHERE "House_ID" = (
+                        SELECT "House_ID" FROM "HOUSE"
+                        WHERE "People_ID" = $1
+                    );
+                    """,
+                    people_id
+                )
+                traffic = [row["Traffic"] for row in data]
+                return {"traffic": traffic}
+            except Exception as e:
+                return {"error": f"Error retrieving house traffic: {str(e)}"}
 
     async def update_sleep_time(
             self, people_id: int, new_sleep_time: int) -> dict:

@@ -156,6 +156,55 @@ def test_get_interests():
     assert response.json()  # 確保回應有內容
 
 
+def test_get_size():
+    people_id = 1
+    response = client.get(f"/get_size/{people_id}")
+    assert response.status_code == 200
+    assert response.json()  # 確保回應有內容
+
+
+def test_get_fire():
+    people_id = 1
+    response = client.get(f"/get_fire/{people_id}")
+    assert response.status_code == 200
+    assert response.json()  # 確保回應有內容
+
+
+def test_get_negotiate():
+    people_id = 1
+    response = client.get(f"/get_negotiate/{people_id}")
+    assert response.status_code == 200
+    assert response.json()  # 確保回應有內容
+
+
+def test_get_floor():
+    people_id = 1
+    response = client.get(f"/get_floor/{people_id}")
+    assert response.status_code == 200
+    assert response.json()  # 確保回應有內容
+
+
+def test_get_house_type():
+    people_id = 1
+    response = client.get(f"/get_house_type/{people_id}")
+    assert response.status_code == 200
+    assert response.json()  # 確保回應有內容
+
+
+def test_get_house_furniture():
+    people_id = 1
+    response = client.get(f"/get_house_furniture/{people_id}")
+    assert response.status_code == 200
+    assert response.json()  # 確保回應有內容
+
+
+def test_get_house_traffic():
+    people_id = 1
+    response = client.get(f"/get_house_traffic/{people_id}")
+    assert response.status_code == 200
+    assert response.json()  # 確保回應有內容
+
+
 # def test_update_sleep_time():
 #     people_id = 1
 #     new_sleep_time = 5

@@ -261,6 +261,55 @@ async def get_interests(people_id: int):
     return result
 
 
+@router.get("/get_size/{people_id}")
+async def get_size(people_id: int):
+    client = PosgresqClient()
+    result = await client.get_size(people_id)
+    return result
+
+
+@router.get("/get_fire/{people_id}")
+async def get_fire(people_id: int):
+    client = PosgresqClient()
+    result = await client.get_fire(people_id)
+    return result
+
+
+@router.get("/get_negotiate/{people_id}")
+async def get_negotiate(people_id: int):
+    client = PosgresqClient()
+    result = await client.get_negotiate(people_id)
+    return result
+
+
+@router.get("/get_floor/{people_id}")
+async def get_floor(people_id: int):
+    client = PosgresqClient()
+    result = await client.get_floor(people_id)
+    return result
+
+
+@router.get("/get_house_type/{people_id}")
+async def get_house_type(people_id: int):
+    client = PosgresqClient()
+    result = await client.get_house_type(people_id)
+    return result
+
+
+@router.get("/get_house_furniture/{people_id}")
+async def get_house_furniture(people_id: int):
+    client = PosgresqClient()
+    result = await client.get_house_furniture(people_id)
+    return result
+
+
+@router.get("/get_house_traffic/{people_id}")
+async def get_house_traffic(people_id: int):
+    client = PosgresqClient()
+    result = await client.get_house_traffic(people_id)
+    return result
+
+
 # @router.put("/update_sleep_time/{people_id}")
 # async def update_sleep_time_route(people_id: int, new_sleep_time: int):
 #     client = PosgresqClient()

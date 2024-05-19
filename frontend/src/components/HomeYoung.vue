@@ -74,7 +74,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
-import router from '../router'; // 实际路径
+import router from '../router'; 
 
 const username = ref("使用者")
 const useremail = ref("1234@gmail.com")
@@ -90,32 +90,31 @@ const preference_house_place = ref([]);
 const BASE_URL = 'http://localhost:7877';
 
 
-// 发送HTTP请求获取用户信息
 onMounted(async () => {
   try {
-    const sleep_Response = await axios.get(`${BASE_URL}/get_sleep_time/1`); // 假设传入的people_id为1
+    const sleep_Response = await axios.get(`${BASE_URL}/get_sleep_time/1`); 
     sleepTime.value = sleep_Response.data.sleep_time;
 
-    const drink_or_smoke_Response = await axios.get(`${BASE_URL}/get_drink_or_smoke/1`); // 假设传入的people_id为1
+    const drink_or_smoke_Response = await axios.get(`${BASE_URL}/get_drink_or_smoke/1`); 
     drink_or_smoke.value = drink_or_smoke_Response.data.drink_or_smoke;
 
-    const clean_habit_Response = await axios.get(`${BASE_URL}/get_clean_habit/1`); // 假设传入的people_id为1
+    const clean_habit_Response = await axios.get(`${BASE_URL}/get_clean_habit/1`); 
     clean_habit.value = clean_habit_Response.data.clean_habit;
 
-    const characters_Response = await axios.get(`${BASE_URL}/get_characters/1`); // 假设传入的people_id为1
+    const characters_Response = await axios.get(`${BASE_URL}/get_characters/1`); 
     characters.value = characters_Response.data.characters;
 
-    const interests_Response = await axios.get(`${BASE_URL}/get_interests/1`); // 假设传入的people_id为1
+    const interests_Response = await axios.get(`${BASE_URL}/get_interests/1`); 
     interests.value = interests_Response.data.interests;
 
-    const mbti_Response = await axios.get(`${BASE_URL}/get_mbti/1`); // 假设传入的people_id为1
+    const mbti_Response = await axios.get(`${BASE_URL}/get_mbti/1`); 
     mbti.value = mbti_Response.data.mbti;
 
-    const preference_furniture_Response = await axios.get(`${BASE_URL}/get_preference_furniture/1`); // 假设传入的preference_id为1
-    preference_furniture.value = preference_furniture_Response.data.message; // 
+    const preference_furniture_Response = await axios.get(`${BASE_URL}/get_preference_furniture/1`); 
+    preference_furniture.value = preference_furniture_Response.data.message;  
 
-    const preference_house_place_Response = await axios.get(`${BASE_URL}/get_preference_house_place/1`); // 假设传入的preference_id为1
-    preference_house_place.value = preference_house_place_Response.data.message; // 此处修正为正确的变量名
+    const preference_house_place_Response = await axios.get(`${BASE_URL}/get_preference_house_place/1`); 
+    preference_house_place.value = preference_house_place_Response.data.message; 
 
   } catch (error) {
     console.error('Error fetching user information:', error);
