@@ -16,8 +16,7 @@ PyYAML==6.0.1
 requests
 requests
 torch
-torchaudio
-torchvision
-transformers
+transformers.AutoImageProcessor
+transformers.ResNetForImageClassification
 uvicorn
 uvicorn[standard]
