@@ -4,3 +4,4 @@ myvenv/
 *.pyc
 ./frontend/node_modules
 ngrok/
+/packages/google-oidc/client.json

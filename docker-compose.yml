@@ -9,6 +9,7 @@ services:
     ports:
       - "7877:8777"
       - "8080:8080"
+      - "8082:8082"
     command: uvicorn src.main:app --host 0.0.0.0 --port 8777 --reload
     container_name: graduation-project
     environment:
