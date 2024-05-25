@@ -9,9 +9,10 @@ class OIDCService:
     def __init__(self):
         self.client_id = os.getenv("GOOGLE_CLIENT_ID")
         self.redirect_uri = os.getenv("GOOGLE_REDIRECT_URI")
+        client_secrect_file = os.getenv("GOOGLE_SECRECT_FILE")
 
         self.flow = Flow.from_client_secrets_file(
-            "src/services/google_oidc/client.json",
+            client_secrect_file,
             scopes=[
                 "https://www.googleapis.com/auth/userinfo.email",
                 "https://www.googleapis.com/auth/userinfo.profile",
