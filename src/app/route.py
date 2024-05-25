@@ -6,7 +6,6 @@ from database.migrations.pg_CRUD import PosgresqClient
 from database.migrations.posgresql_init import PosgresqlInitClient
 from database.seeds.mongo_api_for_testing import MongoDBClient
 from database.seeds.pg_api_for_testing import PosgresqTestClient
-from src.services.model import test
 
 router = APIRouter()
 
@@ -143,13 +142,4 @@ async def get_preference_furniture(preference_id: int):
 async def get_preference_house_place(preference_id: int):
     client = PosgresqClient()
     result = await client.get_preference_house_place(preference_id)
-    return result
-
-
-# model test
-
-
-@router.get("/test_model/")
-async def test_model():
-    result = await test()
     return result
