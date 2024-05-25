@@ -43,8 +43,13 @@ jobs:
       run: docker-compose down
       if: always()
 
-    - name: Create client_secrets.json
+    - name: Create client.json
       env:
         CLIENT_SECRETS_JSON: ${{ secrets.CLIENT_SECRETS_JSON }}
       run: |
         echo "${CLIENT_SECRETS_JSON}" > src/services/google_oidc/client.json
+
+    - name: Verify client.json
+      run: |
+        ls -alh src/services/google_oidc/
+        cat src/services/google_oidc/client.json
