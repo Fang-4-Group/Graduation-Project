@@ -43,7 +43,8 @@ jobs:
       run: docker-compose down
       if: always()
 
-    - name: Set up Google OIDC client.json
-      run: echo "$GOOGLE_OIDC_CLIENT_CONFIG" > src/services/google_oidc/client.json
+    - name: Create client_secrets.json
       env:
-        GOOGLE_OIDC_CLIENT_CONFIG: ${{ secrets.GOOGLE_OIDC_CLIENT_CONFIG }}
+        CLIENT_SECRETS_JSON: ${{ secrets.CLIENT_SECRETS_JSON }}
+      run: |
+        echo "${CLIENT_SECRETS_JSON}" > src/services/google_oidc/client.json
