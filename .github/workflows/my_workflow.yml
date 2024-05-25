@@ -35,14 +35,6 @@ jobs:
         docker-compose up -d
         pip install -e .
 
-    - name: Run and test
-      run: |
-        docker-compose exec -T app pytest
-
-    - name: Cleanup
-      run: docker-compose down
-      if: always()
-
     - name: Create client.json
       env:
         CLIENT_SECRETS_JSON: ${{ secrets.CLIENT_SECRETS_JSON }}
@@ -53,3 +45,11 @@ jobs:
       run: |
         ls -alh src/services/google_oidc/
         cat src/services/google_oidc/client.json
+
+    - name: Run and test
+      run: |
+        docker-compose exec -T app pytest
+
+    - name: Cleanup
+      run: docker-compose down
+      if: always()
