@@ -42,3 +42,8 @@ jobs:
     - name: Cleanup
       run: docker-compose down
       if: always()
+
+    - name: Set up Google OIDC client.json
+      run: echo "$GOOGLE_OIDC_CLIENT_CONFIG" > src/services/google_oidc/client.json
+      env:
+        GOOGLE_OIDC_CLIENT_CONFIG: ${{ secrets.GOOGLE_OIDC_CLIENT_CONFIG }}
