@@ -1,5 +1,7 @@
-from fastapi import APIRouter
-from fastapi.responses import FileResponse
+from fastapi import APIRouter, HTTPException, Request
+from fastapi.responses import FileResponse, HTMLResponse
+from jinja2 import Environment, FileSystemLoader, TemplateNotFound
+from starlette.responses import RedirectResponse
 
 from database.migrations.mongodb_init import MongoDBInitClient
 from database.migrations.pg_CRUD import PosgresqClient
@@ -7,8 +9,12 @@ from database.migrations.posgresql_init import PosgresqlInitClient
 from database.seeds.mongo_api_for_testing import MongoDBClient
 from database.seeds.pg_api_for_testing import PosgresqTestClient
 
-router = APIRouter()
+from ..services.google_oidc.oidc import OIDCService
 
+router = APIRouter()
+oidc_service = OIDCService()
+
+jinja_env = Environment(loader=FileSystemLoader("src/templates"))
 
 # Posgresql Test
 
@@ -134,3 +140,45 @@ async def get_preference_house_place(preference_id: int):
     client = PosgresqClient()
     result = await client.get_preference_house_place(preference_id)
     return result
+
+
+# Googel OIDC Login
+@router.get("/google-oidc/")
+async def root(request: Request):
+    try:
+        home_temp = jinja_env.get_template("homepage.html")
+        html_content = home_temp.render()
+        return HTMLResponse(content=html_content)
+    except TemplateNotFound as e:
+        return HTTPException(status_code=404, detail=f"Template not found: {e}")  # noqa
+
+
+@router.get("/google-oidc/login")
+async def login(request: Request):
+    authorization_url, state = oidc_service.get_authorization_url()
+    request.session["state"] = state
+    return RedirectResponse(authorization_url)
+
+
+@router.get("/google-oidc/auth")
+async def auth(request: Request):
+    state = request.session.get("state")
+    if not state:
+        raise HTTPException(
+            status_code=400, detail="State not found in session"
+        )  # noqa
+
+    authorization_response = str(request.url)
+
+    try:
+        oidc_service.fetch_token(authorization_response)
+        credentials = oidc_service.flow.credentials
+        request.session["access_token"] = credentials.token
+        userinfo = oidc_service.verify_id_token(credentials.id_token)
+        template = jinja_env.get_template("profile.html")
+        html_content = template.render(userinfo=userinfo)
+        return HTMLResponse(content=html_content)
+    except ValueError as e:
+        return HTMLResponse(
+            content=f"Error: Invalid token: {e}", status_code=400
+        )  # noqa

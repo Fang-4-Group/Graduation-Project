@@ -1,7 +1,11 @@
 asyncpg
 fastapi[all]
+google-auth # OIDC Login
+google-auth-oauthlib
 httpx
 ipython
+itsdangerous
+jinja2
 line-bot-sdk
 matplotlib==3.8.0
 matplotlib-inline==0.1.6

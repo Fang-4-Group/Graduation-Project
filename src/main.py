@@ -1,15 +1,21 @@
 # uvicorn main:app --reload
 import asyncio
+import os
 import time
 from concurrent.futures import ProcessPoolExecutor
 
 from fastapi import FastAPI
+from starlette.middleware.sessions import SessionMiddleware
 
 # 引入 pg api router
 from .app.route import router
 
+# Override environment for OAuth2.0 development
+os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
+
 app = FastAPI()
 
+app.add_middleware(SessionMiddleware, secret_key="!secret")
 app.include_router(router)
 
 
