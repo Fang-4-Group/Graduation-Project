@@ -83,3 +83,29 @@ def test_get_preference_house_place():
     response = client.get(f"/get_preference_house_place/{preference_id}")
     assert response.status_code == 200
     assert response.json()  # assure that there are content in response
+
+
+def test_root_status_code():
+    response = client.get("/google-oidc/")
+    assert response.status_code == 200
+    assert "homepage" in response.text
+
+
+def test_login_status_code():
+    response = client.get("/google-oidc/login")
+    assert response.status_code == 307
+    assert "location" in response.headers  # Ensure there's a redirect URL
+
+
+def test_auth_status_code():
+    with client.session_transaction() as session:
+        # Mock the state in session
+        session["state"] = "dummy_state"
+
+    response = client.get("/google-oidc/auth")
+    assert (
+        response.status_code == 400
+    )  # Since we don't have a real authorization response, it should fail
+    assert (
+        "Error: Invalid token" in response.text
+    )  # Assure the error message is present
