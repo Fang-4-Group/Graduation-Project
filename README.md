@@ -80,6 +80,33 @@ The way to test your API is as follow:
 3. Turn to GitHub, and click **Action** (beside of Pull request)
 4. Wait to see whether your push or PR success or not
 
+### Test Google OIDC Login
+### Prerequisites
+- Navigate to the Google Cloud API Credentials page at [Google Cloud Console](https://console.cloud.google.com/apis/credentials?hl=en) and create a new project.
+- Follow the instructions on this page to register a client: [Google OAuth 2.0 Integration Guide](https://growingdna.com/google-oauth-2-0-for-3rd-party-login/). Please set two redirect URIs: `http://localhost:7877/google-oidc/auth` and `http://localhost:7877/google-oidc/login`.
+- After registering, add yourself as a test user and download the OAuth client JSON file. Rename this file to `client.json` and place it under the `services/google_oidc` directory.
+  
+### Steps to Test
+1. Update your `.env` file.
+  ```
+  # Google OIDC Login Settings
+  GOOGLE_CLIENT_ID = [YOUR_GOOGLE_CLIENT_ID]
+  GOOGLE_CLIENT_SECRET = [YOUR_GOOGLE_CLIENT_SECRET]
+  GOOGLE_REDIRECT_URI = 'http://localhost:7877/google-oidc/auth'
+  ```  
+2.  Start the test environment:
+   ```bash
+   # Accessing the container's shell
+   docker exec -it graduation-project /bin/bash
+   uvicorn src.main:app --host localhost --port 7877 --reload
+
+   ```
+3. Visit [http://localhost:7877/google-oidc/](http://localhost:7877/google-oidc/) to see the test results.
+### Expected Results
+  <img width="400" alt="homepage" src="https://github.com/Fang-4-Group/Graduation-Project/assets/82760846/3ed378a0-625e-4371-bdc1-d1d98c930b87">
+  <img width="400" alt="login" src="https://github.com/Fang-4-Group/Graduation-Project/assets/82760846/04228ea1-6fe4-4115-9751-814f1780f49e">
+  <img width="400" alt="login-successful" src="https://github.com/Fang-4-Group/Graduation-Project/assets/82760846/ab909842-d764-4e53-b1ab-9fad6f1050cb">
+
 ### Chatbot Setup
 #### Prerequisites
 Before setting up the chatbot, complete the following prerequisites:
