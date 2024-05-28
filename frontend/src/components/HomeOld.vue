@@ -8,36 +8,40 @@
 
     <!-- User Info Section -->
     <div class="section-boxed">
-      <h2>基本資料<button class="add-button" @click="goToPage('/editbasic')">新增</button></h2>
-      
+      <h2>基本資料</h2>
+      <div class="user-info-details">
         <div class="data-item">
-          <label>姓名：</label>
-          <span class="data-value">{{ username }}</span>
+          <div class="data-item-content">
+            <label>姓名：</label>
+            <span class="data-value">{{ username }}</span>
+          </div>
+          <div class="data-item-content">
+            <label>信箱：</label>
+            <span class="data-value">{{ useremail }}</span>
+          </div>
         </div>
-        <div class="data-item">
-          <label>信箱：</label>
-          <span class="data-value">{{ useremail }}</span>
-        </div>
-     
+      </div>
     </div>
-  
-      <!-- Basic Info Section -->
-      <div class="section-boxed">
-        <h2>
-          生活習慣
-          <button class="add-button" @click="goToPage('/editbasic')">新增</button>
-        </h2>
-        <div class="data-item">
+
+    <!-- Basic Info Section -->
+    <div class="section-boxed">
+      <h2>生活習慣 <button class="add-button" @click="goToPage('/editbasic')">新增</button></h2>
+      <div class="data-item">
+        <div class="data-item-content">
           <label>睡覺時間：</label>
           <span class="data-value">{{ sleepTime }}</span>
         </div>
-        <div class="data-item">
+        <div class="data-item-content">
           <label>菸酒程度：</label>
           <span class="data-value">{{ drink_or_smoke }}</span>
+        </div>
+        <div class="data-item-content">
           <label>愛乾淨程度：</label>
           <span class="data-value">{{ clean_habit }}</span>
         </div>
       </div>
+    </div>
+
   
       <!-- Personality Traits Section -->
       <div class="section-boxed">
@@ -58,7 +62,7 @@
   
         <!-- 房屋資本資料 -->
         <div class="section-boxed">
-          <h3>房屋資本資料</h3>
+          <h3>房屋資本資料<button class="add-button" @click="goToPage('/edithousebasic')">新增</button></h3>
           <ul class="house-list">
             <li>房屋大小：{{ size }}</li>
             <li>是否可開火：{{ fire }}</li>
@@ -71,7 +75,7 @@
   
         <!-- 房屋家具 -->
         <div class="section-boxed">
-          <h3>房屋家具</h3>
+          <h3>房屋家具<button class="add-button" @click="goToPage('/edithousefur')">新增</button></h3>
           <ul class="furniture-list">
             <li v-for="(item, index) in houseFurniture" :key="index">{{ item }}</li>
           </ul>
@@ -79,7 +83,7 @@
   
         <!-- 房屋交通 -->
         <div class="section-boxed">
-          <h3>房屋交通</h3>
+          <h3>房屋交通<button class="add-button" @click="goToPage('/edithousetraf')">新增</button></h3>
           <ul class="traffic-list">
             <li v-for="(item, index) in houseTraffic" :key="index">{{ item }}</li>
           </ul>
@@ -166,7 +170,7 @@
  
   
   function goToPage(path) {
-    router.push(path);
+    router.push({ path, query: { from: '/HomeOld' } });
   }
   </script>
   
@@ -193,7 +197,12 @@
 
 .data-item {
   display: flex;
+  flex-direction: column;
   margin-bottom: 10px;
+}
+
+.data-item-content {
+  text-align: center;
 }
 
 .data-item label {

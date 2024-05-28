@@ -1,20 +1,28 @@
-import { createRouter, createWebHistory } from 'vue-router'; // 導入創建路由器的函數
-import Home from '../components/HomeYoung.vue'; // 導入首頁(年輕人)組件
-import HomeOld from '../components/HomeOld.vue'; // 導入首頁(老人)組件
-import EditBasic from '../components/EditBasic.vue'; // 導入編輯頁面組件
-import EditHousePref from '../components/EditHousePref.vue'; // 導入編輯頁面組件
-import EditInterests from '../components/EditInterests.vue'; // 導入編輯頁面組件
-import EditPersonality from '../components/EditPersonality.vue'; // 導入編輯頁面組件
-import LIFF from '../components/LIFF.vue'; // 導入編輯頁面組件
+import { createRouter, createWebHistory } from 'vue-router'; 
+import FirstPage from '../components/FirstPage.vue';
+import HomeYoung from '../components/HomeYoung.vue'; 
+import HomeOld from '../components/HomeOld.vue'; 
+import EditBasic from '../components/EditBasic.vue'; 
+import EditHousePref from '../components/EditHousePref.vue';
+import EditInterests from '../components/EditInterests.vue'; 
+import EditPersonality from '../components/EditPersonality.vue'; 
+import EditHouseFurniture from'../components/EditHouseFurniture.vue' ;
+import EditHouseTraffic from'../components/EditHouseTraffic.vue' ;
+import EditHouseBasic from'../components/EditHouseBasic.vue' ;
+import LIFF from '../components/LIFF.vue'; 
 
 const routes = [
-  { path: '/', component: Home },
+  {path: '/', component: FirstPage },
+  { path: '/homeyoung', component: HomeYoung },
   { path: '/homeold', component: HomeOld },
   { path: '/editbasic', component: EditBasic },
   { path: '/editpersonality', component: EditPersonality },
   { path: '/editinterests', component: EditInterests },
   { path: '/edithousepref', component: EditHousePref },
-  { path: '/liff', component: LIFF }
+  { path: '/liff', component: LIFF },
+  { path: '/edithousefur', component: EditHouseFurniture },
+  { path: '/edithousetraf', component: EditHouseTraffic },
+  { path: '/edithousebasic', component: EditHouseBasic },
 ];
 
 const router = createRouter({

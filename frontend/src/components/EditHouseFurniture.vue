@@ -1,16 +1,16 @@
 <template>
     <div class="edit-overlay">
       <div class="edit-modal">
-        <h2>新增個人特質</h2>
-        <form @submit.prevent="saveUserData">
-          <!-- Personality Traits Section -->
-          <div class="form-group" v-for="(trait, index) in traits" :key="index">
-            <label :for="'trait-' + index">個人特質：</label>
-            <input type="text" :id="'trait-' + index" v-model="editedUserData.personalityTraits[index]" required>
+        <h2>新增家具</h2>
+        <form @submit.prevent="saveFurnitureData">
+          <!-- Furniture Items Section -->
+          <div class="form-group" v-for="(item, index) in furnitureItems" :key="index">
+            <label :for="'furniture-' + index">家具項目：</label>
+            <input type="text" :id="'furniture-' + index" v-model="editedUserData.furniture[index]" required>
           </div>
   
-          <!-- Add New Trait Block -->
-          <div class="add-trait-block" @click="addNewTrait" @mouseover="hovered = true" @mouseleave="hovered = false">
+          <!-- Add New Furniture Item Block -->
+          <div class="add-furniture-block" @click="addNewFurnitureItem" @mouseover="hovered = true" @mouseleave="hovered = false">
             <span class="add-icon">+ 新增</span>
           </div>
   
@@ -25,29 +25,26 @@
   
   <script setup>
   import { ref } from 'vue';
-  import { useRouter , useRoute } from 'vue-router';
+  import { useRouter, useRoute } from 'vue-router';
   
   const editedUserData = ref({
-  
-    personalityTraits: [''], 
+    furniture: [''], 
   });
   
-  const traits = ref(editedUserData.value.personalityTraits); // 将 traits 设置为响应式数据
+  const furnitureItems = ref(editedUserData.value.furniture); // 将 furnitureItems 设置为响应式数据
   const hovered = ref(false); // 控制 hover 效果
-  const router = useRouter(); // 獲取 router 實例
-  
-
-  
-  const route = useRoute();
+  const router = useRouter(); // 获取 router 实例
+  const route = useRoute(); // 获取当前 route 实例
   
   function cancel() {
     const from = route.query.from || '/'; // 如果没有传递参数，默认回到首页
     router.push(from);
   }
-
-  function addNewTrait() {
-    traits.value.push(''); // 添加一个空字符串，新的输入框会出现
+  
+  function addNewFurnitureItem() {
+    furnitureItems.value.push(''); // 添加一个空字符串，新的输入框会出现
   }
+  
   </script>
   
   <style scoped>
@@ -87,7 +84,7 @@
     border-radius: 4px;
   }
   
-  .add-trait-block {
+  .add-furniture-block {
     cursor: pointer;
     display: inline-block;
     padding: 8px 16px;
@@ -96,7 +93,7 @@
     margin-bottom: 10px;
   }
   
-  .add-trait-block:hover {
+  .add-furniture-block:hover {
     background-color: #e0e0e0;
   }
   
@@ -137,3 +134,4 @@
     background-color: #da190b;
   }
   </style>
+  

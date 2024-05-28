@@ -9,7 +9,7 @@
 
     <!-- User Info Section -->
     <div class="section-boxed">
-      <h2>基本資料 <button class="add-button" @click="goToPage('/editbasic')">新增</button></h2>
+      <h2>基本資料</h2>
       <div class="user-info-details">
         <div class="data-item">
           <div class="data-item-content">
@@ -58,15 +58,6 @@
       <ul class="interests-list">
         <li v-for="interest in interests" :key="interest">{{ interest }}</li>
       </ul>
-    </div>
-
-    <!-- Housing Preferences Section -->
-    <div class="section-boxed">
-      <h2>房屋偏好 <button class="add-button" @click="goToPage('/edithousepref')">新增</button></h2>
-      <div class="furniture-list">
-        <div v-for="(item, index) in preference_furniture" :key="index" class="furniture-item">{{ item }}</div>
-        <div v-for="(item, index) in preference_house_place" :key="index" class="furniture-item">{{ item }}</div>
-      </div>
     </div>
   </div>
 </template>
@@ -122,8 +113,8 @@ onMounted(async () => {
 });
 
 function goToPage(path) {
-  router.push(path);
-}
+    router.push({ path, query: { from: '/homeyoung' } });
+  }
 </script>
 
 <style scoped>

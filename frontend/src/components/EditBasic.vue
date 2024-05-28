@@ -5,10 +5,6 @@
         <form @submit.prevent="saveUserData">
           <!-- Basic Info Section -->
           <div class="form-group">
-            <label for="age">年齡：</label>
-            <input type="number" id="age" v-model="editedUserData.basicInfo.age" required>
-          </div>
-          <div class="form-group">
             <label for="sleepTime">睡覺時間：</label>
             <input type="number" id="sleepTime" v-model="editedUserData.basicInfo.sleepTime" required>
           </div>
@@ -23,7 +19,7 @@
 
           <div class="btn-group">
             <button type="submit" class="btn-submit">保存</button>
-            <button type="button" class="btn-cancel" @click="goToPage('/')">取消</button>
+            <button type="button" class="btn-cancel" @click="cancel()">取消</button>
           </div>
         </form>
       </div>
@@ -32,33 +28,24 @@
   
   <script setup>
   import { ref } from 'vue';
-  import { useRouter } from 'vue-router';
+  import { useRouter ,useRoute } from 'vue-router';
   
   const editedUserData = ref({
     basicInfo: {
-      age: 0,
       sleepTime: 0,
       alcoholLevel: 0,
       cleanlinessLevel: 0,
     },
-    personalityTraits: [''], // 初始化为一个空字符串
-    interests: '',
-    housingPreferences: {
-      furniture: '',
-      district: '',
-    },
+   
   });
   
   const router = useRouter(); // 獲取 router 實例
-
-  function saveUserData() {
-    // 实际保存用户信息的逻辑，这里只是示例，根据实际情况处理
-    // closeModal();  [todo: define "closeModal()"]
-  }
+  const route = useRoute();
   
-  function goToPage(path) {
-  router.push(path);
-}
+  function cancel() {
+    const from = route.query.from || '/'; // 如果没有传递参数，默认回到首页
+    router.push(from);
+  }
   
   </script>
   
