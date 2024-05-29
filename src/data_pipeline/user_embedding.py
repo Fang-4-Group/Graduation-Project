@@ -11,8 +11,8 @@ class UserEmbedding:
         self.server_path = "http://localhost:7877/"
         self.url_young = self.server_path + "get_young_info/"
         self.url_elder = self.server_path + "get_elder_info/"
-        self.url_pre_fun = self.server_path + "get_preference_furniture/"
         self.url_pre_house = self.server_path + "get_preference_house_place/"
+        self.url_dis_geo = self.server_path + "get_district_geocoding/"
 
     # def get_young_df(self):
     #     response_y = requests.get(self.url_young)
@@ -76,10 +76,11 @@ class UserEmbedding:
 
             # 将聚类结果添加到DataFrame中
             df["Cluster"] = kmeans.labels_
-            json_data = df.to_json(orient="records")
+            df.to_dict(orient="records")
+            json_data = df.to_dict(orient="records")
             return {"data": json_data}
         else:
-            json_data = df.to_json(orient="records")
+            json_data = df.to_dict(orient="records")
             return {"data": json_data}
 
     def pre_data_process(self):
@@ -94,33 +95,3 @@ class UserEmbedding:
             return {"fun": response_fun.json(), "house": response_house.json()}  # noqa
         else:
             return {"message": "Something wrong when access preference data"}
-
-
-# 地理位置 Encoding
-
-# def get_coordinates(api_key, address):
-#     url = f"https://maps.googleapis.com/maps/api/geocode/json?address={address}&key={api_key}" # noqa
-#     response = requests.get(url)
-#     data = response.json()
-#     if data["status"] == "OK":
-#         location = data["results"][0]["geometry"]["location"]
-#         latitude = location["lat"]
-#         longitude = location["lng"]
-#         return latitude, longitude
-#     else:
-#         print("無法獲取該地址的經緯度座標")
-#         print(data)
-#         return None, None
-
-
-# # 在這裡輸入你的 Google Maps API 金鑰
-# api_key = "AIzaSyCUQIOFxAispj4Phown1-QgFzS4jBmUOgk"
-
-# # 要查詢的地址，這裡以大安區為例
-# address = "大安區, 臺北市, Taiwan"
-
-# # 獲取地址的經緯度座標
-# latitude, longitude = get_coordinates(api_key, address)
-
-# # 印出獲取的經緯度座標
-# print("大安區的經緯度座標:", latitude, longitude)

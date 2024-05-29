@@ -8,7 +8,7 @@ from database.migrations.pg_CRUD import PosgresqClient
 from database.migrations.posgresql_init import PosgresqlInitClient
 from database.seeds.mongo_api_for_testing import MongoDBClient
 from database.seeds.pg_api_for_testing import PosgresqTestClient
-from src.app.controllers.user_embedding import UserEmbedding
+from src.data_pipeline.user_embedding import UserEmbedding
 
 from ..services.google_oidc.oidc import OIDCService
 
@@ -95,10 +95,12 @@ async def posgresql_init():
     response_c = await client.create_table()
     response_a = await client.add_fk_setting()
     response_i = await client.insert_data()
+    response_d = await client.insert_district_data()
     return {
         "create table": f"{response_c['message']}",
         "add FK": f"{response_a['message']}",
         "insert data": f"{response_i['message']}",
+        "insert district data": f"{response_d['message']}",
     }
 
 
@@ -136,17 +138,17 @@ async def get_elder_info():
     return result
 
 
-@router.get("/get_preference_furniture/{preference_id}")
-async def get_preference_furniture(preference_id: int):
-    client = PosgresqClient()
-    result = await client.get_preference_furniture(preference_id)
-    return result
-
-
 @router.get("/get_preference_house_place/{preference_id}")
 async def get_preference_house_place(preference_id: int):
     client = PosgresqClient()
     result = await client.get_preference_house_place(preference_id)
+    return result
+
+
+@router.get("/get_district_geocoding/{city}/{district}")
+async def get_district_geocoding(city: str, district: str):
+    client = PosgresqClient()
+    result = await client.get_district_geocoding(city, district)
     return result
 
 
@@ -195,8 +197,15 @@ async def auth(request: Request):
 # Embedding
 
 
-@router.get("/embedding/")
-async def test():
+@router.get("/user_embedding/")
+async def embedding():
     client = UserEmbedding()
     result = client.embedding()
+    return result
+
+
+@router.get("/pre_data_process/")
+async def pre_data_process():
+    client = UserEmbedding()
+    result = client.pre_data_process()
     return result
