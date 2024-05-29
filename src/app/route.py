@@ -8,6 +8,7 @@ from database.migrations.pg_CRUD import PosgresqClient
 from database.migrations.posgresql_init import PosgresqlInitClient
 from database.seeds.mongo_api_for_testing import MongoDBClient
 from database.seeds.pg_api_for_testing import PosgresqTestClient
+from src.app.controllers.user_embedding import UserEmbedding
 
 from ..services.google_oidc.oidc import OIDCService
 
@@ -128,6 +129,13 @@ async def get_young_info():
     return result
 
 
+@router.get("/get_elder_info/")
+async def get_elder_info():
+    client = PosgresqClient()
+    result = await client.get_elder_info()
+    return result
+
+
 @router.get("/get_preference_furniture/{preference_id}")
 async def get_preference_furniture(preference_id: int):
     client = PosgresqClient()
@@ -182,3 +190,13 @@ async def auth(request: Request):
         return HTMLResponse(
             content=f"Error: Invalid token: {e}", status_code=400
         )  # noqa
+
+
+# Embedding
+
+
+@router.get("/embedding/")
+async def test():
+    client = UserEmbedding()
+    result = client.embedding()
+    return result

@@ -53,6 +53,25 @@ class PosgresqClient:
                     "message": f"Error when selecting data: {str(e)}",
                 }
 
+    async def get_elder_info(self) -> dict:
+        async with self.access_db() as conn:
+            try:
+                data = await conn.fetch(
+                    """
+                    SELECT
+                        *
+                    FROM
+                        "PEOPLE" AS PEO
+                    WHERE
+                        PEO."Role" = 1;
+                    """  # noqa
+                )
+                return {"message": data}
+            except Exception as e:
+                return {
+                    "message": f"Error when selecting data: {str(e)}",
+                }
+
     async def get_preference_furniture(self, preference_id) -> dict:
         async with self.access_db() as conn:
             try:

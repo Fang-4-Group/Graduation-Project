@@ -71,6 +71,12 @@ def test_get_young_info():
     assert response.json()  # assure that there are content in response
 
 
+def test_get_elder_info():
+    response = client.get("/get_elder_info/")
+    assert response.status_code == 200
+    assert response.json()  # assure that there are content in response
+
+
 def test_get_preference_furniture():
     preference_id = 1
     response = client.get(f"/get_preference_furniture/{preference_id}")
