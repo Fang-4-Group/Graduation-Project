@@ -93,7 +93,8 @@ def test_get_district_geocoding():
 
 
 def test_embedding():
-    city = "臺北市"
-    district = "文山區"
-    response = client.get(f"/get_district_geocoding/{city}/{district}")
+    k_mean = 1
+    n_clusters = 3
+    par = f"?k_mean={k_mean}&n_clusters={n_clusters}"
+    response = client.get(f"user_embedding/{par}")
     assert response.status_code == 200
