@@ -2,8 +2,8 @@ import numpy as np
 import pandas as pd
 import requests
 from fastapi.responses import JSONResponse
-from sklearn.cluster import KMeans
-from sklearn.preprocessing import StandardScaler
+
+from src.data_pipeline.utils import kmeans
 
 
 class UserEmbedding:
@@ -11,10 +11,8 @@ class UserEmbedding:
         self.server_path = "http://localhost:7877/"
         self.url_young = self.server_path + "get_young_info/"
         self.url_elder = self.server_path + "get_elder_info/"
-        # self.url_pre_house = self.server_path + "get_preference_house_place/"
-        # self.url_dis_geo = self.server_path + "get_district_geocoding/"
 
-    def embedding(self, k_mean, n_clusters):
+    def embedding(self, k_mean: bool, n_clusters: int):
         try:
             response_y = requests.get(self.url_young)
             result_y = response_y.json()
@@ -43,21 +41,7 @@ class UserEmbedding:
             df.drop(columns=["Mbti", "M1", "M2", "M3", "M4"], inplace=True)
 
             if k_mean:
-                features = df.drop(
-                    columns=["People_ID", "Preference_ID", "Role"]
-                )  # noqa
-
-                # 標準化
-                scaler = StandardScaler()
-                scaled_features = scaler.fit_transform(features)
-
-                # 使用 K-means 聚類
-                kmeans = KMeans(n_clusters=n_clusters, random_state=42)
-                kmeans.fit(scaled_features)
-
-                # 將聚類結果添加到 DataFrame 中
-                df["Cluster"] = kmeans.labels_
-                df.sort_values(by=["Cluster"], inplace=True)
+                df = kmeans(df, n_clusters)
 
             # 替换NaN和Infinity值
             df.replace([np.inf, -np.inf], np.nan, inplace=True)
@@ -65,6 +49,8 @@ class UserEmbedding:
 
             dict_data = df.to_dict(orient="records")
             return JSONResponse(content=dict_data)
+            # To test whether df can be return directly
+            # return df
 
         except Exception as e:
             return {"message": f"Error when embedding user feature: {str(e)}"}
