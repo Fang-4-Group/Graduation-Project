@@ -3,7 +3,7 @@ from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
 
 
-def kmeans(df: pd.DataFrame, n_clusters: int):
+def kmeans(df: pd.DataFrame, n_clusters: int) -> pd.DataFrame:
     features = df.drop(columns=["People_ID", "Preference_ID", "Role"])  # noqa
 
     # 標準化
