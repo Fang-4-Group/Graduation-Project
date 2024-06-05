@@ -53,21 +53,18 @@ class PosgresqClient:
                     "message": f"Error when selecting data: {str(e)}",
                 }
 
-    async def get_preference_furniture(self, preference_id) -> dict:
+    async def get_elder_info(self) -> dict:
         async with self.access_db() as conn:
             try:
-                if not isinstance(preference_id, int):
-                    raise ValueError("preference_id need to be integer")
                 data = await conn.fetch(
                     """
                     SELECT
                         *
                     FROM
-                        "PREFERENCE_HOUSE_FURNITURE" AS PRE_FUR
+                        "PEOPLE" AS PEO
                     WHERE
-                        PRE_FUR."Preference_ID" = $1
-                    """,
-                    preference_id,
+                        PEO."Role" = 1;
+                    """  # noqa
                 )
                 return {"message": data}
             except Exception as e:
@@ -90,6 +87,28 @@ class PosgresqClient:
                         PRE_PLA."Preference_ID" = $1
                     """,
                     preference_id,
+                )
+                return {"message": data}
+            except Exception as e:
+                return {
+                    "message": f"Error when selecting data: {str(e)}",
+                }
+
+    async def get_district_geocoding(self, city, district):
+        async with self.access_db() as conn:
+            try:
+                data = await conn.fetch(
+                    """
+                    SELECT
+                        *
+                    FROM
+                        "DISTRICT_LOCATIONS" AS DIS
+                    WHERE
+                        DIS."City" = $1
+                        AND DIS."District" = $2
+                    """,
+                    city,
+                    district,
                 )
                 return {"message": data}
             except Exception as e:

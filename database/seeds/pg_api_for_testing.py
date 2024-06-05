@@ -78,7 +78,7 @@ class PosgresqTestClient:
     async def test_create_img_fun(self) -> dict:
         async with self.access_db() as conn:
             try:
-                path = r"/srv/graduation-project/database/img/test_img.jpg"
+                path = r"/srv/graduation-project/database/image/test_img.jpg"
                 await conn.execute(
                     f"""
                     CREATE TABLE IF NOT EXISTS images (

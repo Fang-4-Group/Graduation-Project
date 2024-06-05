@@ -13,6 +13,7 @@ project-name/
 │   ├── config/
 │   ├── services/    (external services, e.g., 3rd party authorization)
 │   └── utils/    (utility functions)
+│   └── data_pipelines/    (data embedding)
 ├── public/
 │   ├── images/
 │   ├── styles/

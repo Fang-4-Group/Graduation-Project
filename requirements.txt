@@ -17,6 +17,7 @@ pytest
 python-dotenv
 PyYAML==6.0.1
 requests
+scikit-learn
 services
 uvicorn
 uvicorn[standard]

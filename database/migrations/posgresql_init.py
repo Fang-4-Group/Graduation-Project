@@ -1,3 +1,4 @@
+import json
 import os
 from contextlib import asynccontextmanager
 
@@ -95,16 +96,18 @@ class PosgresqlInitClient:
                         "People_ID" integer
                     );
 
-                    CREATE TABLE IF NOT EXISTS "PREFERENCE_HOUSE_FURNITURE" (
-                        "Preference_ID" integer,
-                        "Preference_House_Furniture" varchar,
-                        PRIMARY KEY ("Preference_ID", "Preference_House_Furniture")
-                    );
-
                     CREATE TABLE IF NOT EXISTS "PREFERENCE_HOUSE_PLACE" (
                     "Preference_ID" integer,
                     "Preference_House_Place" varchar,
                     PRIMARY KEY ("Preference_ID", "Preference_House_Place")
+                    );
+
+                    CREATE TABLE "DISTRICT_LOCATIONS" (
+                        "ID" SERIAL PRIMARY KEY,
+                        "City" VARCHAR(50),
+                        "District" VARCHAR(50),
+                        "Longitude" FLOAT,
+                        "Latitude" FLOAT
                     );
                     """  # noqa
                 )
@@ -127,8 +130,6 @@ class PosgresqlInitClient:
                     ALTER TABLE "PREFERENCE" ADD FOREIGN KEY ("People_ID") REFERENCES "PEOPLE" ("People_ID");
 
                     ALTER TABLE "PREFERENCE_HOUSE_PLACE" ADD FOREIGN KEY ("Preference_ID") REFERENCES "PREFERENCE" ("Preference_ID");
-
-                    ALTER TABLE "PREFERENCE_HOUSE_FURNITURE" ADD FOREIGN KEY ("Preference_ID") REFERENCES "PREFERENCE" ("Preference_ID");
 
                     ALTER TABLE "HOUSE_FURNITURE" ADD FOREIGN KEY ("House_ID") REFERENCES "HOUSE" ("House_ID");
 
@@ -221,17 +222,6 @@ class PosgresqlInitClient:
                     (4, 8),
                     (5, 10);
 
-                    INSERT INTO "PREFERENCE_HOUSE_FURNITURE" ("Preference_ID", "Preference_House_Furniture")
-                    VALUES
-                    (1, '衣櫃'),
-                    (1, '床'),
-                    (2, '床'),
-                    (3, '書架'),
-                    (3, '沙發'),
-                    (4, '書桌'),
-                    (4, '床'),
-                    (5, '書架');
-
                     INSERT INTO "PREFERENCE_HOUSE_PLACE" ("Preference_ID", "Preference_House_Place")
                     VALUES
                     (1, '大安區'),
@@ -243,6 +233,37 @@ class PosgresqlInitClient:
                 )
                 return {
                     "message": "success to insert data",
+                }
+            except Exception as e:
+                return {
+                    "message": f"Error when inserting data: {str(e)}",
+                }
+
+    async def insert_district_data(self):
+        async with self.access_db() as conn:
+            try:
+                json_file_path = [
+                    r"database/migrations/data/taipei_district_lat_lon.json",
+                    r"database/migrations/data/newtaipei_district_lat_lon.json",  # noqa
+                ]
+                for path in json_file_path:
+                    with open(path, "r", encoding="utf-8") as file:
+                        data = json.load(file)
+                    for entry in data["data"]:
+                        await conn.execute(
+                            """
+                            INSERT INTO
+                                "DISTRICT_LOCATIONS" ("City", "District", "Longitude", "Latitude")
+                            VALUES
+                                ($1, $2, $3, $4)
+                            """,  # noqa
+                            entry["City"],
+                            entry["District"],
+                            entry["Longitude"],
+                            entry["Latitude"],
+                        )
+                return {
+                    "message": "success to insert district data",
                 }
             except Exception as e:
                 return {
