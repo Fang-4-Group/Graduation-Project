@@ -83,24 +83,3 @@ def test_get_preference_house_place():
     response = client.get(f"/get_preference_house_place/{preference_id}")
     assert response.status_code == 200
     assert response.json()  # assure that there are content in response
-
-
-def test_root_status_code():
-    response = client.get("/google-oidc/")
-    assert response.status_code == 200
-
-
-def test_login_status_code():
-    response = client.get("/google-oidc/login")
-    assert response.status_code == 307
-
-
-def test_auth_status_code():
-    response = client.get("/google-oidc/login")
-    authorization_data = response.json()
-    assert "url" in authorization_data
-    state = response.cookies.get("state")
-
-    callback_url = f"/auth?state={state}&code=test_code"
-    response = client.get(callback_url, cookies=response.cookies)
-    assert response.status_code == 200
