@@ -1,7 +1,6 @@
 import json
 import os
 
-import services
 import uvicorn
 from dotenv import load_dotenv
 from fastapi import APIRouter, FastAPI, Request
@@ -10,6 +9,8 @@ from linebot import LineBotApi
 from linebot.exceptions import InvalidSignatureError, LineBotApiError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage
 from linebot.v3.webhook import WebhookHandler
+
+import services
 
 app = FastAPI()
 
@@ -50,7 +51,7 @@ async def line_webhook(request: Request):
                 await services.output_group_msg(group_id)
             elif (
                 event["source"]["type"] == "user"
-                and event["message"]["type"] == "text"  # noqa  # noqa
+                and event["message"]["type"] == "text"  # noqa
             ):
                 await services.user_chat(event)
             else:
