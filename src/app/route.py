@@ -8,10 +8,10 @@ from database.migrations.pg_CRUD import PosgresqClient
 from database.migrations.posgresql_init import PosgresqlInitClient
 from database.seeds.mongo_api_for_testing import MongoDBClient
 from database.seeds.pg_api_for_testing import PosgresqTestClient
+from src.data_pipeline.item_embedding import ItemEmbedding
 from src.data_pipeline.user_embedding import UserEmbedding
 
 from ..services.google_oidc.oidc import OIDCService
-from src.data_pipeline.item_embedding import ItemEmbedding
 
 router = APIRouter()
 oidc_service = OIDCService()
@@ -150,6 +150,34 @@ async def get_preference_house_place(preference_id: int):
 async def get_district_geocoding(city: str, district: str):
     client = PosgresqClient()
     result = await client.get_district_geocoding(city, district)
+    return result
+
+
+@router.post("/post_user_basic_info/")
+async def post_user_basic_info(user_data: dict):
+    client = PosgresqClient()
+    result = await client.post_user_basic_info(user_data)
+    return result
+
+
+@router.post("/post_house_info/")
+async def post_house_info(house_data: dict):
+    client = PosgresqClient()
+    result = await client.post_house_info(house_data)
+    return result
+
+
+@router.post("/post_house_furniture_info/")
+async def post_house_furniture_info(house_furn_data: dict):
+    client = PosgresqClient()
+    result = await client.post_house_furniture_info(house_furn_data)
+    return result
+
+
+@router.post("/post_house_traffic_info/")
+async def post_house_traffic_info(house_traffic_data: dict):
+    client = PosgresqClient()
+    result = await client.post_house_traffic_info(house_traffic_data)
     return result
 
 

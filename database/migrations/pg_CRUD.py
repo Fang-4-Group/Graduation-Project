@@ -416,3 +416,132 @@ class PosgresqClient:
                 return {"message": f"{column_name} updated successfully"}
             except Exception as e:
                 return {"error": f"Error updating {column_name}: {str(e)}"}
+
+    async def post_user_basic_info(self, user_data: dict) -> dict:  # noqa
+        async with self.access_db() as conn:
+            try:
+                # Validate required fields
+                # required_fields = ["People_ID", "Name", "Role", "Sleep_Time",
+                #                    "Drink", "Smoke", "Clean", "Mbti",
+                #                    "Shopping", "Movie", "Travel", "Music",
+                #                    "Read", "Game", "PE", "Science", "Food"]
+
+                # # need conmunicate: do I need to check content
+                # for field in required_fields:
+                #     if field not in user_data:
+                #         raise ValueError(f"Missing required field: {field}")
+
+                data = await conn.fetch(
+                    """
+                    INSERT INTO "PEOPLE"
+                    ("Name", "Role", "Sleep_Time", "Drink",
+                    "Smoke", "Clean", "Mbti", "Shopping", "Movie", "Travel",
+                    "Music", "Read", "Game", "PE", "Science", "Food")
+                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12,
+                    $13, $14, $15, $16)
+                    RETURNING "People_ID"
+                    """,
+                    user_data["Name"],
+                    user_data["Role"],
+                    user_data["Sleep_Time"],  # noqa
+                    user_data["Drink"],
+                    user_data["Smoke"],
+                    user_data["Clean"],
+                    user_data["Mbti"],  # noqa
+                    user_data["Shopping"],
+                    user_data["Movie"],
+                    user_data["Travel"],
+                    user_data["Music"],  # noqa
+                    user_data["Read"],
+                    user_data["Game"],
+                    user_data["PE"],
+                    user_data["Science"],
+                    user_data["Food"],  # noqa
+                )
+                return {
+                    "message": "Data inserted successfully",
+                    "People_ID": data[0]["People_ID"],
+                }
+            except Exception as e:
+                return {"message": f"Error when inserting data: {str(e)}"}
+
+    async def post_house_info(self, house_data: dict) -> dict:  # noqa
+        async with self.access_db() as conn:
+            try:
+                # # need conmunicate: do I need to check content
+                # required_fields = (
+                #     "People_ID", "Size", "Fire", "Negotiate_Price", # noqa
+                #     "City", "District", "Street", "Floor", "Type"),
+
+                # for field in required_fields:
+                #     if field not in user_data:
+                #         raise ValueError(f"Missing required field: {field}")
+
+                data = await conn.fetch(
+                    """
+                    INSERT INTO "HOUSE"
+                    ("People_ID", "Size", "Fire", "Negotiate_Price",
+                    "City", "District", "Street", "Floor", "Type")
+                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+                    RETURNING "House_ID"
+                    """,
+                    house_data["People_ID"],
+                    house_data["Size"],
+                    house_data["Fire"],  # noqa
+                    house_data["Negotiate_Price"],
+                    house_data["City"],
+                    house_data["District"],  # noqa
+                    house_data["Street"],
+                    house_data["Floor"],
+                    house_data["Type"],  # noqa
+                )
+                return {
+                    "message": "Data inserted successfully",
+                    "House_ID": data[0]["House_ID"],
+                }
+            except Exception as e:
+                return {"message": f"Error when inserting data: {str(e)}"}
+
+    async def post_house_furniture_info(self, house_furn_data: dict) -> dict:  # noqa
+        async with self.access_db() as conn:
+            try:
+                house_id = house_furn_data["House_ID"]
+                furniture_list = house_furn_data["Furniture"]
+                values = ", ".join(
+                    [f"({house_id}, '{furn}')" for furn in furniture_list]
+                )  # noqa
+                await conn.execute(
+                    """
+                    INSERT INTO "HOUSE_FURNITURE" ("House_ID", "Furniture")
+                    VALUES
+                    """
+                    + values
+                )
+                return {
+                    "message": "Data inserted successfully",
+                }
+            except Exception as e:
+                return {"message": f"Error when inserting data: {str(e)}"}
+
+    async def post_house_traffic_info(self, house_traffic_data: dict) -> dict:  # noqa
+        async with self.access_db() as conn:
+            try:
+                house_id = house_traffic_data["House_ID"]
+                values = ", ".join(
+                    [
+                        f"({house_id}, '{furn}')"
+                        for furn in house_traffic_data["Traffic"]
+                    ]
+                )  # noqa
+                await conn.execute(
+                    """
+                    INSERT INTO "HOUSE_TRAFFIC" ("House_ID", "Traffic")
+                    VALUES
+                    """
+                    + values
+                )
+                return {
+                    "message": "Data inserted successfully",
+                }
+            except Exception as e:
+                return {"message": f"Error when inserting data: {str(e)}"}

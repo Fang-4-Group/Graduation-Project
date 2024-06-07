@@ -42,10 +42,12 @@ class PosgresqlInitClient:
                     DROP SCHEMA public CASCADE;
                     CREATE SCHEMA public;
                     CREATE TABLE IF NOT EXISTS "PEOPLE" (
-                        "People_ID" integer PRIMARY KEY,
+                        "People_ID" SERIAL PRIMARY KEY,
+                        "Name" varchar,
                         "Role" integer,
                         "Sleep_Time" integer,
-                        "Drink_or_Smoke" integer,
+                        "Drink" integer,
+                        "Smoke" integer,
                         "Clean" integer,
                         "Mbti" varchar,
                         "Shopping" integer,
@@ -66,7 +68,7 @@ class PosgresqlInitClient:
                     );
 
                     CREATE TABLE IF NOT EXISTS "HOUSE" (
-                        "House_ID" integer PRIMARY KEY,
+                        "House_ID" SERIAL PRIMARY KEY,
                         "People_ID" integer,
                         "Size" float,
                         "Fire" integer,
@@ -149,18 +151,18 @@ class PosgresqlInitClient:
             try:
                 await conn.execute(
                     """
-                    INSERT INTO "PEOPLE" ("People_ID", "Role", "Sleep_Time", "Drink_or_Smoke", "Clean", "Mbti", "Shopping", "Movie", "Travel", "Music", "Read", "Game", "PE", "Science", "Food")
+                    INSERT INTO "PEOPLE" ("Name", "Role", "Sleep_Time", "Drink", "Smoke", "Clean", "Mbti", "Shopping", "Movie", "Travel", "Music", "Read", "Game", "PE", "Science", "Food")
                     VALUES
-                    (1, 1, 3, 2, 4, 'INTJ', 0, 1, 0, 0, 0, 0, 0, 1, 0),
-                    (2, 0, 4, 1, 3, 'INFP', 1, 1, 0, 1, 1, 0, 0, 0, 1),
-                    (3, 1, 2, 3, 5, 'ISTJ', 0, 1, 1, 0, 0, 0, 1, 0, 0),
-                    (4, 0, 3, 2, 4, 'ENFP', 0, 0, 1, 0, 1, 1, 1, 0, 1),
-                    (5, 1, 4, 1, 5, 'ENTP', 0, 1, 1, 0, 1, 0, 1, 1, 0),
-                    (6, 0, 2, 3, 4, 'ISFP', 1, 1, 0, 1, 0, 0, 0, 0, 1),
-                    (7, 1, 3, 2, 3, 'ESTJ', 0, 0, 1, 0, 1, 1, 1, 0, 0),
-                    (8, 0, 4, 1, 5, 'INFJ', 0, 1, 0, 0, 1, 0, 0, 0, 1),
-                    (9, 1, 2, 3, 4, 'ENTJ', 0, 1, 1, 0, 0, 0, 1, 1, 0),
-                    (10, 0, 3, 2, 3, 'ESFP', 1, 0, 1, 0, 1, 0, 1, 0, 1);
+                    ('AA', 1, 3, 2, 0, 4, 'INTJ', 0, 1, 0, 0, 0, 0, 0, 1, 0),
+                    ('BB', 0, 4, 1, 3, 3, 'INFP', 1, 1, 0, 1, 1, 0, 0, 0, 1),
+                    ('CC', 1, 2, 3, 1, 5, 'ISTJ', 0, 1, 1, 0, 0, 0, 1, 0, 0),
+                    ('DD', 0, 3, 2, 0, 4, 'ENFP', 0, 0, 1, 0, 1, 1, 1, 0, 1),
+                    ('EE', 1, 4, 1, 2, 5, 'ENTP', 0, 1, 1, 0, 1, 0, 1, 1, 0),
+                    ('FF', 0, 2, 3, 4, 0, 'ISFP', 1, 1, 0, 1, 0, 0, 0, 0, 1),
+                    ('GG', 1, 3, 2, 2, 3, 'ESTJ', 0, 0, 1, 0, 1, 1, 1, 0, 0),
+                    ('HH', 0, 4, 1, 2, 5, 'INFJ', 0, 1, 0, 0, 1, 0, 0, 0, 1),
+                    ('II', 1, 2, 3, 1, 4, 'ENTJ', 0, 1, 1, 0, 0, 0, 1, 1, 0),
+                    ('JJ', 0, 3, 2, 1, 3, 'ESFP', 1, 0, 1, 0, 1, 0, 1, 0, 1);
 
                     INSERT INTO "PEOPLE_CHARACTER" ("People_ID", "Character")
                     VALUES
@@ -183,13 +185,13 @@ class PosgresqlInitClient:
                     (10, '善於社交'),
                     (10, '友善');
 
-                    INSERT INTO "HOUSE" ("House_ID", "People_ID", "Size", "Fire", "Negotiate_Price", "Photo", "City", "District", "Street", "Floor", "Type")
+                    INSERT INTO "HOUSE" ("People_ID", "Size", "Fire", "Negotiate_Price", "Photo", "City", "District", "Street", "Floor", "Type")
                     VALUES
-                    (1, 1, 12.5, 0, 1, 'house1.jpg', '臺北市', '大安區', '新生南路', 2, '公寓'),
-                    (2, 3, 15.2, 1, 0, 'house2.jpg', '臺北市', '中山區', '松江路', 1, '華廈'),
-                    (3, 5, 10.0, 0, 1, 'house3.jpg', '新北市', '新店區', '北宜路', 3, '華廈'),
-                    (4, 7, 18.3, 1, 0, 'house4.jpg', '新北市', '板橋區', '中山路', 2, '大樓'),
-                    (5, 9, 9.7, 0, 1, 'house5.jpg', '臺北市', '士林區', '中正路', 1, '公寓');
+                    (1, 12.5, 0, 1, 'house1.jpg', '臺北市', '大安區', '新生南路', 2, '公寓'),
+                    (3, 15.2, 1, 0, 'house2.jpg', '臺北市', '中山區', '松江路', 1, '華廈'),
+                    (5, 10.0, 0, 1, 'house3.jpg', '新北市', '新店區', '北宜路', 3, '華廈'),
+                    (7, 18.3, 1, 0, 'house4.jpg', '新北市', '板橋區', '中山路', 2, '大樓'),
+                    (9, 9.7, 0, 1, 'house5.jpg', '臺北市', '士林區', '中正路', 1, '公寓');
 
                     INSERT INTO "HOUSE_FURNITURE" ("House_ID", "Furniture")
                     VALUES

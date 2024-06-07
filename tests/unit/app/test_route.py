@@ -203,3 +203,58 @@ def test_get_house_traffic():
     response = client.get(f"/get_house_traffic/{people_id}")
     assert response.status_code == 200
     assert response.json()  # 確保回應有內容
+
+
+def test_post_user_basic_info():
+    sample_data = {
+        "Name": "jam",
+        "Role": 0,
+        "Sleep_Time": 1,
+        "Drink": 0,
+        "Smoke": 2,
+        "Clean": 4,
+        "Mbti": "INTJ",
+        "Shopping": 0,
+        "Movie": 1,
+        "Travel": 2,
+        "Music": 2,
+        "Read": 1,
+        "Game": 1,
+        "PE": 1,
+        "Science": 1,
+        "Food": 1,
+    }
+    response = client.post("/post_user_basic_info/", json=sample_data)
+    assert response.status_code == 200
+    assert response.json() == {"message": "Data inserted successfully"}
+
+
+def test_post_house_info():
+    sample_data = {
+        "People_ID": 1,
+        "Size": 10,
+        "Fire": 1,
+        "Negotiate_Price": 0,
+        "City": "臺北市",
+        "District": "文山區",
+        "Street": "木柵路",
+        "Floor": 3,
+        "Type": "公寓",
+    }
+    response = client.post("/post_house_info/", json=sample_data)
+    assert response.status_code == 200
+    assert response.json() == {"message": "Data inserted successfully"}
+
+
+def post_house_furniture_info():
+    sample_data = {"House_ID": 6, "Furniture": ["沙發", "書桌"]}
+    response = client.post("/post_house_furniture_info/", json=sample_data)
+    assert response.status_code == 200
+    assert response.json() == {"message": "Data inserted successfully"}
+
+
+def test_post_house_traffic_info():
+    sample_data = {"House_ID": 6, "Furniture": ["捷運", "公車"]}
+    response = client.post("/post_house_traffic_info/", json=sample_data)
+    assert response.status_code == 200
+    assert response.json() == {"message": "Data inserted successfully"}
