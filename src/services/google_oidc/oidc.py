@@ -1,4 +1,5 @@
 import os
+from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
 
 from google.auth.transport import requests
 from google.oauth2 import id_token
@@ -20,8 +21,18 @@ class OIDCService:
             redirect_uri=self.redirect_uri,
         )
 
+    # Solving disallowed user agent error
+    def append_open_external_browser_param(url: str) -> str:
+        url_parts = list(urlparse(url))
+        query = parse_qs(url_parts[4])
+        query["openExternalBrowser"] = ["1"]
+        url_parts[4] = urlencode(query, doseq=True)
+        return urlunparse(url_parts)
+
     def get_authorization_url(self):
-        return self.flow.authorization_url()
+        auth_url = self.flow.authorization_url()
+        auth_url_with_param = self.append_open_external_browser_param(auth_url)
+        return auth_url_with_param
 
     def fetch_token(self, authorization_response):
         return self.flow.fetch_token(
