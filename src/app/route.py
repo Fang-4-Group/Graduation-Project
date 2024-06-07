@@ -11,6 +11,7 @@ from database.seeds.pg_api_for_testing import PosgresqTestClient
 from src.data_pipeline.user_embedding import UserEmbedding
 
 from ..services.google_oidc.oidc import OIDCService
+from src.data_pipeline.item_embedding import ItemEmbedding
 
 router = APIRouter()
 oidc_service = OIDCService()
@@ -201,4 +202,18 @@ async def auth(request: Request):
 async def embedding(k_mean: bool = 0, n_clusters: int = 3):
     client = UserEmbedding()
     result = client.embedding(k_mean, n_clusters)
+    return result
+
+
+@router.get("/get_house_info/")
+async def get_house_info():
+    client = PosgresqClient()
+    result = await client.get_house_info()
+    return result
+
+
+@router.get("/item_embedding/")
+async def item_embedding():
+    client = ItemEmbedding()
+    result = await client.item_embedding()
     return result

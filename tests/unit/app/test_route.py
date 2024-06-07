@@ -98,3 +98,16 @@ def test_embedding():
     par = f"?k_mean={k_mean}&n_clusters={n_clusters}"
     response = client.get(f"user_embedding/{par}")
     assert response.status_code == 200
+    assert response.json()  # assure that there are content in response
+
+
+def test_get_house_info():
+    response = client.get("/get_house_info/")
+    assert response.status_code == 200
+    assert response.json()
+
+
+def test_item_embedding():
+    response = client.get("/item_embedding/")
+    assert response.status_code == 200
+    assert response.json()
