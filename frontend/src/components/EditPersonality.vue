@@ -24,6 +24,7 @@
   </template>
   
   <script setup>
+  // TODO: Complete the unfinished functions"saveUserData" outlined in ticket [GP103].
   import { ref } from 'vue';
   import { useRouter , useRoute } from 'vue-router';
   
@@ -32,21 +33,21 @@
     personalityTraits: [''], 
   });
   
-  const traits = ref(editedUserData.value.personalityTraits); // 将 traits 设置为响应式数据
-  const hovered = ref(false); // 控制 hover 效果
-  const router = useRouter(); // 獲取 router 實例
+  const traits = ref(editedUserData.value.personalityTraits); 
+  const hovered = ref(false); 
+  const router = useRouter(); 
   
 
   
   const route = useRoute();
   
   function cancel() {
-    const from = route.query.from || '/'; // 如果没有传递参数，默认回到首页
+    const from = route.query.from || '/'; 
     router.push(from);
   }
 
   function addNewTrait() {
-    traits.value.push(''); // 添加一个空字符串，新的输入框会出现
+    traits.value.push(''); 
   }
   </script>
   

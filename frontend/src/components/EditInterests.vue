@@ -24,6 +24,7 @@
 </template>
 
 <script setup>
+// TODO: Complete the unfinished functions"saveUserData" outlined in ticket [GP103].
 import { ref } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 
@@ -36,12 +37,12 @@ const router = useRouter();
 const route = useRoute();
 
 function cancel() {
-    const from = route.query.from || '/'; // 如果没有传递参数，默认回到首页
+    const from = route.query.from || '/'; 
     router.push(from);
   }
 
 function addNewInterest() {
-  editedUserData.value.interests.push(''); // 添加一个空的兴趣项
+  editedUserData.value.interests.push(''); 
 }
 </script>
 

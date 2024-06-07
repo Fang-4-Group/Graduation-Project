@@ -24,6 +24,7 @@
   </template>
   
   <script setup>
+   // TODO: Complete the unfinished functions"saveFurnitureData" outlined in ticket [GP103].
   import { ref } from 'vue';
   import { useRouter, useRoute } from 'vue-router';
   
@@ -31,18 +32,18 @@
     furniture: [''], 
   });
   
-  const furnitureItems = ref(editedUserData.value.furniture); // 将 furnitureItems 设置为响应式数据
-  const hovered = ref(false); // 控制 hover 效果
-  const router = useRouter(); // 获取 router 实例
-  const route = useRoute(); // 获取当前 route 实例
+  const furnitureItems = ref(editedUserData.value.furniture); 
+  const hovered = ref(false); 
+  const router = useRouter(); 
+  const route = useRoute(); 
   
   function cancel() {
-    const from = route.query.from || '/'; // 如果没有传递参数，默认回到首页
+    const from = route.query.from || '/'; 
     router.push(from);
   }
   
   function addNewFurnitureItem() {
-    furnitureItems.value.push(''); // 添加一个空字符串，新的输入框会出现
+    furnitureItems.value.push(''); 
   }
   
   </script>

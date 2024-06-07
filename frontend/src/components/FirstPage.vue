@@ -90,6 +90,7 @@
 </template>
 
 <script setup>
+ // TODO: Complete the unfinished functions"submitForm" outlined in ticket [GP103].
 import { ref } from 'vue';
 
 const userData = ref({
@@ -125,10 +126,7 @@ function removeInterest(index) {
   userData.value.interests.splice(index, 1);
 }
 
-// 這裡的 submitForm 函數我們先暫時註釋掉，因為它涉及到 axios 和路由，而你的程式碼中沒有引入這些依賴
-// function submitForm() {
-//   // 你的提交表單邏輯
-// }
+
 </script>
 
 <style scoped>

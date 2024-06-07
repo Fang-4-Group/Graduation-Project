@@ -184,12 +184,12 @@
 
 .user-info {
   display: flex;
-  justify-content: center; /* 水平置中 */
-  margin-bottom: 20px; /* 調整下方間距 */
+  justify-content: center; 
+  margin-bottom: 20px; 
 }
 
 .section-boxed {
-  background-color: #f5f5f5; /* 淺灰色 */
+  background-color: #f5f5f5; 
   padding: 20px;
   margin-bottom: 20px;
   border-radius: 10px;
@@ -226,7 +226,7 @@
   margin-bottom: 5px;
   padding: 5px 10px;
   border-radius: 20px;
-  background-color: #c2d4dc; /* 淡藍色 */
+  background-color: #c2d4dc; 
   color: #333;
   display: inline-block;
 }
@@ -236,7 +236,7 @@
   margin-bottom: 5px;
   padding: 5px 10px;
   border-radius: 20px;
-  background-color: #d9b9b0; /* 淡粉色 */
+  background-color: #d9b9b0; 
   color: #333;
   display: inline-block;
 }

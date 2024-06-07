@@ -29,6 +29,7 @@
   </template>
   
   <script setup>
+   // TODO: Complete the unfinished functions"saveuserData" outlined in ticket [GP103].
   import { ref } from 'vue';
   import { useRouter } from 'vue-router';
   
@@ -39,7 +40,7 @@
       alcoholLevel: 0,
       cleanlinessLevel: 0,
     },
-    personalityTraits: [''], // 初始化为一个空字符串
+    personalityTraits: [''], 
     interests: '',
     housingPreferences: {
       furniture: '',
@@ -47,21 +48,17 @@
     },
   });
   
-  const traits = ref(editedUserData.value.personalityTraits); // 将 traits 设置为响应式数据
-  const hovered = ref(false); // 控制 hover 效果
-  const router = useRouter(); // 獲取 router 實例
+  const traits = ref(editedUserData.value.personalityTraits); 
+  const hovered = ref(false); 
+  const router = useRouter(); 
 
-  function saveUserData() {
-    // 实际保存用户信息的逻辑，这里只是示例，根据实际情况处理
-    // closeModal();  [todo: define "closeModal()"]
-  }
-  
+
   function goToPage(path) {
   router.push(path);
 }
   
   function addNewTrait() {
-    traits.value.push(''); // 添加一个空字符串，新的输入框会出现
+    traits.value.push(''); 
   }
   </script>
   

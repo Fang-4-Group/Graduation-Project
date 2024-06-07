@@ -53,27 +53,6 @@ class PosgresqClient:
                     "message": f"Error when selecting data: {str(e)}",
                 }
 
-    async def get_elder_info(self) -> dict:
-        async with self.access_db() as conn:
-            try:
-                data = await conn.fetch(
-                    """
-                    SELECT
-                        *
-                    FROM
-                        "PEOPLE" AS PEO
-                    WHERE
-                        PEO."Role" = 1;
-                    """  # noqa
-                )
-                furniture_list = [
-                    row["Preference_House_Furniture"] for row in data]
-                return {"message": furniture_list}
-            except Exception as e:
-                return {
-                    "message": f"Error when selecting data: {str(e)}",
-                }
-
     async def get_preference_house_place(self, preference_id) -> dict:
         async with self.access_db() as conn:
             try:
@@ -385,24 +364,6 @@ class PosgresqClient:
                 return {"message": "MBTI updated successfully"}
             except Exception as e:
                 return {"error": f"Error updating MBTI: {str(e)}"}
-
-    async def add_preference_house_furniture(
-            self, preference_id: int, new_furniture: list) -> dict:
-        async with self.access_db() as conn:
-            try:
-                for furniture in new_furniture:
-                    await conn.execute(
-                        """
-                        INSERT INTO "PREFERENCE_HOUSE_FURNITURE" (
-                            "Preference_ID", "Preference_House_Furniture")
-                        VALUES ($1, $2);
-                        """,
-                        preference_id, furniture
-                    )
-                return {"message": "Preference house furniture added success"}
-            except Exception as e:
-                return {"error":
-                        f"Error adding preference house furniture: {str(e)}"}
 
     async def add_preference_house_place(
             self, preference_id: int, new_place: list) -> dict:

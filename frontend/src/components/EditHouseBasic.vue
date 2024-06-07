@@ -45,6 +45,7 @@
   </template>
   
   <script setup>
+  // TODO: Complete the unfinished functions"saveHouseData" outlined in ticket [GP103].
   import { ref } from 'vue';
   import { useRouter, useRoute } from 'vue-router';
   
@@ -57,20 +58,15 @@
     houseType: '',
   });
   
-  const router = useRouter(); // 獲取 router 實例
+  const router = useRouter(); 
   const route = useRoute();
   
   function cancel() {
-    const from = route.query.from || '/'; // 如果没有传递参数，默认回到首页
+    const from = route.query.from || '/'; 
     router.push(from);
   }
   
-  function saveHouseData() {
-    // 保存房屋基本資料的逻辑
-    // 示例：console.log(editedHouseData.value);
-    // 根据实际需求进行具体实现
-    cancel(); // 保存完毕后返回
-  }
+
   </script>
   
   <style scoped>
