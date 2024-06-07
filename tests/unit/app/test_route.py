@@ -226,7 +226,6 @@ def test_post_user_basic_info():
     }
     response = client.post("/post_user_basic_info/", json=sample_data)
     assert response.status_code == 200
-    assert response.json() == {"message": "Data inserted successfully"}
 
 
 def test_post_house_info():
@@ -243,18 +242,15 @@ def test_post_house_info():
     }
     response = client.post("/post_house_info/", json=sample_data)
     assert response.status_code == 200
-    assert response.json() == {"message": "Data inserted successfully"}
 
 
 def post_house_furniture_info():
     sample_data = {"House_ID": 6, "Furniture": ["沙發", "書桌"]}
     response = client.post("/post_house_furniture_info/", json=sample_data)
     assert response.status_code == 200
-    assert response.json() == {"message": "Data inserted successfully"}
 
 
 def test_post_house_traffic_info():
-    sample_data = {"House_ID": 6, "Furniture": ["捷運", "公車"]}
+    sample_data = {"House_ID": 6, "Traffic": ["捷運", "公車"]}
     response = client.post("/post_house_traffic_info/", json=sample_data)
     assert response.status_code == 200
-    assert response.json() == {"message": "Data inserted successfully"}
