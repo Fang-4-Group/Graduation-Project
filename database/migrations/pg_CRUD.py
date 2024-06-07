@@ -88,7 +88,9 @@ class PosgresqClient:
                     """,
                     preference_id,
                 )
-                return {"message": data}
+                place_list = [
+                    row["Preference_House_Place"] for row in data]
+                return {"message": place_list}
             except Exception as e:
                 return {
                     "message": f"Error when selecting data: {str(e)}",
@@ -132,3 +134,285 @@ class PosgresqClient:
                 return {
                     "message": f"Error when selecting data: {str(e)}",
                 }
+
+    async def get_sleep_time(self, people_id: int) -> dict:
+        async with self.access_db() as conn:
+            try:
+                data = await conn.fetchval(
+                    """
+                    SELECT "Sleep_Time" FROM "PEOPLE" WHERE "People_ID" = $1;
+                    """,
+                    people_id
+                )
+                return {"sleep_time": data}
+            except Exception as e:
+                return {"error": f"Error retrieving sleep time: {str(e)}"}
+
+    async def get_drink_or_smoke(self, people_id: int) -> dict:
+        async with self.access_db() as conn:
+            try:
+                data = await conn.fetchval(
+                    """
+                    SELECT "Drink_or_Smoke"
+                    FROM "PEOPLE" WHERE "People_ID" = $1;
+                    """,
+                    people_id
+                )
+                return {"drink_or_smoke": data}
+            except Exception as e:
+                return {"error":
+                        f"Error retrieving drink or smoke habit: {str(e)}"}
+
+    async def get_clean_habit(self, people_id: int) -> dict:
+        async with self.access_db() as conn:
+            try:
+                data = await conn.fetchval(
+                    """
+                    SELECT "Clean" FROM "PEOPLE" WHERE "People_ID" = $1;
+                    """,
+                    people_id
+                )
+                return {"clean_habit": data}
+            except Exception as e:
+                return {"error": f"Error retrieving clean habit: {str(e)}"}
+
+    async def get_mbti(self, people_id: int) -> dict:
+        async with self.access_db() as conn:
+            try:
+                data = await conn.fetchval(
+                    """
+                    SELECT "Mbti" FROM "PEOPLE" WHERE "People_ID" = $1;
+                    """,
+                    people_id
+                )
+                return {"mbti": data}
+            except Exception as e:
+                return {"error": f"Error retrieving MBTI: {str(e)}"}
+
+    async def get_characters(self, people_id: int) -> dict:
+        async with self.access_db() as conn:
+            try:
+                data = await conn.fetch(
+                    """
+                    SELECT "Character" FROM "PEOPLE_CHARACTER"
+                    WHERE "People_ID" = $1;
+                    """,
+                    people_id
+                )
+                characters = [row["Character"] for row in data]
+                return {"characters": characters}
+            except Exception as e:
+                return {"error": f"Error retrieving characters: {str(e)}"}
+
+    async def get_interests(self, people_id: int) -> dict:
+        async with self.access_db() as conn:
+            try:
+                data = await conn.fetch(
+                    """
+                    SELECT
+                        "Shopping", "Movie", "Travel", "Music", "Read",
+                        "Game", "PE", "Science", "Food"
+                    FROM
+                        "PEOPLE"
+                    WHERE
+                        "People_ID" = $1;
+                    """,
+                    people_id
+                )
+                interests = [key for key,
+                             value in data[0].items() if value == 1]
+                return {"interests": interests}
+            except Exception as e:
+                return {"error": f"Error retrieving interests: {str(e)}"}
+
+    async def get_size(self, people_id: int) -> dict:
+        async with self.access_db() as conn:
+            try:
+                data = await conn.fetchval(
+                    """
+                    SELECT "Size" FROM "HOUSE" WHERE "People_ID" = $1;
+                    """,
+                    people_id
+                )
+                return {"size": data}
+            except Exception as e:
+                return {"error": f"Error retrieving size: {str(e)}"}
+
+    async def get_fire(self, people_id: int) -> dict:
+        async with self.access_db() as conn:
+            try:
+                data = await conn.fetchval(
+                    """
+                    SELECT "Fire" FROM "HOUSE" WHERE "People_ID" = $1;
+                    """,
+                    people_id
+                )
+                return {"fire": data}
+            except Exception as e:
+                return {"error": f"Error retrieving fire: {str(e)}"}
+
+    async def get_negotiate(self, people_id: int) -> dict:
+        async with self.access_db() as conn:
+            try:
+                data = await conn.fetchval(
+                    """
+                    SELECT "Negotiate_Price"
+                    FROM "HOUSE" WHERE "People_ID" = $1;
+                    """,
+                    people_id
+                )
+                return {"negotiate_price": data}
+            except Exception as e:
+                return {"error": f"Error retrieving negotiate price: {str(e)}"}
+
+    async def get_floor(self, people_id: int) -> dict:
+        async with self.access_db() as conn:
+            try:
+                data = await conn.fetchval(
+                    """
+                    SELECT "Floor" FROM "HOUSE" WHERE "People_ID" = $1;
+                    """,
+                    people_id
+                )
+                return {"floor": data}
+            except Exception as e:
+                return {"error": f"Error retrieving floor: {str(e)}"}
+
+    async def get_house_type(self, people_id: int) -> dict:
+        async with self.access_db() as conn:
+            try:
+                data = await conn.fetchval(
+                    """
+                    SELECT "Type" FROM "HOUSE" WHERE "People_ID" = $1;
+                    """,
+                    people_id
+                )
+                return {"type": data}
+            except Exception as e:
+                return {"error": f"Error retrieving house type: {str(e)}"}
+
+    async def get_house_furniture(self, people_id: int) -> dict:
+        async with self.access_db() as conn:
+            try:
+                data = await conn.fetch(
+                    """
+                    SELECT "Furniture" FROM "HOUSE_FURNITURE"
+                    WHERE "House_ID" = (
+                        SELECT "House_ID" FROM "HOUSE"
+                        WHERE "People_ID" = $1
+                    );
+                    """,
+                    people_id
+                )
+                furniture = [row["Furniture"] for row in data]
+                return {"furniture": furniture}
+            except Exception as e:
+                return {"error": f"Error retrieving house furniture: {str(e)}"}
+
+    async def get_house_traffic(self, people_id: int) -> dict:
+        async with self.access_db() as conn:
+            try:
+                data = await conn.fetch(
+                    """
+                    SELECT "Traffic" FROM "HOUSE_TRAFFIC"
+                    WHERE "House_ID" = (
+                        SELECT "House_ID" FROM "HOUSE"
+                        WHERE "People_ID" = $1
+                    );
+                    """,
+                    people_id
+                )
+                traffic = [row["Traffic"] for row in data]
+                return {"traffic": traffic}
+            except Exception as e:
+                return {"error": f"Error retrieving house traffic: {str(e)}"}
+
+    async def update_sleep_time(
+            self, people_id: int, new_sleep_time: int) -> dict:
+        async with self.access_db() as conn:
+            try:
+                await conn.execute(
+                    """
+                    UPDATE "PEOPLE" SET "Sleep_Time" = $1
+                    WHERE "People_ID" = $2;
+                    """,
+                    new_sleep_time, people_id
+                )
+                return {"message": "Sleep time updated successfully"}
+            except Exception as e:
+                return {"error": f"Error updating sleep time: {str(e)}"}
+
+    async def update_drink_or_smoke(
+            self, people_id: int, new_drink_or_smoke: int) -> dict:
+        async with self.access_db() as conn:
+            try:
+                await conn.execute(
+                    """
+                    UPDATE "PEOPLE" SET "Drink_or_Smoke" = $1
+                    WHERE "People_ID" = $2;
+                    """,
+                    new_drink_or_smoke, people_id
+                )
+                return {"message": "Drink or smoke habit updated successfully"}
+            except Exception as e:
+                return {"error":
+                        f"Error updating drink or smoke habit: {str(e)}"}
+
+    async def update_clean_habit(self, people_id: int, new_clean: int) -> dict:
+        async with self.access_db() as conn:
+            try:
+                await conn.execute(
+                    """
+                    UPDATE "PEOPLE" SET "Clean" = $1 WHERE "People_ID" = $2;
+                    """,
+                    new_clean, people_id
+                )
+                return {"message": "Clean habit updated successfully"}
+            except Exception as e:
+                return {"error": f"Error updating clean habit: {str(e)}"}
+
+    async def update_mbti(self, people_id: int, new_mbti: str) -> dict:
+        async with self.access_db() as conn:
+            try:
+                await conn.execute(
+                    """
+                    UPDATE "PEOPLE" SET "Mbti" = $1 WHERE "People_ID" = $2;
+                    """,
+                    new_mbti, people_id
+                )
+                return {"message": "MBTI updated successfully"}
+            except Exception as e:
+                return {"error": f"Error updating MBTI: {str(e)}"}
+
+    async def add_preference_house_place(
+            self, preference_id: int, new_place: list) -> dict:
+        async with self.access_db() as conn:
+            try:
+                for place in new_place:
+                    await conn.execute(
+                        """
+                        INSERT INTO "PREFERENCE_HOUSE_PLACE"
+                        ("Preference_ID", "Preference_House_Place")
+                        VALUES ($1, $2);
+                        """,
+                        preference_id, place
+                    )
+                return {"message": "Preference house place added successfully"}
+            except Exception as e:
+                return {"error":
+                        f"Error adding preference house place: {str(e)}"}
+
+    async def update_integer_field(
+            self, column_name: str, people_id: int, new_value: int) -> dict:
+        async with self.access_db() as conn:
+            try:
+                await conn.execute(
+                    f"""
+                    UPDATE "PEOPLE" SET "{column_name}" = $1
+                    WHERE "People_ID" = $2;
+                    """,
+                    new_value, people_id
+                )
+                return {"message": f"{column_name} updated successfully"}
+            except Exception as e:
+                return {"error": f"Error updating {column_name}: {str(e)}"}

@@ -111,3 +111,95 @@ def test_item_embedding():
     response = client.get("/item_embedding/")
     assert response.status_code == 200
     assert response.json()
+    assert response.json()  # assure that there are content in response
+
+
+def test_get_sleep_time():
+    people_id = 1
+    response = client.get(f"/get_sleep_time/{people_id}")
+    assert response.status_code == 200
+    assert response.json()  # 確保回應有內容
+
+
+def test_get_drink_or_smoke():
+    people_id = 1
+    response = client.get(f"/get_drink_or_smoke/{people_id}")
+    assert response.status_code == 200
+    assert response.json()  # 確保回應有內容
+
+
+def test_get_clean_habit():
+    people_id = 1
+    response = client.get(f"/get_clean_habit/{people_id}")
+    assert response.status_code == 200
+    assert response.json()  # 確保回應有內容
+
+
+def test_get_mbti():
+    people_id = 1
+    response = client.get(f"/get_mbti/{people_id}")
+    assert response.status_code == 200
+    assert response.json()  # 確保回應有內容
+
+
+def test_get_characters():
+    people_id = 1
+    response = client.get(f"/get_characters/{people_id}")
+    assert response.status_code == 200
+    assert response.json()  # 確保回應有內容
+
+
+def test_get_interests():
+    people_id = 1
+    response = client.get(f"/get_interests/{people_id}")
+    assert response.status_code == 200
+    assert response.json()  # 確保回應有內容
+
+
+def test_get_size():
+    people_id = 1
+    response = client.get(f"/get_size/{people_id}")
+    assert response.status_code == 200
+    assert response.json()  # 確保回應有內容
+
+
+def test_get_fire():
+    people_id = 1
+    response = client.get(f"/get_fire/{people_id}")
+    assert response.status_code == 200
+    assert response.json()  # 確保回應有內容
+
+
+def test_get_negotiate():
+    people_id = 1
+    response = client.get(f"/get_negotiate/{people_id}")
+    assert response.status_code == 200
+    assert response.json()  # 確保回應有內容
+
+
+def test_get_floor():
+    people_id = 1
+    response = client.get(f"/get_floor/{people_id}")
+    assert response.status_code == 200
+    assert response.json()  # 確保回應有內容
+
+
+def test_get_house_type():
+    people_id = 1
+    response = client.get(f"/get_house_type/{people_id}")
+    assert response.status_code == 200
+    assert response.json()  # 確保回應有內容
+
+
+def test_get_house_furniture():
+    people_id = 1
+    response = client.get(f"/get_house_furniture/{people_id}")
+    assert response.status_code == 200
+    assert response.json()  # 確保回應有內容
+
+
+def test_get_house_traffic():
+    people_id = 1
+    response = client.get(f"/get_house_traffic/{people_id}")
+    assert response.status_code == 200
+    assert response.json()  # 確保回應有內容

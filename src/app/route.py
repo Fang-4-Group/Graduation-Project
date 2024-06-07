@@ -217,3 +217,96 @@ async def item_embedding():
     client = ItemEmbedding()
     result = await client.item_embedding()
     return result
+
+
+@router.get("/get_sleep_time/{people_id}")
+async def get_sleep_time(people_id: int):
+    client = PosgresqClient()
+    result = await client.get_sleep_time(people_id)
+    return result
+
+
+@router.get("/get_drink_or_smoke/{people_id}")
+async def get_drink_or_smoke(people_id: int):
+    client = PosgresqClient()
+    result = await client.get_drink_or_smoke(people_id)
+    return result
+
+
+@router.get("/get_clean_habit/{people_id}")
+async def get_clean_habit(people_id: int):
+    client = PosgresqClient()
+    result = await client.get_clean_habit(people_id)
+    return result
+
+
+@router.get("/get_mbti/{people_id}")
+async def get_mbti(people_id: int):
+    client = PosgresqClient()
+    result = await client.get_mbti(people_id)
+    return result
+
+
+@router.get("/get_characters/{people_id}")
+async def get_characters(people_id: int):
+    client = PosgresqClient()
+    result = await client.get_characters(people_id)
+    return result
+
+
+@router.get("/get_interests/{people_id}")
+async def get_interests(people_id: int):
+    client = PosgresqClient()
+    result = await client.get_interests(people_id)
+    return result
+
+
+@router.get("/get_size/{people_id}")
+async def get_size(people_id: int):
+    client = PosgresqClient()
+    result = await client.get_size(people_id)
+    return result
+
+
+@router.get("/get_fire/{people_id}")
+async def get_fire(people_id: int):
+    client = PosgresqClient()
+    result = await client.get_fire(people_id)
+    return result
+
+
+@router.get("/get_negotiate/{people_id}")
+async def get_negotiate(people_id: int):
+    client = PosgresqClient()
+    result = await client.get_negotiate(people_id)
+    return result
+
+
+@router.get("/get_floor/{people_id}")
+async def get_floor(people_id: int):
+    client = PosgresqClient()
+    result = await client.get_floor(people_id)
+    return result
+
+
+@router.get("/get_house_type/{people_id}")
+async def get_house_type(people_id: int):
+    client = PosgresqClient()
+    result = await client.get_house_type(people_id)
+    return result
+
+
+@router.get("/get_house_furniture/{people_id}")
+async def get_house_furniture(people_id: int):
+    client = PosgresqClient()
+    result = await client.get_house_furniture(people_id)
+    return result
+
+
+@router.get("/get_house_traffic/{people_id}")
+async def get_house_traffic(people_id: int):
+    client = PosgresqClient()
+    result = await client.get_house_traffic(people_id)
+    return result
+
+# ToDo: Complete  API (edit and insert) outlined in ticket [GP102]
