@@ -132,13 +132,6 @@ async def get_young_info():
     return result
 
 
-@router.get("/get_elder_info/")
-async def get_elder_info():
-    client = PosgresqClient()
-    result = await client.get_elder_info()
-    return result
-
-
 @router.get("/get_preference_house_place/{preference_id}")
 async def get_preference_house_place(preference_id: int):
     client = PosgresqClient()
