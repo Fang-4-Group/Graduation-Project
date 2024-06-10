@@ -106,6 +106,37 @@
           <label for="floor" style="font-weight: bold;">樓層：</label>
           <input type="number" id="floor" v-model="house_data.Floor" required>
         </div>
+        <div class="section-boxed">
+          <label for="address" style="font-weight: bold;">房屋家具：</label>
+          <div class="data-item" v-for="(item, index) in house_furn_data.Furniture" :key="index">
+            <div class="data-item-content">
+              <div class="furniture-input-container">
+                <input type="text" v-model="item.name" required>
+              </div>
+              <div class="delete-button" @click="removeFurniture(index)">&times;</div>
+            </div>
+          </div>
+          <div class="add-trait-block" @click="addFurniture">
+            <span class="add-icon">+ 新增</span>
+          </div>
+        </div>
+
+      
+      <div class="section-boxed">
+        <label for="address" style="font-weight: bold;">房屋交通:</label>
+          <div class="data-item" v-for="(item, index) in house_traffic_data.Traffic" :key="index">
+            <div class="data-item-content">
+              <div class="traffic-input-container">
+                <input type="text" v-model="item.name" required>
+              </div>
+              <div class="delete-button" @click="removeTraffic(index)">&times;</div>
+            </div>
+          </div>
+          <div class="add-trait-block" @click="addTraffic">
+            <span class="add-icon">+ 新增</span>
+          </div>
+        </div>
+
       </div>
 
       <div class="btn-group">
@@ -150,6 +181,16 @@ const house_data = ref({
   Type: ''
 });
 
+const house_furn_data = ref({
+  House_ID:0,
+  Furniture:[]
+})
+
+const house_traffic_data = ref({
+  House_ID:0,
+  Traffic:[]
+})
+
 const interests = [
   { key: 'Shopping', label: '購物' },
   { key: 'Movie', label: '電影' },
@@ -188,18 +229,26 @@ async function submitForm() {
   try {
     const userResponse = await axios.post('http://localhost:7877/post_user_basic_info', user_data.value);
     console.log(userResponse.data);
-    
-    // 获取用户的 People_ID
     const People_ID = userResponse.data.People_ID;
 
-    // 如果用户是老年人，提交房屋信息
     if (user_data.value.Role === 1) {
-      // 将用户的 People_ID 关联到房屋信息中
       const houseResponse = await axios.post('http://localhost:7877/post_house_info', {
         ...house_data.value,
-        People_ID: People_ID // 使用相同的 People_ID
+        People_ID: People_ID 
       });
-      console.log(houseResponse.data);
+      const House_ID = houseResponse.data.House_ID;
+      const furnitureResponse = await axios.post('http://localhost:7877/post_house_furniture_info', {
+        ...house_furn_data.value,
+        House_ID: House_ID,
+        Furniture: house_furn_data.value.Furniture.map(f => f.name) // 提取家具名稱作為數組
+      });
+      console.log(furnitureResponse.data);
+      const trafficResponse = await axios.post('http://localhost:7877/post_house_traffic_info', {
+        ...house_furn_data.value,
+        House_ID: House_ID,
+        Traffic: house_traffic_data.value.Traffic.map(t => t.name) // 提取交通名稱作為數組
+      });
+      console.log(trafficResponse.data);
       router.push({ path: '/homeold', query: { People_ID } });
     } else {
       router.push({ path: '/homeyoung', query: { People_ID } });
@@ -209,6 +258,21 @@ async function submitForm() {
   }
 }
 
+function addFurniture() {
+  house_furn_data.value.Furniture.push({ name: '' });
+}
+
+function removeFurniture(index) {
+  house_furn_data.value.Furniture.splice(index, 1);
+}
+
+function addTraffic() {
+  house_traffic_data.value.Traffic.push({ name: '' });
+}
+
+function removeTraffic(index) {
+  house_traffic_data.value.Traffic.splice(index, 1);
+}
 </script>
 
 <style scoped>
@@ -263,14 +327,15 @@ input[type="radio"] {
 
 .add-button,
 .delete-button {
-  padding: 6px 12px;
-  border: none;
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  padding: 4px 8px;
   border-radius: 50%;
-  cursor: pointer;
-  font-size: 14px;
-  line-height: 0.8;
   background-color: #f44336;
   color: white;
+  cursor: pointer;
 }
 
 .add-button {
@@ -341,4 +406,22 @@ input[type="radio"] {
   background-color: #779aa8;
   color: white;
 }
+
+/* 添加新的 CSS 样式 */
+.data-item-content {
+  position: relative;
+}
+
+.furniture-input-container,
+.traffic-input-container {
+  display: flex;
+  align-items: center;
+}
+
+.furniture-input-container label,
+.traffic-input-containerlabel {
+  margin-right: 10px;
+}
+
+
 </style>
