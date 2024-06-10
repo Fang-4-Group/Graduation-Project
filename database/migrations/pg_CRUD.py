@@ -135,6 +135,19 @@ class PosgresqClient:
                     "message": f"Error when selecting data: {str(e)}",
                 }
 
+    async def get_name(self, people_id: int) -> dict:
+        async with self.access_db() as conn:
+            try:
+                data = await conn.fetchval(
+                    """
+                    SELECT "Name" FROM "PEOPLE" WHERE "People_ID" = $1;
+                    """,
+                    people_id
+                )
+                return {"name": data}
+            except Exception as e:
+                return {"error": f"Error retrieving name: {str(e)}"}
+
     async def get_sleep_time(self, people_id: int) -> dict:
         async with self.access_db() as conn:
             try:
@@ -148,20 +161,35 @@ class PosgresqClient:
             except Exception as e:
                 return {"error": f"Error retrieving sleep time: {str(e)}"}
 
-    async def get_drink_or_smoke(self, people_id: int) -> dict:
+    async def get_drink(self, people_id: int) -> dict:
         async with self.access_db() as conn:
             try:
                 data = await conn.fetchval(
                     """
-                    SELECT "Drink_or_Smoke"
+                    SELECT "Drink"
                     FROM "PEOPLE" WHERE "People_ID" = $1;
                     """,
                     people_id
                 )
-                return {"drink_or_smoke": data}
+                return {"drink": data}
             except Exception as e:
                 return {"error":
-                        f"Error retrieving drink or smoke habit: {str(e)}"}
+                        f"Error retrieving drink habit: {str(e)}"}
+
+    async def get_smoke(self, people_id: int) -> dict:
+        async with self.access_db() as conn:
+            try:
+                data = await conn.fetchval(
+                    """
+                    SELECT "Smoke"
+                    FROM "PEOPLE" WHERE "People_ID" = $1;
+                    """,
+                    people_id
+                )
+                return {"smoke": data}
+            except Exception as e:
+                return {"error":
+                        f"Error retrieving smoke habit: {str(e)}"}
 
     async def get_clean_habit(self, people_id: int) -> dict:
         async with self.access_db() as conn:
@@ -264,6 +292,45 @@ class PosgresqClient:
                 return {"negotiate_price": data}
             except Exception as e:
                 return {"error": f"Error retrieving negotiate price: {str(e)}"}
+    
+    async def get_city(self, people_id: int) -> dict:
+        async with self.access_db() as conn:
+            try:
+                data = await conn.fetchval(
+                    """
+                    SELECT "City" FROM "HOUSE" WHERE "People_ID" = $1;
+                    """,
+                    people_id
+                )
+                return {"city": data}
+            except Exception as e:
+                return {"error": f"Error retrieving city: {str(e)}"}
+    
+    async def get_district(self, people_id: int) -> dict:
+        async with self.access_db() as conn:
+            try:
+                data = await conn.fetchval(
+                    """
+                    SELECT "District" FROM "HOUSE" WHERE "People_ID" = $1;
+                    """,
+                    people_id
+                )
+                return {"district": data}
+            except Exception as e:
+                return {"error": f"Error retrieving district: {str(e)}"}
+    
+    async def get_street(self, people_id: int) -> dict:
+        async with self.access_db() as conn:
+            try:
+                data = await conn.fetchval(
+                    """
+                    SELECT "Street" FROM "HOUSE" WHERE "People_ID" = $1;
+                    """,
+                    people_id
+                )
+                return {"street": data}
+            except Exception as e:
+                return {"error": f"Error retrieving street: {str(e)}"}
 
     async def get_floor(self, people_id: int) -> dict:
         async with self.access_db() as conn:
