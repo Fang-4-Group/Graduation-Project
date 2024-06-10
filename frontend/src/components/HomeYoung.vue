@@ -207,7 +207,7 @@ function goToPage(path) {
 
 .header-image {
   width: 100%;
-  max-width: 200px; /* Adjust max-width as needed */
+  max-width: 200px; 
 }
 
 .add-button {

@@ -64,7 +64,7 @@
         </ul>
       </div>
   
-        <!-- 房屋資本資料 -->
+        <!-- House Basic Info -->
         <div class="section-boxed">
           <h3>房屋資本資料<button class="add-button" @click="goToPage('/edithousebasic')">新增</button></h3>
           <ul class="house-list">
@@ -79,7 +79,7 @@
           </ul>
         </div>
   
-        <!-- 房屋家具 -->
+        <!-- House Furniture -->
         <div class="section-boxed">
           <h3>房屋家具<button class="add-button" @click="goToPage('/edithousefur')">新增</button></h3>
           <ul class="furniture-list">
@@ -87,7 +87,7 @@
           </ul>
         </div>
   
-        <!-- 房屋交通 -->
+        <!-- House Traffic-->
         <div class="section-boxed">
           <h3>房屋交通<button class="add-button" @click="goToPage('/edithousetraf')">新增</button></h3>
           <ul class="traffic-list">

@@ -240,13 +240,13 @@ async function submitForm() {
       const furnitureResponse = await axios.post('http://localhost:7877/post_house_furniture_info', {
         ...house_furn_data.value,
         House_ID: House_ID,
-        Furniture: house_furn_data.value.Furniture.map(f => f.name) // 提取家具名稱作為數組
+        Furniture: house_furn_data.value.Furniture.map(f => f.name) 
       });
       console.log(furnitureResponse.data);
       const trafficResponse = await axios.post('http://localhost:7877/post_house_traffic_info', {
         ...house_furn_data.value,
         House_ID: House_ID,
-        Traffic: house_traffic_data.value.Traffic.map(t => t.name) // 提取交通名稱作為數組
+        Traffic: house_traffic_data.value.Traffic.map(t => t.name) 
       });
       console.log(trafficResponse.data);
       router.push({ path: '/homeold', query: { People_ID } });
@@ -303,7 +303,7 @@ input[type="radio"] {
   width: 100%;
   padding: 10px;
   border-radius: 5px;
-  border: 2px solid #333; /* 加粗的邊框 */
+  border: 2px solid #333; 
   font-size: 16px;
   box-sizing: border-box;
 }
@@ -344,7 +344,7 @@ input[type="radio"] {
 
 .add-button:hover,
 .delete-button:hover {
-  box-shadow: 0px 4px 8px rgba(0, 0, 255, 0.2); /* 水平偏移、垂直偏移、模糊程度、顏色 */
+  box-shadow: 0px 4px 8px rgba(0, 0, 255, 0.2); 
 }
 
 .trait-item,
@@ -363,7 +363,7 @@ input[type="radio"] {
 .add-interest-block {
   cursor: pointer;
   display: inline-block;
-  width: calc(100% - 32px); /* 將寬度設置為100%，但減去左右邊距的總寬度 */
+  width: calc(100% - 32px); 
   padding: 8px 16px;
   background-color: #f0f0f0;
   border-radius: 5px;
@@ -382,15 +382,15 @@ input[type="radio"] {
 
 .interests {
   display: flex;
-  flex-direction: column; /* 设置为列方向 */
-  align-items: center; /* 水平居中对齐 */
+  flex-direction: column; 
+  align-items: center; 
 }
 
 .interest-item-container {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  justify-content: center; /* 水平居中对齐 */
+  justify-content: center; 
 }
 
 .interest-item {
@@ -407,7 +407,6 @@ input[type="radio"] {
   color: white;
 }
 
-/* 添加新的 CSS 样式 */
 .data-item-content {
   position: relative;
 }
