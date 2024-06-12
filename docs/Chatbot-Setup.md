@@ -46,7 +46,7 @@ Expose your local server to the Internet using ngrok:
 
 # Execute ngrok
 ngrok authtoken [YOUR_AUTH_TOKEN]  # Authenticate your ngrok session
-ngrok http 8080  # Expose local port 8080 to the Internet
+ngrok http 8079  # Expose local port 8079 to the Internet
 ```
 
 Update the generated ngrok URL in LINE Developers Settings (e.g., https://xxxxxx.ngrok-free.app/linebot/callback) to update the webhook URL for real-time communication.

@@ -4,6 +4,7 @@ Welcome to our project! This document provides an overview and links to detailed
 
 ## Table of Contents
 
+0. [Building `ENV` file](docs/Building-env-file.md)
 1. [Installing Docker and Starting the Daemon](./docs/Installing-Docker-and-Starting-the-Daemon.md)
 2. [For Windows Developers](./docs/For-Windows-Developers.md)
 3. [Launching the API Service Locally](./docs/Launching-the-API-Service-Locally.md)

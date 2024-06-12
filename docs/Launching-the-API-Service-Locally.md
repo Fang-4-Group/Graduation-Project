@@ -11,6 +11,8 @@ docker-compose build
 
 # Deploying the service using Docker Compose
 docker-compose up -d
+# Deploying the service using Docker Compose with the Nvidia GPU settings
+docker-compose -f docker-compose.gpu.yml up -d
 
 # Accessing the container's shell
 docker exec -it graduation-project /bin/bash
