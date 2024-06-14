@@ -88,13 +88,30 @@ class PosgresqClient:
                     """,
                     preference_id,
                 )
-                place_list = [
-                    row["Preference_House_Place"] for row in data]
+                place_list = [row["Preference_House_Place"] for row in data]
                 return {"message": place_list}
             except Exception as e:
                 return {
                     "message": f"Error when selecting data: {str(e)}",
                 }
+
+    async def get_preference_id(self, people_id: int) -> dict:
+        async with self.access_db() as conn:
+            try:
+                data = await conn.fetch(
+                    """
+                    SELECT
+                        "Preference_ID"
+                    FROM
+                        "PREFERENCE"
+                    WHERE
+                        "People_ID" = $1;
+                    """,
+                    people_id,
+                )
+                return data[0]
+            except Exception as e:
+                return {"error": f"Error getting preferenceid: {str(e)}"}
 
     async def get_district_geocoding(self, city, district):
         async with self.access_db() as conn:
@@ -148,6 +165,29 @@ class PosgresqClient:
             except Exception as e:
                 return {"error": f"Error retrieving name: {str(e)}"}
 
+    async def get_pre_house_info(self, pre_house_place_lst: list) -> dict:
+        async with self.access_db() as conn:
+            try:
+                # 執行 SQL 查詢
+                data = []
+                for dis in pre_house_place_lst:
+                    sub_data = await conn.fetch(
+                        """
+                        SELECT *
+                        FROM "HOUSE"
+                        WHERE "District" = $1;
+                        """,
+                        dis,
+                    )
+                    data.extend(sub_data)
+                return {
+                    "data": data,
+                }
+            except Exception as e:
+                return {
+                    "message": f"Error when selecting pre_house: {str(e)}",
+                }
+
     async def get_sleep_time(self, people_id: int) -> dict:
         async with self.access_db() as conn:
             try:
@@ -155,7 +195,7 @@ class PosgresqClient:
                     """
                     SELECT "Sleep_Time" FROM "PEOPLE" WHERE "People_ID" = $1;
                     """,
-                    people_id
+                    people_id,
                 )
                 return {"sleep_time": data}
             except Exception as e:
@@ -184,7 +224,7 @@ class PosgresqClient:
                     SELECT "Smoke"
                     FROM "PEOPLE" WHERE "People_ID" = $1;
                     """,
-                    people_id
+                    people_id,
                 )
                 return {"smoke": data}
             except Exception as e:
@@ -198,7 +238,7 @@ class PosgresqClient:
                     """
                     SELECT "Clean" FROM "PEOPLE" WHERE "People_ID" = $1;
                     """,
-                    people_id
+                    people_id,
                 )
                 return {"clean_habit": data}
             except Exception as e:
@@ -211,7 +251,7 @@ class PosgresqClient:
                     """
                     SELECT "Mbti" FROM "PEOPLE" WHERE "People_ID" = $1;
                     """,
-                    people_id
+                    people_id,
                 )
                 return {"mbti": data}
             except Exception as e:
@@ -225,7 +265,7 @@ class PosgresqClient:
                     SELECT "Character" FROM "PEOPLE_CHARACTER"
                     WHERE "People_ID" = $1;
                     """,
-                    people_id
+                    people_id,
                 )
                 characters = [row["Character"] for row in data]
                 return {"characters": characters}
@@ -245,10 +285,11 @@ class PosgresqClient:
                     WHERE
                         "People_ID" = $1;
                     """,
-                    people_id
+                    people_id,
                 )
-                interests = [key for key,
-                             value in data[0].items() if value == 1]
+                interests = [
+                    key for key, value in data[0].items() if value == 1
+                ]  # noqa
                 return {"interests": interests}
             except Exception as e:
                 return {"error": f"Error retrieving interests: {str(e)}"}
@@ -260,7 +301,7 @@ class PosgresqClient:
                     """
                     SELECT "Size" FROM "HOUSE" WHERE "People_ID" = $1;
                     """,
-                    people_id
+                    people_id,
                 )
                 return {"size": data}
             except Exception as e:
@@ -273,7 +314,7 @@ class PosgresqClient:
                     """
                     SELECT "Fire" FROM "HOUSE" WHERE "People_ID" = $1;
                     """,
-                    people_id
+                    people_id,
                 )
                 return {"fire": data}
             except Exception as e:
@@ -287,7 +328,7 @@ class PosgresqClient:
                     SELECT "Negotiate_Price"
                     FROM "HOUSE" WHERE "People_ID" = $1;
                     """,
-                    people_id
+                    people_id,
                 )
                 return {"negotiate_price": data}
             except Exception as e:
@@ -339,7 +380,7 @@ class PosgresqClient:
                     """
                     SELECT "Floor" FROM "HOUSE" WHERE "People_ID" = $1;
                     """,
-                    people_id
+                    people_id,
                 )
                 return {"floor": data}
             except Exception as e:
@@ -352,7 +393,7 @@ class PosgresqClient:
                     """
                     SELECT "Type" FROM "HOUSE" WHERE "People_ID" = $1;
                     """,
-                    people_id
+                    people_id,
                 )
                 return {"type": data}
             except Exception as e:
@@ -369,7 +410,7 @@ class PosgresqClient:
                         WHERE "People_ID" = $1
                     );
                     """,
-                    people_id
+                    people_id,
                 )
                 furniture = [row["Furniture"] for row in data]
                 return {"furniture": furniture}
@@ -387,7 +428,7 @@ class PosgresqClient:
                         WHERE "People_ID" = $1
                     );
                     """,
-                    people_id
+                    people_id,
                 )
                 traffic = [row["Traffic"] for row in data]
                 return {"traffic": traffic}
@@ -395,7 +436,8 @@ class PosgresqClient:
                 return {"error": f"Error retrieving house traffic: {str(e)}"}
 
     async def update_sleep_time(
-            self, people_id: int, new_sleep_time: int) -> dict:
+        self, people_id: int, new_sleep_time: int
+    ) -> dict:  # noqa
         async with self.access_db() as conn:
             try:
                 await conn.execute(
@@ -403,14 +445,16 @@ class PosgresqClient:
                     UPDATE "PEOPLE" SET "Sleep_Time" = $1
                     WHERE "People_ID" = $2;
                     """,
-                    new_sleep_time, people_id
+                    new_sleep_time,
+                    people_id,
                 )
                 return {"message": "Sleep time updated successfully"}
             except Exception as e:
                 return {"error": f"Error updating sleep time: {str(e)}"}
 
     async def update_drink_or_smoke(
-            self, people_id: int, new_drink_or_smoke: int) -> dict:
+        self, people_id: int, new_drink_or_smoke: int
+    ) -> dict:
         async with self.access_db() as conn:
             try:
                 await conn.execute(
@@ -418,12 +462,14 @@ class PosgresqClient:
                     UPDATE "PEOPLE" SET "Drink_or_Smoke" = $1
                     WHERE "People_ID" = $2;
                     """,
-                    new_drink_or_smoke, people_id
+                    new_drink_or_smoke,
+                    people_id,
                 )
                 return {"message": "Drink or smoke habit updated successfully"}
             except Exception as e:
-                return {"error":
-                        f"Error updating drink or smoke habit: {str(e)}"}
+                return {
+                    "error": f"Error updating drink or smoke habit: {str(e)}",
+                }
 
     async def update_clean_habit(self, people_id: int, new_clean: int) -> dict:
         async with self.access_db() as conn:
@@ -432,7 +478,8 @@ class PosgresqClient:
                     """
                     UPDATE "PEOPLE" SET "Clean" = $1 WHERE "People_ID" = $2;
                     """,
-                    new_clean, people_id
+                    new_clean,
+                    people_id,
                 )
                 return {"message": "Clean habit updated successfully"}
             except Exception as e:
@@ -445,14 +492,16 @@ class PosgresqClient:
                     """
                     UPDATE "PEOPLE" SET "Mbti" = $1 WHERE "People_ID" = $2;
                     """,
-                    new_mbti, people_id
+                    new_mbti,
+                    people_id,
                 )
                 return {"message": "MBTI updated successfully"}
             except Exception as e:
                 return {"error": f"Error updating MBTI: {str(e)}"}
 
     async def add_preference_house_place(
-            self, preference_id: int, new_place: list) -> dict:
+        self, preference_id: int, new_place: list
+    ) -> dict:
         async with self.access_db() as conn:
             try:
                 for place in new_place:
@@ -462,15 +511,18 @@ class PosgresqClient:
                         ("Preference_ID", "Preference_House_Place")
                         VALUES ($1, $2);
                         """,
-                        preference_id, place
+                        preference_id,
+                        place,
                     )
                 return {"message": "Preference house place added successfully"}
             except Exception as e:
-                return {"error":
-                        f"Error adding preference house place: {str(e)}"}
+                return {
+                    "error": f"Error adding preference house place: {str(e)}",
+                }
 
     async def update_integer_field(
-            self, column_name: str, people_id: int, new_value: int) -> dict:
+        self, column_name: str, people_id: int, new_value: int
+    ) -> dict:
         async with self.access_db() as conn:
             try:
                 await conn.execute(
@@ -478,7 +530,8 @@ class PosgresqClient:
                     UPDATE "PEOPLE" SET "{column_name}" = $1
                     WHERE "People_ID" = $2;
                     """,
-                    new_value, people_id
+                    new_value,
+                    people_id,
                 )
                 return {"message": f"{column_name} updated successfully"}
             except Exception as e:

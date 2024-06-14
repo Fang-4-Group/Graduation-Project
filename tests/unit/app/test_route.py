@@ -289,3 +289,9 @@ def test_post_house_traffic_info():
     sample_data = {"House_ID": 6, "Traffic": ["捷運", "公車"]}
     response = client.post("/post_house_traffic_info/", json=sample_data)
     assert response.status_code == 200
+
+
+def test_get_pre_house():
+    people_id = 2
+    response = client.get(f"/get_pre_house/{people_id}")
+    assert response.status_code == 200

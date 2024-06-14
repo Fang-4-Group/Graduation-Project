@@ -190,7 +190,7 @@ class PosgresqlInitClient:
                     (1, 12.5, 0, 1, 'house1.jpg', '臺北市', '大安區', '新生南路', 2, '公寓'),
                     (3, 15.2, 1, 0, 'house2.jpg', '臺北市', '中山區', '松江路', 1, '華廈'),
                     (5, 10.0, 0, 1, 'house3.jpg', '新北市', '新店區', '北宜路', 3, '華廈'),
-                    (7, 18.3, 1, 0, 'house4.jpg', '新北市', '板橋區', '中山路', 2, '大樓'),
+                    (7, 18.3, 1, 0, 'house4.jpg', '新北市', '文山區', '木柵路', 2, '大樓'),
                     (9, 9.7, 0, 1, 'house5.jpg', '臺北市', '士林區', '中正路', 1, '公寓');
 
                     INSERT INTO "HOUSE_FURNITURE" ("House_ID", "Furniture")
@@ -227,6 +227,7 @@ class PosgresqlInitClient:
                     INSERT INTO "PREFERENCE_HOUSE_PLACE" ("Preference_ID", "Preference_House_Place")
                     VALUES
                     (1, '大安區'),
+                    (1, '文山區'),
                     (2, '大安區'),
                     (3, '中山區'),
                     (4, '新店區'),
