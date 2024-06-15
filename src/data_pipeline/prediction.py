@@ -17,13 +17,12 @@ class Prediction:
             pre_house_place["message"]
         )  # noqa
 
-        if len(pre_house_lst["data"]) < 3:
+        if len(pre_house_lst["data"]) == 0:
+            return {"data": "no house fit"}
+        else:
             random_int = np.random.randint(0, len(pre_house_lst["data"]))
             return_obj = pre_house_lst["data"][random_int]
-        else:
-            return_obj = {"message": "wait for rs"}
-            # ToDo: recommadation system
 
-        return {
-            "data": return_obj,
-        }
+            return {
+                "data": return_obj,
+            }
