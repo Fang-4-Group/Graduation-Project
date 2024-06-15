@@ -1,10 +1,10 @@
 import os
 from datetime import datetime
 
+import models
 from linebot import LineBotApi
 
 import database
-import models
 
 line_bot_api = LineBotApi(os.getenv("CHANNEL_ACCESS_TOKEN"))
 
@@ -24,10 +24,11 @@ async def group_chat(event):
             UserName=user_name,
             MsgText=message["text"],
             Time=datetime.now(),
+            checked=False,
         )
 
         try:
-            await database.add_message_to_group(group_id, msg_detail)
+            database.add_message_to_group(group_id, msg_detail)
             print(f"Insert message to {group_id} successfully.")
         except Exception as e:
             print(f"Exception: {e}")

@@ -6,9 +6,9 @@ from dotenv import load_dotenv
 from fastapi import APIRouter, FastAPI, Request
 from fastapi.responses import JSONResponse
 from linebot import LineBotApi
-from linebot.exceptions import InvalidSignatureError, LineBotApiError
+from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage
-from linebot.v3.webhook import WebhookHandler
+from linebot.webhook import WebhookHandler
 
 import services
 
@@ -51,7 +51,7 @@ async def line_webhook(request: Request):
                 await services.output_group_msg(group_id)
             elif (
                 event["source"]["type"] == "user"
-                and event["message"]["type"] == "text"  # noqa  # noqa
+                and event["message"]["type"] == "text"  # noqa
             ):
                 await services.user_chat(event)
             else:
@@ -60,26 +60,6 @@ async def line_webhook(request: Request):
             return JSONResponse(status_code=200, content={"message": "OK"})
         else:
             print(f"Unhandled event type: {event_type}")
-
-
-@router.post("/webhook")
-async def webhook(request: Request):
-    req_data = await request.json()
-    payload = req_data["originalDetectIntentRequest"]["payload"]
-    user_id = payload["data"]["source"]["userId"]
-    print(f"User ID: {user_id}")
-    try:
-        profile = services.line_bot_api.get_profile(user_id)
-        print(f"Profile: {profile}")
-    except LineBotApiError as error:
-        print(f"Error: {error}")
-
-    dialog_res = req_data["queryResult"]["fulfillmentText"]
-    response_data = {
-        "fulfillmentText": f"{dialog_res} ( 我有經過 FastAPI Server )",
-        "source": "webhookdata",
-    }
-    return JSONResponse(content=response_data, status_code=200)
 
 
 @handler.add(MessageEvent, message=TextMessage)
