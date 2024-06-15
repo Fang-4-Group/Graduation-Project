@@ -114,6 +114,13 @@ def test_item_embedding():
     assert response.json()  # assure that there are content in response
 
 
+def test_get_name():
+    people_id = 1
+    response = client.get(f"/get_name/{people_id}")
+    assert response.status_code == 200
+    assert response.json()  # 確保回應有內容
+
+
 def test_get_sleep_time():
     people_id = 1
     response = client.get(f"/get_sleep_time/{people_id}")
@@ -121,9 +128,16 @@ def test_get_sleep_time():
     assert response.json()  # 確保回應有內容
 
 
-def test_get_drink_or_smoke():
+def test_get_drink():
     people_id = 1
-    response = client.get(f"/get_drink_or_smoke/{people_id}")
+    response = client.get(f"/get_drink/{people_id}")
+    assert response.status_code == 200
+    assert response.json()  # 確保回應有內容
+
+
+def test_get_smoke():
+    people_id = 1
+    response = client.get(f"/get_smoke/{people_id}")
     assert response.status_code == 200
     assert response.json()  # 確保回應有內容
 
@@ -173,6 +187,27 @@ def test_get_fire():
 def test_get_negotiate():
     people_id = 1
     response = client.get(f"/get_negotiate/{people_id}")
+    assert response.status_code == 200
+    assert response.json()  # 確保回應有內容
+
+
+def test_get_city():
+    people_id = 1
+    response = client.get(f"/get_city/{people_id}")
+    assert response.status_code == 200
+    assert response.json()  # 確保回應有內容
+
+
+def test_get_district():
+    people_id = 1
+    response = client.get(f"/get_district/{people_id}")
+    assert response.status_code == 200
+    assert response.json()  # 確保回應有內容
+
+
+def test_get_street():
+    people_id = 1
+    response = client.get(f"/get_street/{people_id}")
     assert response.status_code == 200
     assert response.json()  # 確保回應有內容
 

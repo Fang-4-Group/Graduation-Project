@@ -14,7 +14,7 @@
         <div class="data-item">
           <div class="data-item-content">
             <label>姓名：</label>
-            <span class="data-value">{{ username }}</span>
+            <span class="data-value">{{ name }}</span>
           </div>
           <div class="data-item-content">
             <label>信箱：</label>
@@ -33,8 +33,12 @@
           <span class="data-value">{{ sleepTime }}</span>
         </div>
         <div class="data-item-content">
-          <label>菸酒程度：</label>
-          <span class="data-value">{{ drink_or_smoke }}</span>
+          <label>飲酒程度：</label>
+          <span class="data-value">{{ drink }}</span>
+        </div>
+        <div class="data-item-content">
+          <label>抽菸程度：</label>
+          <span class="data-value">{{ smoke }}</span>
         </div>
         <div class="data-item-content">
           <label>愛乾淨程度：</label>
@@ -66,11 +70,16 @@
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import router from '../router'; 
+import { useRoute } from 'vue-router';
 
-const username = ref("使用者")
-const useremail = ref("1234@gmail.com")
+const route = useRoute();
+const People_ID = route.query.People_ID;
 
-const drink_or_smoke = ref(0);
+const name = ref()
+const useremail = ref("kevin@gmail.com")
+
+const drink = ref(0);
+const smoke = ref(0);
 const clean_habit = ref(0);
 const sleepTime = ref(0);
 const characters = ref([]);
@@ -83,28 +92,36 @@ const BASE_URL = 'http://localhost:7877';
 
 onMounted(async () => {
   try {
-    const sleep_Response = await axios.get(`${BASE_URL}/get_sleep_time/1`); 
+
+    const name_Response = await axios.get(`${BASE_URL}/get_name/${People_ID}`); 
+    name.value = name_Response.data.name;
+    console.log("Name data fetched:", name_Response.data);
+
+    const sleep_Response = await axios.get(`${BASE_URL}/get_sleep_time/${People_ID}`); 
     sleepTime.value = sleep_Response.data.sleep_time;
 
-    const drink_or_smoke_Response = await axios.get(`${BASE_URL}/get_drink_or_smoke/1`); 
-    drink_or_smoke.value = drink_or_smoke_Response.data.drink_or_smoke;
+    const drink_Response = await axios.get(`${BASE_URL}/get_drink/${People_ID}`); 
+    drink.value = drink_Response.data.drink;
 
-    const clean_habit_Response = await axios.get(`${BASE_URL}/get_clean_habit/1`); 
+    const smoke_Response = await axios.get(`${BASE_URL}/get_smoke/${People_ID}`); 
+    smoke.value = smoke_Response.data.smoke;
+
+    const clean_habit_Response = await axios.get(`${BASE_URL}/get_clean_habit/${People_ID}`); 
     clean_habit.value = clean_habit_Response.data.clean_habit;
 
-    const characters_Response = await axios.get(`${BASE_URL}/get_characters/1`); 
+    const characters_Response = await axios.get(`${BASE_URL}/get_characters/${People_ID}`); 
     characters.value = characters_Response.data.characters;
 
-    const interests_Response = await axios.get(`${BASE_URL}/get_interests/1`); 
+    const interests_Response = await axios.get(`${BASE_URL}/get_interests/${People_ID}`); 
     interests.value = interests_Response.data.interests;
 
-    const mbti_Response = await axios.get(`${BASE_URL}/get_mbti/1`); 
+    const mbti_Response = await axios.get(`${BASE_URL}/get_mbti/${People_ID}`); 
     mbti.value = mbti_Response.data.mbti;
 
-    const preference_furniture_Response = await axios.get(`${BASE_URL}/get_preference_furniture/1`); 
+    const preference_furniture_Response = await axios.get(`${BASE_URL}/get_preference_furniture/${People_ID}`); 
     preference_furniture.value = preference_furniture_Response.data.message;  
 
-    const preference_house_place_Response = await axios.get(`${BASE_URL}/get_preference_house_place/1`); 
+    const preference_house_place_Response = await axios.get(`${BASE_URL}/get_preference_house_place/${People_ID}`); 
     preference_house_place.value = preference_house_place_Response.data.message; 
 
   } catch (error) {
@@ -190,7 +207,7 @@ function goToPage(path) {
 
 .header-image {
   width: 100%;
-  max-width: 200px; /* Adjust max-width as needed */
+  max-width: 200px; 
 }
 
 .add-button {

@@ -13,7 +13,7 @@
         <div class="data-item">
           <div class="data-item-content">
             <label>姓名：</label>
-            <span class="data-value">{{ username }}</span>
+            <span class="data-value">{{ name }}</span>
           </div>
           <div class="data-item-content">
             <label>信箱：</label>
@@ -32,8 +32,12 @@
           <span class="data-value">{{ sleepTime }}</span>
         </div>
         <div class="data-item-content">
-          <label>菸酒程度：</label>
-          <span class="data-value">{{ drink_or_smoke }}</span>
+          <label>飲酒程度：</label>
+          <span class="data-value">{{ drink }}</span>
+        </div>
+        <div class="data-item-content">
+          <label>抽菸程度：</label>
+          <span class="data-value">{{ smoke }}</span>
         </div>
         <div class="data-item-content">
           <label>愛乾淨程度：</label>
@@ -60,20 +64,22 @@
         </ul>
       </div>
   
-        <!-- 房屋資本資料 -->
+        <!-- House Basic Info -->
         <div class="section-boxed">
           <h3>房屋資本資料<button class="add-button" @click="goToPage('/edithousebasic')">新增</button></h3>
           <ul class="house-list">
             <li>房屋大小：{{ size }}</li>
             <li>是否可開火：{{ fire }}</li>
             <li>是否可議價：{{ canNegotiate }}</li>
-            <li>地址：{{ address }}</li>
+            <li>城市：{{ city }}</li>
+            <li>行政區：{{ district }}</li>
+            <li>路名：{{ street }}</li>
             <li>樓層：{{ floor }}</li>
             <li>房屋類別：{{ houseType }}</li>
           </ul>
         </div>
   
-        <!-- 房屋家具 -->
+        <!-- House Furniture -->
         <div class="section-boxed">
           <h3>房屋家具<button class="add-button" @click="goToPage('/edithousefur')">新增</button></h3>
           <ul class="furniture-list">
@@ -81,7 +87,7 @@
           </ul>
         </div>
   
-        <!-- 房屋交通 -->
+        <!-- House Traffic-->
         <div class="section-boxed">
           <h3>房屋交通<button class="add-button" @click="goToPage('/edithousetraf')">新增</button></h3>
           <ul class="traffic-list">
@@ -95,11 +101,17 @@
   import { ref,onMounted } from 'vue';
   import axios from 'axios';
   import router from '../router'; 
+  import { useRoute } from 'vue-router';
 
-  const username = ref("老王")
-  const useremail = ref("1234@gmail.com")
+  const route = useRoute();
+  const People_ID = route.query.People_ID;
 
-  const drink_or_smoke = ref(0);
+
+  const name = ref("")
+  const useremail = ref("jony12@gmail.com")
+
+  const drink = ref(0);
+  const smoke = ref(0);
   const clean_habit = ref(0);
   const sleepTime = ref(0);
   const characters = ref([]);
@@ -108,7 +120,9 @@
   const size = ref(0);
   const fire = ref('');
   const canNegotiate = ref('');
-  const address = ref("暫時先寫台北市文山區木柵路123巷");
+  const city = ref("");
+  const district = ref("");
+  const street = ref("");
   const floor = ref(0);
   const houseType = ref();
   const houseFurniture = ref([]);
@@ -118,49 +132,65 @@
   
   onMounted(async () => {
     try {
-      const sleep_Response = await axios.get(`${BASE_URL}/get_sleep_time/3`); 
+      const name_Response = await axios.get(`${BASE_URL}/get_name/${People_ID}`); 
+      name.value = name_Response.data.name;
+      console.log("Name data fetched:", name_Response.data);
+
+      const sleep_Response = await axios.get(`${BASE_URL}/get_sleep_time/${People_ID}`); 
       sleepTime.value = sleep_Response.data.sleep_time;
 
-      const drink_or_smoke_Response = await axios.get(`${BASE_URL}/get_drink_or_smoke/3`); 
-      drink_or_smoke.value = drink_or_smoke_Response.data.drink_or_smoke;
+      const drink_Response = await axios.get(`${BASE_URL}/get_drink/${People_ID}`); 
+      drink.value = drink_Response.data.drink;
 
-      const clean_habit_Response = await axios.get(`${BASE_URL}/get_clean_habit/3`); 
+      const smoke_Response = await axios.get(`${BASE_URL}/get_smoke/${People_ID}`); 
+      smoke.value = smoke_Response.data.smoke;
+
+      const clean_habit_Response = await axios.get(`${BASE_URL}/get_clean_habit/${People_ID}`); 
       clean_habit.value = clean_habit_Response.data.clean_habit;
 
-      const characters_Response = await axios.get(`${BASE_URL}/get_characters/3`); 
+      const characters_Response = await axios.get(`${BASE_URL}/get_characters/${People_ID}`); 
       characters.value = characters_Response.data.characters;
 
-      const interests_Response = await axios.get(`${BASE_URL}/get_interests/3`); 
+      const interests_Response = await axios.get(`${BASE_URL}/get_interests/${People_ID}`); 
       interests.value = interests_Response.data.interests;
 
-      const mbti_Response = await axios.get(`${BASE_URL}/get_mbti/3`); 
+      const mbti_Response = await axios.get(`${BASE_URL}/get_mbti/${People_ID}`); 
       mbti.value = mbti_Response.data.mbti;
 
-      const size_Response = await axios.get(`${BASE_URL}/get_size/3`); 
+      const size_Response = await axios.get(`${BASE_URL}/get_size/${People_ID}`); 
       size.value = size_Response.data.size;
 
-      const fire_Response = await axios.get(`${BASE_URL}/get_fire/3`); 
+      const fire_Response = await axios.get(`${BASE_URL}/get_fire/${People_ID}`); 
       if (fire_Response.data.fire == 1)
         fire.value='是'
       else
         fire.value='否'
 
-      const canNegotiate_Response = await axios.get(`${BASE_URL}/get_negotiate/3`); 
+      const canNegotiate_Response = await axios.get(`${BASE_URL}/get_negotiate/${People_ID}`); 
       if (canNegotiate_Response.data.negotiate_price.fire == 1)
         canNegotiate.value='是'
       else
         canNegotiate.value='否'
       
-      const floor_Response = await axios.get(`${BASE_URL}/get_floor/3`);
+      const city_Response = await axios.get(`${BASE_URL}/get_city/${People_ID}`);
+      city.value = city_Response.data.city;
+
+      const district_Response = await axios.get(`${BASE_URL}/get_district/${People_ID}`);
+      district.value = district_Response.data.district;
+
+      const street_Response = await axios.get(`${BASE_URL}/get_street/${People_ID}`);
+      street.value = street_Response.data.street;
+
+      const floor_Response = await axios.get(`${BASE_URL}/get_floor/${People_ID}`);
       floor.value = floor_Response.data.floor;
 
-      const houseType_Response = await axios.get(`${BASE_URL}/get_house_type/3`); 
+      const houseType_Response = await axios.get(`${BASE_URL}/get_house_type/${People_ID}`); 
       houseType.value = houseType_Response.data.type;
 
-      const houseFurniture_Response = await axios.get(`${BASE_URL}/get_house_furniture/3`); 
+      const houseFurniture_Response = await axios.get(`${BASE_URL}/get_house_furniture/${People_ID}`); 
       houseFurniture.value = houseFurniture_Response.data.furniture; 
 
-      const houseTraffic_Response = await axios.get(`${BASE_URL}/get_house_traffic/3`); 
+      const houseTraffic_Response = await axios.get(`${BASE_URL}/get_house_traffic/${People_ID}`); 
       houseTraffic.value = houseTraffic_Response.data.traffic; 
 
     } catch (error) {

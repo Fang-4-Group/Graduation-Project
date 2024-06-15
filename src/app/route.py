@@ -247,6 +247,13 @@ async def item_embedding():
     return result
 
 
+@router.get("/get_name/{people_id}")
+async def get_name(people_id: int):
+    client = PosgresqClient()
+    result = await client.get_name(people_id)
+    return result
+
+
 @router.get("/get_sleep_time/{people_id}")
 async def get_sleep_time(people_id: int):
     client = PosgresqClient()
@@ -254,10 +261,17 @@ async def get_sleep_time(people_id: int):
     return result
 
 
-@router.get("/get_drink_or_smoke/{people_id}")
-async def get_drink_or_smoke(people_id: int):
+@router.get("/get_drink/{people_id}")
+async def get_drink(people_id: int):
     client = PosgresqClient()
-    result = await client.get_drink_or_smoke(people_id)
+    result = await client.get_drink(people_id)
+    return result
+
+
+@router.get("/get_smoke/{people_id}")
+async def get_smoke(people_id: int):
+    client = PosgresqClient()
+    result = await client.get_smoke(people_id)
     return result
 
 
@@ -307,6 +321,27 @@ async def get_fire(people_id: int):
 async def get_negotiate(people_id: int):
     client = PosgresqClient()
     result = await client.get_negotiate(people_id)
+    return result
+
+
+@router.get("/get_city/{people_id}")
+async def get_city(people_id: int):
+    client = PosgresqClient()
+    result = await client.get_city(people_id)
+    return result
+
+
+@router.get("/get_district/{people_id}")
+async def get_district(people_id: int):
+    client = PosgresqClient()
+    result = await client.get_district(people_id)
+    return result
+
+
+@router.get("/get_street/{people_id}")
+async def get_street(people_id: int):
+    client = PosgresqClient()
+    result = await client.get_street(people_id)
     return result
 
 
