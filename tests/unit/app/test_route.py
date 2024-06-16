@@ -291,7 +291,7 @@ def test_post_house_traffic_info():
     assert response.status_code == 200
 
 
-def test_get_pre_house():
+def test_get_pref_house():
     people_id = 2
-    response = client.get(f"/get_pre_house/{people_id}")
+    response = client.get(f"/get_pref_house_lst/{people_id}")
     assert response.status_code == 200

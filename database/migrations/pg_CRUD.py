@@ -33,20 +33,25 @@ class PosgresqClient:
             if conn:
                 await conn.close()
 
-    async def get_young_info(self) -> dict:
+    async def get_young_info(self, amount: int = None) -> dict:
         async with self.access_db() as conn:
             try:
-                data = await conn.fetch(
+                query = """
+                        SELECT
+                            *
+                        FROM
+                            "PEOPLE" AS PEO
+                            JOIN "PREFERENCE" AS PRE ON PEO."People_ID" = PRE."People_ID"
+                        WHERE
+                            PEO."Role" = 0
+                        """  # noqa
+                if amount is not None:
+                    query += f"""
+                    ORDER BY RANDOM()
+                    LIMIT {amount}
                     """
-                    SELECT
-                        *
-                    FROM
-                        "PEOPLE" AS PEO
-                        JOIN "PREFERENCE" AS PRE ON PEO."People_ID" = PRE."People_ID"
-                    WHERE
-                        PEO."Role" = 0;
-                    """  # noqa
-                )
+
+                data = await conn.fetch(query)
                 return {"message": data}
             except Exception as e:
                 return {
@@ -94,6 +99,24 @@ class PosgresqClient:
                 return {
                     "message": f"Error when selecting data: {str(e)}",
                 }
+
+    async def get_role(self, people_id: int) -> dict:
+        async with self.access_db() as conn:
+            try:
+                data = await conn.fetch(
+                    """
+                    SELECT
+                        "Role"
+                    FROM
+                        "PEOPLE"
+                    WHERE
+                        "People_ID" = $1;
+                    """,
+                    people_id,
+                )
+                return data[0]
+            except Exception as e:
+                return {"error": f"Error getting role: {str(e)}"}
 
     async def get_preference_id(self, people_id: int) -> dict:
         async with self.access_db() as conn:
@@ -165,7 +188,7 @@ class PosgresqClient:
             except Exception as e:
                 return {"error": f"Error retrieving name: {str(e)}"}
 
-    async def get_pre_house_info(self, pre_house_place_lst: list) -> dict:
+    async def get_preferred_houses(self, pre_house_place_lst: list) -> dict:
         async with self.access_db() as conn:
             try:
                 # 執行 SQL 查詢

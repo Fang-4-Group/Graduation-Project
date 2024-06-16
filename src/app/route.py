@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, HTTPException, Query, Request
 from fastapi.responses import FileResponse, HTMLResponse
 from jinja2 import Environment, FileSystemLoader, TemplateNotFound
 from starlette.responses import RedirectResponse
@@ -127,9 +127,11 @@ async def mongodb_init():
 
 
 @router.get("/get_young_info/")
-async def get_young_info():
+async def get_young_info(
+    amount: int = Query(None, description="指定要獲取的人員數量")
+):  # noqa
     client = PosgresqClient()
-    result = await client.get_young_info()
+    result = await client.get_young_info(amount=amount)
     return result
 
 
@@ -380,8 +382,8 @@ async def get_house_traffic(people_id: int):
 # Prediction
 
 
-@router.get("/get_pre_house/{people_id}")
-async def get_pre_house(people_id: int):
+@router.get("/get_pref_house_lst/{people_id}")
+async def get_pref_house_lst(people_id: int):
     client = Prediction()
-    result = await client.get_pre_house_lst(people_id)
+    result = await client.get_pref_house_lst(people_id)
     return result
