@@ -14,14 +14,6 @@ Set up the environment variables for PostgreSQL:
 - `POSTGRES_HOST`: The hostname of the PostgreSQL container.
 - `POSTGRES_PORT`: The port on which PostgreSQL listens.
 
-Example:
-```env
-POSTGRES_USER="riceball"
-POSTGRES_PASSWORD="gp12345"
-POSTGRES_DB="postgres"
-POSTGRES_HOST="postgres_db"
-POSTGRES_PORT="5432"
-```
 
 ### 2. pgAdmin Configuration
 
@@ -30,11 +22,6 @@ Configure pgAdmin with the following variables:
 - `PGADMIN_DEFAULT_EMAIL`: The default email address for pgAdmin login.
 - `PGADMIN_DEFAULT_PASSWORD`: The password for the pgAdmin account.
 
-Example:
-```env
-PGADMIN_DEFAULT_EMAIL="riceball@gmail.com"
-PGADMIN_DEFAULT_PASSWORD="gp12345"
-```
 
 ### 3. MongoDB Configuration
 
@@ -44,14 +31,6 @@ Define the MongoDB settings:
 - `MONGO_PORT`: The port on which MongoDB listens.
 - `MONGO_DB`: The default database to connect to.
 - `MONGO_COLLECTION`: The default collection to use.
-
-Example:
-```env
-MONGO_HOST="mongodb"
-MONGO_PORT="27017"
-MONGO_DB="test_db"
-MONGO_COLLECTION="test_collection"
-```
 
 ### 4. Docker Platform Configuration
 
@@ -76,12 +55,6 @@ Configure LINE Bot settings:
 - `CHANNEL_SECRET`: The channel secret for your LINE Bot.
 - `CHANNEL_ACCESS_TOKEN`: The channel access token for your LINE Bot.
 
-Example:
-```env
-CHANNEL_SECRET=""
-CHANNEL_ACCESS_TOKEN=""
-```
-
 ### 6. MongoDB URI Configuration
 
 Set up the MongoDB URI and database name for a different service:
@@ -90,13 +63,6 @@ Set up the MongoDB URI and database name for a different service:
 - `MONGO_DB_NAME`: The database name for your project.
 - `MONGO_COLLECTION`: The collection name for storing chat records.
 
-Example:
-```env
-MONGO_URI=mongodb://mongodb:27017
-MONGO_DB_NAME=Graduation-Project
-MONGO_COLLECTION=group-chat-record
-```
-
 ### 7. Google OIDC Login Settings
 
 Configure Google OIDC login settings:
@@ -104,13 +70,6 @@ Configure Google OIDC login settings:
 - `GOOGLE_CLIENT_ID`: The client ID for Google OIDC.
 - `GOOGLE_CLIENT_SECRET`: The client secret for Google OIDC.
 - `GOOGLE_REDIRECT_URI`: The redirect URI for Google OIDC authentication.
-
-Example:
-```env
-GOOGLE_CLIENT_ID=""
-GOOGLE_CLIENT_SECRET=""
-GOOGLE_REDIRECT_URI="https://fang5-group.tw/google-oidc/auth"
-```
 
 ### 8. GPU Configuration
 
