@@ -32,32 +32,30 @@ async def line_webhook(request: Request):
     except InvalidSignatureError:
         return JSONResponse(
             status_code=400, content={"message": "Invalid signature"}  # noqa
-        )  # noqa
+        )
 
     body = json.loads(body_str)
-    events = body["events"]
+    events = body.get("events")
 
     for event in events:
         event_type = event.get("type")
-        print(f"Processing event type: {event_type}")
-        if event_type == "message":
+        msg_type = event.get("message").get("type")
+        src_type = event.get("source").get("type")
 
-            if (
-                event["source"]["type"] == "group"
-                and event["message"]["type"] == "text"
-            ):
-                group_id = await services.group_chat(event)  # Use the function
+        print(f"Processing event type: {event_type}")
+
+        if event_type == "message" and msg_type == "text":
+
+            if src_type == "group":
+                group_id = await services.group_chat(event)
                 print("-" * 40)
                 await services.output_group_msg(group_id)
-            elif (
-                event["source"]["type"] == "user"
-                and event["message"]["type"] == "text"  # noqa
-            ):
+            elif src_type == "user":
                 await services.user_chat(event)
             else:
                 print("The message is not in form of text.")
 
-            return JSONResponse(status_code=200, content={"message": "OK"})
+            return JSONResponse(status_code=200)
         else:
             print(f"Unhandled event type: {event_type}")
 
