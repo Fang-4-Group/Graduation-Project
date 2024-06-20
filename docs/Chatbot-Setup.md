@@ -13,8 +13,6 @@ Before setting up the chatbot, complete the following prerequisites:
 Configure environment settings before running the chatbot service:
 
 ```powershell
-# Navigate to the chatbot directory
-cd .\src\chatbot
 
 # Copy the example.env, rename it to .env, and set the required environment variables:
 # These values are found in the LINE Developers Console.

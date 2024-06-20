@@ -85,7 +85,7 @@ def house_recommendation(event):
     user_message = event.message.text
 
     if user_message == "@推薦":
-        your_ip = "192.168.56.1"  # Replace it with your IP address
+        your_ip = os.getenv("HOUSE_RECOMMEND_API")
         user_id = 2
         url = f"http://{your_ip}:7877/get_pref_house_lst/{user_id}"
         try:
