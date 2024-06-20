@@ -4,7 +4,7 @@ from datetime import datetime
 from linebot import LineBotApi
 
 import database
-import models
+import src.chatbot.models as models
 
 line_bot_api = LineBotApi(os.getenv("CHANNEL_ACCESS_TOKEN"))
 

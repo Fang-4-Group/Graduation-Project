@@ -1,16 +1,18 @@
 import json
 import os
 
+import requests
 import uvicorn
 from dotenv import load_dotenv
 from fastapi import APIRouter, FastAPI, Request
 from fastapi.responses import JSONResponse
 from linebot import LineBotApi
-from linebot.exceptions import InvalidSignatureError, LineBotApiError
+from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage
-from linebot.v3.webhook import WebhookHandler
+from linebot.webhook import WebhookHandler
 
-import services
+from src.chatbot.message_templates import create_houses_carousel
+from src.chatbot.services import group_chat, output_group_msg, user_chat
 
 app = FastAPI()
 
@@ -32,7 +34,7 @@ async def line_webhook(request: Request):
     except InvalidSignatureError:
         return JSONResponse(
             status_code=400, content={"message": "Invalid signature"}  # noqa
-        )  # noqa
+        )
 
     body = json.loads(body_str)
     events = body["events"]
@@ -46,47 +48,56 @@ async def line_webhook(request: Request):
                 event["source"]["type"] == "group"
                 and event["message"]["type"] == "text"
             ):
-                group_id = await services.group_chat(event)  # Use the function
+                group_id = await group_chat(event)
                 print("-" * 40)
-                await services.output_group_msg(group_id)
+                await output_group_msg(group_id)
             elif (
                 event["source"]["type"] == "user"
-                and event["message"]["type"] == "text"  # noqa  # noqa
+                and event["message"]["type"] == "text"  # noqa
             ):
-                await services.user_chat(event)
+                await user_chat(event)
             else:
                 print("The message is not in form of text.")
 
             return JSONResponse(status_code=200, content={"message": "OK"})
         else:
             print(f"Unhandled event type: {event_type}")
-
-
-@router.post("/webhook")
-async def webhook(request: Request):
-    req_data = await request.json()
-    payload = req_data["originalDetectIntentRequest"]["payload"]
-    user_id = payload["data"]["source"]["userId"]
-    print(f"User ID: {user_id}")
-    try:
-        profile = services.line_bot_api.get_profile(user_id)
-        print(f"Profile: {profile}")
-    except LineBotApiError as error:
-        print(f"Error: {error}")
-
-    dialog_res = req_data["queryResult"]["fulfillmentText"]
-    response_data = {
-        "fulfillmentText": f"{dialog_res} ( 我有經過 FastAPI Server )",
-        "source": "webhookdata",
-    }
-    return JSONResponse(content=response_data, status_code=200)
+    return JSONResponse(status_code=200, content={"message": "OK"})
 
 
 @handler.add(MessageEvent, message=TextMessage)
-def handle_message(event):
-    services.line_bot_api.reply_message(
-        event.reply_token, TextSendMessage(text=event.message.text)
-    )
+def handle_text_message(event):
+    body = json.loads("temp")
+    print(body)
+    if event.source.type == "group":
+        group_id = group_chat(event)
+        print("-" * 40)
+        output_group_msg(group_id)
+    elif event.source.type == "user":
+        user_chat(event)
+    else:
+        print("The message is not in form of text.")
+
+
+@handler.add(MessageEvent, message=TextMessage)
+def house_recommendation(event):
+    user_message = event.message.text
+
+    if user_message == "@推薦":
+        your_ip = os.getenv("HOUSE_RECOMMEND_API")
+        user_id = 2
+        url = f"http://{your_ip}:7877/get_pref_house_lst/{user_id}"
+        try:
+            response = requests.get(url)
+            data_list = response.json()
+            carousel_message = create_houses_carousel(data_list["data"])
+            line_bot_api.reply_message(event.reply_token, carousel_message)
+        except requests.HTTPError as http_err:
+            error_message = f"API Request Failed: {http_err}"
+            print(error_message)
+            line_bot_api.reply_message(
+                event.reply_token, TextSendMessage(text=error_message)
+            )
 
 
 app.include_router(router)
