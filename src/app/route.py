@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, HTTPException, Query, Request
 from fastapi.responses import FileResponse, HTMLResponse
 from jinja2 import Environment, FileSystemLoader, TemplateNotFound
 from starlette.responses import RedirectResponse
@@ -9,6 +9,7 @@ from database.migrations.posgresql_init import PosgresqlInitClient
 from database.seeds.mongo_api_for_testing import MongoDBClient
 from database.seeds.pg_api_for_testing import PosgresqTestClient
 from src.data_pipeline.item_embedding import ItemEmbedding
+from src.data_pipeline.prediction import Prediction
 from src.data_pipeline.user_embedding import UserEmbedding
 
 from ..services.google_oidc.oidc import OIDCService
@@ -126,9 +127,11 @@ async def mongodb_init():
 
 
 @router.get("/get_young_info/")
-async def get_young_info():
+async def get_young_info(
+    amount: int = Query(None, description="指定要獲取的人員數量")
+):  # noqa
     client = PosgresqClient()
-    result = await client.get_young_info()
+    result = await client.get_young_info(amount=amount)
     return result
 
 
@@ -372,4 +375,15 @@ async def get_house_traffic(people_id: int):
     result = await client.get_house_traffic(people_id)
     return result
 
+
 # ToDo: Complete  API (edit and insert) outlined in ticket [GP102]
+
+
+# Prediction
+
+
+@router.get("/get_pref_house_lst/{people_id}")
+async def get_pref_house_lst(people_id: int):
+    client = Prediction()
+    result = await client.get_pref_house_lst(people_id)
+    return result
