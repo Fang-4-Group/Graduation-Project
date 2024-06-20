@@ -36,34 +36,33 @@ async def line_webhook(request: Request):
             status_code=400, content={"message": "Invalid signature"}  # noqa
         )
 
+    body = json.loads(body_str)
+    events = body["events"]
+
+    for event in events:
+        event_type = event.get("type")
+        print(f"Processing event type: {event_type}")
+        if event_type == "message":
+
+            if (
+                event["source"]["type"] == "group"
+                and event["message"]["type"] == "text"
+            ):
+                group_id = await group_chat(event)
+                print("-" * 40)
+                await output_group_msg(group_id)
+            elif (
+                event["source"]["type"] == "user"
+                and event["message"]["type"] == "text"  # noqa
+            ):
+                await user_chat(event)
+            else:
+                print("The message is not in form of text.")
+
+            return JSONResponse(status_code=200, content={"message": "OK"})
+        else:
+            print(f"Unhandled event type: {event_type}")
     return JSONResponse(status_code=200, content={"message": "OK"})
-
-    # body = json.loads(body_str)
-    # events = body["events"]
-
-    # for event in events:
-    #     event_type = event.get("type")
-    #     print(f"Processing event type: {event_type}")
-    #     if event_type == "message":
-
-    #         if (
-    #             event["source"]["type"] == "group"
-    #             and event["message"]["type"] == "text"
-    #         ):
-    #             group_id = await group_chat(event)
-    #             print("-" * 40)
-    #             await output_group_msg(group_id)
-    #         elif (
-    #             event["source"]["type"] == "user"
-    #             and event["message"]["type"] == "text"  # noqa
-    #         ):
-    #             await user_chat(event)
-    #         else:
-    #             print("The message is not in form of text.")
-
-    #         return JSONResponse(status_code=200, content={"message": "OK"})
-    #     else:
-    #         print(f"Unhandled event type: {event_type}")
 
 
 @handler.add(MessageEvent, message=TextMessage)
