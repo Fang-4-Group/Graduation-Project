@@ -4,7 +4,8 @@
     
     <!-- Add Image Section -->
     <div class="header">
-      <img src="path_to_your_image.jpg" alt="Your Image" class="header-image">
+      <img :src="userinfo.picture" alt="Your Image" class="header-image">
+
     </div>
 
     <!-- User Info Section -->
@@ -14,11 +15,11 @@
         <div class="data-item">
           <div class="data-item-content">
             <label>姓名：</label>
-            <span class="data-value">{{ name }}</span>
+            <span class="data-value">{{ userinfo.name }}</span>
           </div>
           <div class="data-item-content">
             <label>信箱：</label>
-            <span class="data-value">{{ useremail }}</span>
+            <span class="data-value">{{ userinfo.email }}</span>
           </div>
         </div>
       </div>
@@ -74,9 +75,10 @@ import { useRoute } from 'vue-router';
 
 const route = useRoute();
 const People_ID = route.query.People_ID;
+const userinfo = route.query.userinfo;
 
 const name = ref()
-const useremail = ref("kevin@gmail.com")
+
 
 const drink = ref(0);
 const smoke = ref(0);

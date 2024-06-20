@@ -1,6 +1,11 @@
 <template>
   <div class="container">
     <h1>首次登錄</h1>
+    <div v-if="userinfo">
+      <p>Welcome, {{ userinfo.name }}!</p>
+      <p>Email: {{ userinfo.email }}</p>
+      <!-- 其他用户信息展示 -->
+    </div>
     <form @submit.prevent="submitForm">
       <div class="form-group">
         <label style="margin-right: 10px; font-weight: bold;">你是：</label>
@@ -147,8 +152,23 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref,onMounted } from 'vue';
 import axios from 'axios';
+
+const userinfo = ref(null);
+async function fetchUserInfo() {
+  try {
+    const response = await axios.get('http://localhost:7877/oidc/userinfo');
+    userinfo.value = response.data;
+    console.log("Get userinfo");
+  } catch (error) {
+    console.error('Error fetching userinfo:', error);
+  }
+}
+
+onMounted(() => {
+  fetchUserInfo();
+});
 
 const user_data = ref({
   Name: '',
@@ -249,9 +269,9 @@ async function submitForm() {
         Traffic: house_traffic_data.value.Traffic.map(t => t.name) 
       });
       console.log(trafficResponse.data);
-      router.push({ path: '/homeold', query: { People_ID } });
+      router.push({ path: '/homeold', query: { People_ID ,userinfo} });
     } else {
-      router.push({ path: '/homeyoung', query: { People_ID } });
+      router.push({ path: '/homeyoung', query: { People_ID,userinfo } });
     }
   } catch (error) {
     console.error('Error submitting form:', error);

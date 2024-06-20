@@ -10,7 +10,6 @@ from starlette.middleware.sessions import SessionMiddleware
 from fastapi.middleware.cors import CORSMiddleware
 
 
-
 # 引入 pg api router
 from .app.route import router
 

@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Query, Request
 from fastapi.responses import FileResponse, HTMLResponse
 from jinja2 import Environment, FileSystemLoader, TemplateNotFound
-from starlette.responses import RedirectResponse
+from starlette.responses import RedirectResponse,JSONResponse
 
 from database.migrations.mongodb_init import MongoDBInitClient
 from database.migrations.pg_CRUD import PosgresqClient
@@ -204,6 +204,38 @@ async def login(request: Request):
 
 @router.get("/google-oidc/auth")
 async def auth(request: Request):
+    state = request.session.get("state")
+    if not state:
+        raise HTTPException(
+            status_code=400, detail="State not found in session"
+        )  # noqa
+
+    authorization_response = str(request.url)
+
+    try:
+        oidc_service.fetch_token(authorization_response)
+        credentials = oidc_service.flow.credentials
+        request.session["access_token"] = credentials.token
+        userinfo = oidc_service.verify_id_token(credentials.id_token)
+        request.session["userinfo"] = userinfo
+        firstpage_url = "http://localhost:8081/"
+        return RedirectResponse(firstpage_url)
+    except ValueError as e:
+        return HTMLResponse(
+            content=f"Error: Invalid token: {e}", status_code=400
+        )  # noqa
+
+
+@router.get("/oidc/userinfo")
+async def get_userinfo(request: Request):
+    userinfo = request.session.get("userinfo")
+    if not userinfo:
+        raise HTTPException(status_code=404, detail="User info not found")
+    return JSONResponse(content=userinfo)
+
+
+@router.get("/google-oidc/auth/old")
+async def authold(request: Request):
     state = request.session.get("state")
     if not state:
         raise HTTPException(

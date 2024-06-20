@@ -1,250 +1,250 @@
 <template>
-    <div class="container">
-      <h1 class="user-info">用戶(老人)資訊</h1>
-       <!-- Add Image Section -->
-    <div class="header">
-      <img src="path_to_your_image.jpg" alt="Your Image" class="header-image">
-    </div>
+  <div class="container">
+    <h1 class="user-info">用戶(老人)資訊</h1>
+     <!-- Add Image Section -->
+  <div class="header">
+    <img :src="userinfo.picture" alt="Your Image" class="header-image">
 
-    <!-- User Info Section -->
-    <div class="section-boxed">
-      <h2>基本資料</h2>
-      <div class="user-info-details">
-        <div class="data-item">
-          <div class="data-item-content">
-            <label>姓名：</label>
-            <span class="data-value">{{ name }}</span>
-          </div>
-          <div class="data-item-content">
-            <label>信箱：</label>
-            <span class="data-value">{{ useremail }}</span>
-          </div>
-        </div>
-      </div>
-    </div>
+  </div>
 
-    <!-- Basic Info Section -->
-    <div class="section-boxed">
-      <h2>生活習慣 <button class="add-button" @click="goToPage('/editbasic')">新增</button></h2>
+  <!-- User Info Section -->
+  <div class="section-boxed">
+    <h2>基本資料</h2>
+    <div class="user-info-details">
       <div class="data-item">
         <div class="data-item-content">
-          <label>睡覺時間：</label>
-          <span class="data-value">{{ sleepTime }}</span>
+          <label>姓名：</label>
+          <span class="data-value">{{ userinfo.name }}</span>
         </div>
         <div class="data-item-content">
-          <label>飲酒程度：</label>
-          <span class="data-value">{{ drink }}</span>
-        </div>
-        <div class="data-item-content">
-          <label>抽菸程度：</label>
-          <span class="data-value">{{ smoke }}</span>
-        </div>
-        <div class="data-item-content">
-          <label>愛乾淨程度：</label>
-          <span class="data-value">{{ clean_habit }}</span>
+          <label>信箱：</label>
+          <span class="data-value">{{ userinfo.email }}</span>
         </div>
       </div>
     </div>
+  </div>
 
-  
-      <!-- Personality Traits Section -->
+  <!-- Basic Info Section -->
+  <div class="section-boxed">
+    <h2>生活習慣 <button class="add-button" @click="goToPage('/editbasic')">新增</button></h2>
+    <div class="data-item">
+      <div class="data-item-content">
+        <label>睡覺時間：</label>
+        <span class="data-value">{{ sleepTime }}</span>
+      </div>
+      <div class="data-item-content">
+        <label>飲酒程度：</label>
+        <span class="data-value">{{ drink }}</span>
+      </div>
+      <div class="data-item-content">
+        <label>抽菸程度：</label>
+        <span class="data-value">{{ smoke }}</span>
+      </div>
+      <div class="data-item-content">
+        <label>愛乾淨程度：</label>
+        <span class="data-value">{{ clean_habit }}</span>
+      </div>
+    </div>
+  </div>
+
+
+    <!-- Personality Traits Section -->
+    <div class="section-boxed">
+      <h2>個人特質 <button class="add-button" @click="goToPage('/editpersonality')">新增</button></h2>
+      <ul class="traits-list">
+        <li v-for="trait in characters" :key="trait">{{ trait }}</li>
+        <li>{{ mbti }}</li>
+      </ul>
+    </div>
+
+    <!-- Interests Section -->
+    <div class="section-boxed">
+      <h2>興趣 <button class="add-button" @click="goToPage('/editinterests')">新增</button></h2>
+      <ul class="interests-list">
+        <li v-for="interest in interests" :key="interest">{{ interest }}</li>
+      </ul>
+    </div>
+
+      <!-- House Basic Info -->
       <div class="section-boxed">
-        <h2>個人特質 <button class="add-button" @click="goToPage('/editpersonality')">新增</button></h2>
-        <ul class="traits-list">
-          <li v-for="trait in characters" :key="trait">{{ trait }}</li>
-          <li>{{ mbti }}</li>
+        <h3>房屋資本資料<button class="add-button" @click="goToPage('/edithousebasic')">新增</button></h3>
+        <ul class="house-list">
+          <li>房屋大小：{{ size }}</li>
+          <li>是否可開火：{{ fire }}</li>
+          <li>是否可議價：{{ canNegotiate }}</li>
+          <li>城市：{{ city }}</li>
+          <li>行政區：{{ district }}</li>
+          <li>路名：{{ street }}</li>
+          <li>樓層：{{ floor }}</li>
+          <li>房屋類別：{{ houseType }}</li>
         </ul>
       </div>
-  
-      <!-- Interests Section -->
+
+      <!-- House Furniture -->
       <div class="section-boxed">
-        <h2>興趣 <button class="add-button" @click="goToPage('/editinterests')">新增</button></h2>
-        <ul class="interests-list">
-          <li v-for="interest in interests" :key="interest">{{ interest }}</li>
+        <h3>房屋家具<button class="add-button" @click="goToPage('/edithousefur')">新增</button></h3>
+        <ul class="furniture-list">
+          <li v-for="(item, index) in houseFurniture" :key="index">{{ item }}</li>
         </ul>
       </div>
-  
-        <!-- House Basic Info -->
-        <div class="section-boxed">
-          <h3>房屋資本資料<button class="add-button" @click="goToPage('/edithousebasic')">新增</button></h3>
-          <ul class="house-list">
-            <li>房屋大小：{{ size }}</li>
-            <li>是否可開火：{{ fire }}</li>
-            <li>是否可議價：{{ canNegotiate }}</li>
-            <li>城市：{{ city }}</li>
-            <li>行政區：{{ district }}</li>
-            <li>路名：{{ street }}</li>
-            <li>樓層：{{ floor }}</li>
-            <li>房屋類別：{{ houseType }}</li>
-          </ul>
-        </div>
-  
-        <!-- House Furniture -->
-        <div class="section-boxed">
-          <h3>房屋家具<button class="add-button" @click="goToPage('/edithousefur')">新增</button></h3>
-          <ul class="furniture-list">
-            <li v-for="(item, index) in houseFurniture" :key="index">{{ item }}</li>
-          </ul>
-        </div>
-  
-        <!-- House Traffic-->
-        <div class="section-boxed">
-          <h3>房屋交通<button class="add-button" @click="goToPage('/edithousetraf')">新增</button></h3>
-          <ul class="traffic-list">
-            <li v-for="(item, index) in houseTraffic" :key="index">{{ item }}</li>
-          </ul>
-        </div>
+
+      <!-- House Traffic-->
+      <div class="section-boxed">
+        <h3>房屋交通<button class="add-button" @click="goToPage('/edithousetraf')">新增</button></h3>
+        <ul class="traffic-list">
+          <li v-for="(item, index) in houseTraffic" :key="index">{{ item }}</li>
+        </ul>
       </div>
-  </template>
-  
-  <script setup>
-  import { ref,onMounted } from 'vue';
-  import axios from 'axios';
-  import router from '../router'; 
-  import { useRoute } from 'vue-router';
+    </div>
+</template>
 
-  const route = useRoute();
-  const People_ID = route.query.People_ID;
+<script setup>
+import { ref,onMounted } from 'vue';
+import axios from 'axios';
+import router from '../router'; 
+import { useRoute } from 'vue-router';
+
+const route = useRoute();
+const People_ID = route.query.People_ID;
+const userinfo = route.query.userinfo;
+
+const name = ref("")
+
+const drink = ref(0);
+const smoke = ref(0);
+const clean_habit = ref(0);
+const sleepTime = ref(0);
+const characters = ref([]);
+const interests = ref([]);
+const mbti = ref();
+const size = ref(0);
+const fire = ref('');
+const canNegotiate = ref('');
+const city = ref("");
+const district = ref("");
+const street = ref("");
+const floor = ref(0);
+const houseType = ref();
+const houseFurniture = ref([]);
+const houseTraffic = ref([]);
+const BASE_URL = 'http://localhost:7877';
 
 
-  const name = ref("")
-  const useremail = ref("jony12@gmail.com")
+onMounted(async () => {
+  try {
+    const name_Response = await axios.get(`${BASE_URL}/get_name/${People_ID}`); 
+    name.value = name_Response.data.name;
+    console.log("Name data fetched:", name_Response.data);
 
-  const drink = ref(0);
-  const smoke = ref(0);
-  const clean_habit = ref(0);
-  const sleepTime = ref(0);
-  const characters = ref([]);
-  const interests = ref([]);
-  const mbti = ref();
-  const size = ref(0);
-  const fire = ref('');
-  const canNegotiate = ref('');
-  const city = ref("");
-  const district = ref("");
-  const street = ref("");
-  const floor = ref(0);
-  const houseType = ref();
-  const houseFurniture = ref([]);
-  const houseTraffic = ref([]);
-  const BASE_URL = 'http://localhost:7877';
-  
-  
-  onMounted(async () => {
-    try {
-      const name_Response = await axios.get(`${BASE_URL}/get_name/${People_ID}`); 
-      name.value = name_Response.data.name;
-      console.log("Name data fetched:", name_Response.data);
+    const sleep_Response = await axios.get(`${BASE_URL}/get_sleep_time/${People_ID}`); 
+    sleepTime.value = sleep_Response.data.sleep_time;
 
-      const sleep_Response = await axios.get(`${BASE_URL}/get_sleep_time/${People_ID}`); 
-      sleepTime.value = sleep_Response.data.sleep_time;
+    const drink_Response = await axios.get(`${BASE_URL}/get_drink/${People_ID}`); 
+    drink.value = drink_Response.data.drink;
 
-      const drink_Response = await axios.get(`${BASE_URL}/get_drink/${People_ID}`); 
-      drink.value = drink_Response.data.drink;
+    const smoke_Response = await axios.get(`${BASE_URL}/get_smoke/${People_ID}`); 
+    smoke.value = smoke_Response.data.smoke;
 
-      const smoke_Response = await axios.get(`${BASE_URL}/get_smoke/${People_ID}`); 
-      smoke.value = smoke_Response.data.smoke;
+    const clean_habit_Response = await axios.get(`${BASE_URL}/get_clean_habit/${People_ID}`); 
+    clean_habit.value = clean_habit_Response.data.clean_habit;
 
-      const clean_habit_Response = await axios.get(`${BASE_URL}/get_clean_habit/${People_ID}`); 
-      clean_habit.value = clean_habit_Response.data.clean_habit;
+    const characters_Response = await axios.get(`${BASE_URL}/get_characters/${People_ID}`); 
+    characters.value = characters_Response.data.characters;
 
-      const characters_Response = await axios.get(`${BASE_URL}/get_characters/${People_ID}`); 
-      characters.value = characters_Response.data.characters;
+    const interests_Response = await axios.get(`${BASE_URL}/get_interests/${People_ID}`); 
+    interests.value = interests_Response.data.interests;
 
-      const interests_Response = await axios.get(`${BASE_URL}/get_interests/${People_ID}`); 
-      interests.value = interests_Response.data.interests;
+    const mbti_Response = await axios.get(`${BASE_URL}/get_mbti/${People_ID}`); 
+    mbti.value = mbti_Response.data.mbti;
 
-      const mbti_Response = await axios.get(`${BASE_URL}/get_mbti/${People_ID}`); 
-      mbti.value = mbti_Response.data.mbti;
+    const size_Response = await axios.get(`${BASE_URL}/get_size/${People_ID}`); 
+    size.value = size_Response.data.size;
 
-      const size_Response = await axios.get(`${BASE_URL}/get_size/${People_ID}`); 
-      size.value = size_Response.data.size;
+    const fire_Response = await axios.get(`${BASE_URL}/get_fire/${People_ID}`); 
+    if (fire_Response.data.fire == 1)
+      fire.value='是'
+    else
+      fire.value='否'
 
-      const fire_Response = await axios.get(`${BASE_URL}/get_fire/${People_ID}`); 
-      if (fire_Response.data.fire == 1)
-        fire.value='是'
-      else
-        fire.value='否'
+    const canNegotiate_Response = await axios.get(`${BASE_URL}/get_negotiate/${People_ID}`); 
+    if (canNegotiate_Response.data.negotiate_price.fire == 1)
+      canNegotiate.value='是'
+    else
+      canNegotiate.value='否'
+    
+    const city_Response = await axios.get(`${BASE_URL}/get_city/${People_ID}`);
+    city.value = city_Response.data.city;
 
-      const canNegotiate_Response = await axios.get(`${BASE_URL}/get_negotiate/${People_ID}`); 
-      if (canNegotiate_Response.data.negotiate_price.fire == 1)
-        canNegotiate.value='是'
-      else
-        canNegotiate.value='否'
-      
-      const city_Response = await axios.get(`${BASE_URL}/get_city/${People_ID}`);
-      city.value = city_Response.data.city;
+    const district_Response = await axios.get(`${BASE_URL}/get_district/${People_ID}`);
+    district.value = district_Response.data.district;
 
-      const district_Response = await axios.get(`${BASE_URL}/get_district/${People_ID}`);
-      district.value = district_Response.data.district;
+    const street_Response = await axios.get(`${BASE_URL}/get_street/${People_ID}`);
+    street.value = street_Response.data.street;
 
-      const street_Response = await axios.get(`${BASE_URL}/get_street/${People_ID}`);
-      street.value = street_Response.data.street;
+    const floor_Response = await axios.get(`${BASE_URL}/get_floor/${People_ID}`);
+    floor.value = floor_Response.data.floor;
 
-      const floor_Response = await axios.get(`${BASE_URL}/get_floor/${People_ID}`);
-      floor.value = floor_Response.data.floor;
+    const houseType_Response = await axios.get(`${BASE_URL}/get_house_type/${People_ID}`); 
+    houseType.value = houseType_Response.data.type;
 
-      const houseType_Response = await axios.get(`${BASE_URL}/get_house_type/${People_ID}`); 
-      houseType.value = houseType_Response.data.type;
+    const houseFurniture_Response = await axios.get(`${BASE_URL}/get_house_furniture/${People_ID}`); 
+    houseFurniture.value = houseFurniture_Response.data.furniture; 
 
-      const houseFurniture_Response = await axios.get(`${BASE_URL}/get_house_furniture/${People_ID}`); 
-      houseFurniture.value = houseFurniture_Response.data.furniture; 
+    const houseTraffic_Response = await axios.get(`${BASE_URL}/get_house_traffic/${People_ID}`); 
+    houseTraffic.value = houseTraffic_Response.data.traffic; 
 
-      const houseTraffic_Response = await axios.get(`${BASE_URL}/get_house_traffic/${People_ID}`); 
-      houseTraffic.value = houseTraffic_Response.data.traffic; 
-
-    } catch (error) {
-      console.error('Error fetching user information:', error);
-    }
-  });
- 
-  
-  function goToPage(path) {
-    router.push({ path, query: { from: '/HomeOld' } });
+  } catch (error) {
+    console.error('Error fetching user information:', error);
   }
-  </script>
-  
-  <style scoped>
+});
+
+
+function goToPage(path) {
+  router.push({ path, query: { from: '/HomeOld' } });
+}
+</script>
+
+<style scoped>
 .container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
-  font-family: Arial, sans-serif;
+max-width: 800px;
+margin: 0 auto;
+padding: 20px;
+font-family: Arial, sans-serif;
 }
 
 .user-info {
-  display: flex;
-  justify-content: center; 
-  margin-bottom: 20px; 
+display: flex;
+justify-content: center; 
+margin-bottom: 20px; 
 }
 
 .section-boxed {
-  background-color: #f5f5f5; 
-  padding: 20px;
-  margin-bottom: 20px;
-  border-radius: 10px;
+background-color: #f5f5f5; 
+padding: 20px;
+margin-bottom: 20px;
+border-radius: 10px;
 }
 
 .data-item {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 10px;
+display: flex;
+flex-direction: column;
+margin-bottom: 10px;
 }
 
 .data-item-content {
-  text-align: center;
+text-align: center;
 }
 
 .data-item label {
-  font-weight: bold;
-  margin-right: 10px;
+font-weight: bold;
+margin-right: 10px;
 }
 
 .traits-list,
 .interests-list {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
+list-style-type: none;
+padding: 0;
+margin: 0;
 }
 
 .traits-list li,
@@ -252,45 +252,45 @@
 .furniture-list li,
 .traffic-list li,
 .house-list li{
-  margin-right: 10px;
-  margin-bottom: 5px;
-  padding: 5px 10px;
-  border-radius: 20px;
-  background-color: #c2d4dc; 
-  color: #333;
-  display: inline-block;
+margin-right: 10px;
+margin-bottom: 5px;
+padding: 5px 10px;
+border-radius: 20px;
+background-color: #c2d4dc; 
+color: #333;
+display: inline-block;
 }
 
 .data-value {
-  margin-right: 10px;
-  margin-bottom: 5px;
-  padding: 5px 10px;
-  border-radius: 20px;
-  background-color: #d9b9b0; 
-  color: #333;
-  display: inline-block;
+margin-right: 10px;
+margin-bottom: 5px;
+padding: 5px 10px;
+border-radius: 20px;
+background-color: #d9b9b0; 
+color: #333;
+display: inline-block;
 }
 
 .housing-info {
-  margin-top: 20px;
+margin-top: 20px;
 }
 
 .housing-info h3 {
-  margin-bottom: 10px;
+margin-bottom: 10px;
 }
 
 .header {
-  text-align: left;
-  margin-bottom: 20px;
+text-align: left;
+margin-bottom: 20px;
 }
 
 .header-image {
-  width: 100%;
-  max-width: 200px; /* Adjust max-width as needed */
+width: 100%;
+max-width: 200px; /* Adjust max-width as needed */
 }
 
 .add-button {
-  float: right;
-  margin-top: -10px;
+float: right;
+margin-top: -10px;
 }
 </style>
