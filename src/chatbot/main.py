@@ -36,32 +36,48 @@ async def line_webhook(request: Request):
             status_code=400, content={"message": "Invalid signature"}  # noqa
         )
 
-    body = json.loads(body_str)
-    events = body["events"]
+    return JSONResponse(status_code=200, content={"message": "OK"})
 
-    for event in events:
-        event_type = event.get("type")
-        print(f"Processing event type: {event_type}")
-        if event_type == "message":
+    # body = json.loads(body_str)
+    # events = body["events"]
 
-            if (
-                event["source"]["type"] == "group"
-                and event["message"]["type"] == "text"
-            ):
-                group_id = await group_chat(event)
-                print("-" * 40)
-                await output_group_msg(group_id)
-            elif (
-                event["source"]["type"] == "user"
-                and event["message"]["type"] == "text"  # noqa
-            ):
-                await user_chat(event)
-            else:
-                print("The message is not in form of text.")
+    # for event in events:
+    #     event_type = event.get("type")
+    #     print(f"Processing event type: {event_type}")
+    #     if event_type == "message":
 
-            return JSONResponse(status_code=200, content={"message": "OK"})
-        else:
-            print(f"Unhandled event type: {event_type}")
+    #         if (
+    #             event["source"]["type"] == "group"
+    #             and event["message"]["type"] == "text"
+    #         ):
+    #             group_id = await group_chat(event)
+    #             print("-" * 40)
+    #             await output_group_msg(group_id)
+    #         elif (
+    #             event["source"]["type"] == "user"
+    #             and event["message"]["type"] == "text"  # noqa
+    #         ):
+    #             await user_chat(event)
+    #         else:
+    #             print("The message is not in form of text.")
+
+    #         return JSONResponse(status_code=200, content={"message": "OK"})
+    #     else:
+    #         print(f"Unhandled event type: {event_type}")
+
+
+@handler.add(MessageEvent, message=TextMessage)
+def handle_text_message(event):
+    body = json.loads("temp")
+    print(body)
+    if event.source.type == "group":
+        group_id = group_chat(event)
+        print("-" * 40)
+        output_group_msg(group_id)
+    elif event.source.type == "user":
+        user_chat(event)
+    else:
+        print("The message is not in form of text.")
 
 
 @handler.add(MessageEvent, message=TextMessage)
