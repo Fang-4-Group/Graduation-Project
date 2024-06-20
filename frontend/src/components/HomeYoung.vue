@@ -4,7 +4,7 @@
     
     <!-- Add Image Section -->
     <div class="header">
-      <img src="path_to_your_image.jpg" alt="Your Image" class="header-image">
+      <img :src="require('@/assets/riceballaccount.png')" alt="Your Image" class="header-image">
     </div>
 
     <!-- User Info Section -->
@@ -76,7 +76,7 @@ const route = useRoute();
 const People_ID = route.query.People_ID;
 
 const name = ref()
-const useremail = ref("kevin@gmail.com")
+const useremail = ref("riceball110306@gmail.com")
 
 const drink = ref(0);
 const smoke = ref(0);
@@ -207,7 +207,7 @@ function goToPage(path) {
 
 .header-image {
   width: 100%;
-  max-width: 200px; 
+  max-width: 100px; 
 }
 
 .add-button {
