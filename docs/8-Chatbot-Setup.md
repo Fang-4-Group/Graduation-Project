@@ -19,7 +19,7 @@ Configure environment settings before running the chatbot service:
 CHANNEL_SECRET=[YOUR_CHANNEL_SECRET]
 CHANNEL_ACCESS_TOKEN=[YOUR_CHANNEL_ACCESS_TOKEN]
 
-HOUSE_RECOMMEND_API = [YOUR_IP]
+HOUSE_RECOMMEND_API = [YOUR_IP_ADDR]
 
 MONGO_URI=mongodb://mongodb:27017
 MONGO_DB_NAME=Graduation-Project
