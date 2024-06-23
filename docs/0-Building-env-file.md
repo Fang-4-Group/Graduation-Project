@@ -92,6 +92,12 @@ For no GPU:
 GPU_MODE=none
 GPU_RUNTIME=runc
 ```
+### 9. Model Configuration
+
+API url and port:
+```env
+API_URL="http://host.docker.internal:7877"
+```
 
 ## Example `.env` File
 
