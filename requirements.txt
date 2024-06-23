@@ -20,6 +20,5 @@ PyYAML==6.0.1
 requests
 scikit-learn
 services
-torch_geometric
 uvicorn
 uvicorn[standard]
