@@ -13,6 +13,8 @@ RUN rm -rf /var/lib/apt/lists/*
 # Set up Python environment
 COPY ./requirements.txt ./
 RUN pip install -r requirements.txt
+RUN pip install torch
+torch
 
 # Add the rest of the application
 ADD . ${WORKDIR}
