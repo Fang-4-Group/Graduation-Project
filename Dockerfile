@@ -11,8 +11,13 @@ RUN apt-get install -y wget unzip
 RUN rm -rf /var/lib/apt/lists/*
 
 # Set up Python environment
+# Copy and install base dependencies
 COPY ./requirements.txt ./
 RUN pip install -r requirements.txt
+
+# Copy and install extra dependencies
+COPY ./extra-requirements.txt ./
+RUN pip install -r extra-requirements.txt
 
 # Add the rest of the application
 ADD . ${WORKDIR}
