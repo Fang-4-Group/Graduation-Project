@@ -1,44 +1,43 @@
 import os
 from datetime import datetime
 
+import requests
 from linebot import LineBotApi
 
-import database
 import src.chatbot.models as models
+from src.chatbot.database import save_group_msg_to_db
+from src.chatbot.message_templates import create_houses_carousel
 
 line_bot_api = LineBotApi(os.getenv("CHANNEL_ACCESS_TOKEN"))
 
 
-async def group_chat(event):
-    message = event["message"]
+def save_group_msg(user_id, group_id, msg):
+    profile = line_bot_api.get_group_member_profile(group_id, user_id)
+    user_name = profile.display_name
 
-    if "groupId" in event["source"]:
-        group_id = event["source"]["groupId"]
-        user_id = event["source"]["userId"]
+    #  Contruct msg data structure
+    msg_detail = models.MsgDetail(
+        UserId=user_id, UserName=user_name, MsgText=msg, Time=datetime.now()
+    )
 
-        profile = line_bot_api.get_group_member_profile(group_id, user_id)
-        user_name = profile.display_name
-
-        msg_detail = models.MsgDetail(
-            UserId=user_id,
-            UserName=user_name,
-            MsgText=message["text"],
-            Time=datetime.now(),
-        )
-
-        try:
-            await database.add_message_to_group(group_id, msg_detail)
-            print(f"Insert message to {group_id} successfully.")
-        except Exception as e:
-            print(f"Exception: {e}")
-    return group_id
+    # Save msg to DB
+    try:
+        result = save_group_msg_to_db(group_id, msg_detail)
+    except Exception as e:
+        result = f"Exception: {e}"
+    return result
 
 
-async def user_chat(events):
-    pass
-
-
-async def output_group_msg(group_id):
-    messages = await database.select_all_group_msg(group_id)
-    for message in messages:
-        print("FROM MONGO DB:", message)
+def house_recommendation():
+    your_ip = os.getenv("HOUSE_RECOMMEND_API")
+    user_id = 2
+    url = f"http://{your_ip}:7877/get_pref_house_lst/{user_id}"
+    try:
+        response = requests.get(url)
+        data_list = response.json()
+        carousel_message = create_houses_carousel(data_list["data"])
+        result = carousel_message
+    except requests.HTTPError as http_err:
+        error_message = f"API Request Failed: {http_err}"
+        result = error_message
+    return result

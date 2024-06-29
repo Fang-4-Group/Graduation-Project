@@ -13,7 +13,6 @@ Before setting up the chatbot, complete the following prerequisites:
 Configure environment settings before running the chatbot service:
 
 ```powershell
-
 # Copy the example.env, rename it to .env, and set the required environment variables:
 # These values are found in the LINE Developers Console.
 CHANNEL_SECRET=[YOUR_CHANNEL_SECRET]
@@ -24,11 +23,7 @@ HOUSE_RECOMMEND_API = [YOUR_IP_ADDR]
 MONGO_URI=mongodb://mongodb:27017
 MONGO_DB_NAME=Graduation-Project
 MONGO_COLLECTION=group-chat-record
-
-# Depending on your operating system's architecture, choose the correct build (amd/arm).
 ```
-
-## Running the Chatbot
 
 Run the chatbot using the following command in the project root:
 
@@ -45,8 +40,6 @@ uvicorn src.chatbot.main:app --host 0.0.0.0 --port 8080 --reload
 Expose your local server to the Internet using ngrok:
 
 ```powershell
-
-
 # Execute ngrok
 ngrok authtoken [YOUR_AUTH_TOKEN]  # Authenticate your ngrok session
 ngrok http 8080  # Expose local port 8080 to the Internet
