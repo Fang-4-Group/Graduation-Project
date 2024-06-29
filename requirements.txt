@@ -1,3 +1,4 @@
+aiohttp
 asyncpg
 datasets
 fastapi[all]

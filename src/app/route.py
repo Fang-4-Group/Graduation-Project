@@ -9,6 +9,7 @@ from database.migrations.posgresql_init import PosgresqlInitClient
 from database.seeds.mongo_api_for_testing import MongoDBClient
 from database.seeds.pg_api_for_testing import PosgresqTestClient
 from src.data_pipeline.item_embedding import ItemEmbedding
+from src.data_pipeline.model import EmbeddingModel
 from src.data_pipeline.prediction import Prediction
 from src.data_pipeline.user_embedding import UserEmbedding
 
@@ -386,4 +387,12 @@ async def get_house_traffic(people_id: int):
 async def get_pref_house_lst(people_id: int):
     client = Prediction()
     result = await client.get_pref_house_lst(people_id)
+    return result
+
+
+# Model
+@router.get("/embeddingModel/{target}")
+async def embeddingModel(target: int):
+    model = EmbeddingModel(target)
+    result = await model.run()
     return result
