@@ -37,7 +37,7 @@ jobs:
         echo "MONGO_DB=${{ secrets.MONGO_DB }}" >> $GITHUB_ENV
         echo "MONGO_COLLECTION=${{ secrets.MONGO_COLLECTION }}" >> $GITHUB_ENV
         echo "DOCKER_PLATFORM=${{ secrets.DOCKER_PLATFORM }}" >> $GITHUB_ENV
-
+        echo "MONGO_DB_NAME: ${{ secrets.MONGO_DB_NAME }}" >> $GITHUB_ENV
     - name: Build and run with docker-compose
       run: |
         docker-compose up -d
