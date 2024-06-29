@@ -9,3 +9,4 @@ class MsgDetail(BaseModel):
     UserName: str
     MsgText: str
     Time: datetime
+    checked: bool = False
