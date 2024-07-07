@@ -11,11 +11,12 @@ load_dotenv()
 
 class MongoDBInitClient:
     def __init__(self):
-        self.host = os.getenv("MONGO_HOST", "localhost")
-        self.port = int(os.getenv("MONGO_PORT", 27017))
-        self.db_name = "sample"
-        self.collection_name = "sample_chat_record"
-        self.client = pymongo.MongoClient(host=self.host, port=self.port)
+        self.url = os.getenv("MONGO_URI")
+        self.db_name = os.getenv("MONGO_DB_NAME", "Graduation-Project")
+        self.collection_name = os.getenv(
+            "MONGO_DB_COLLECTION", "group-chat-record"
+        )  # noqa
+        self.client = pymongo.MongoClient(self.url)
         self.db = self.client[self.db_name]
         self.collection = self.db[self.collection_name]
 
