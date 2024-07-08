@@ -8,6 +8,7 @@ from database.migrations.pg_CRUD import PosgresqClient
 from database.migrations.posgresql_init import PosgresqlInitClient
 from database.seeds.mongo_api_for_testing import MongoDBClient
 from database.seeds.pg_api_for_testing import PosgresqTestClient
+from src.chatbot.database import get_group_chat_records_by_id
 from src.data_pipeline.item_embedding import ItemEmbedding
 from src.data_pipeline.prediction import Prediction
 from src.data_pipeline.user_embedding import UserEmbedding
@@ -386,4 +387,11 @@ async def get_house_traffic(people_id: int):
 async def get_pref_house_lst(people_id: int):
     client = Prediction()
     result = await client.get_pref_house_lst(people_id)
+    return result
+
+
+# API for GAI
+@router.get("/get_group_chat_records/{group_id}")
+async def get_group_chat_records(group_id: str):
+    result = get_group_chat_records_by_id(group_id)
     return result
