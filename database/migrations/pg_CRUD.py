@@ -132,3 +132,26 @@ class PosgresqClient:
                 return {
                     "message": f"Error when selecting data: {str(e)}",
                 }
+
+    async def update_user_info(self, user_update_data: dict):
+        async with self.access_db() as conn:
+            try:
+                user_id = user_update_data['People_ID']
+                data = user_update_data['data']
+                set_clauses = ", ".join([f'"{key}" = ${i+1}' for i, key in enumerate(data.keys())]) # noqa
+
+                query = f"""
+                UPDATE "PEOPLE"
+                SET {set_clauses}
+                WHERE "People_ID" = {user_id}
+                RETURNING "People_ID"
+                """
+                values = list(data.values()) + [user_id]
+
+                await conn.fetch(query, *values)
+
+                return {
+                    "message": "Data updated successfully",
+                }
+            except Exception as e:
+                return {"message": f"Error when updating data: {str(e)}"}

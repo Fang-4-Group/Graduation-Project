@@ -153,6 +153,13 @@ async def get_district_geocoding(city: str, district: str):
     return result
 
 
+@router.post("/update_user_info/")
+async def update_user_info(user_update_data: dict):
+    client = PosgresqClient()
+    result = await client.update_user_info(user_update_data)
+    return result
+
+
 # Googel OIDC Login
 @router.get("/google-oidc/")
 async def root(request: Request):
