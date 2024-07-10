@@ -1,3 +1,4 @@
+import logging
 import os
 from contextlib import asynccontextmanager
 
@@ -5,6 +6,10 @@ import asyncpg
 from dotenv import load_dotenv
 
 load_dotenv()
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 class PosgresqClient:
@@ -158,17 +163,31 @@ class PosgresqClient:
                     "message": f"Error when selecting data: {str(e)}",
                 }
 
-    async def get_house_info(self) -> dict:
+    async def get_house_info(
+        self, city: str = None, district: str = None
+    ) -> dict:  # noqa
         async with self.access_db() as conn:
             try:
-                data = await conn.fetch(
-                    """
+                query = """
                     SELECT
                         *
                     FROM
                         "HOUSE"
-                    """
-                )
+                """
+                conditions = []
+                params = []
+
+                if city:
+                    conditions.append('"City" = $1')
+                    params.append(city)
+                if district:
+                    conditions.append('"District" = $2')
+                    params.append(district)
+
+                if conditions:
+                    query += " WHERE " + " AND ".join(conditions)
+                logger.info("Query: %s", query)
+                data = await conn.fetch(query, *params)
                 return {"message": data}
             except Exception as e:
                 return {
@@ -182,7 +201,7 @@ class PosgresqClient:
                     """
                     SELECT "Name" FROM "PEOPLE" WHERE "People_ID" = $1;
                     """,
-                    people_id
+                    people_id,
                 )
                 return {"name": data}
             except Exception as e:
@@ -232,12 +251,11 @@ class PosgresqClient:
                     SELECT "Drink"
                     FROM "PEOPLE" WHERE "People_ID" = $1;
                     """,
-                    people_id
+                    people_id,
                 )
                 return {"drink": data}
             except Exception as e:
-                return {"error":
-                        f"Error retrieving drink habit: {str(e)}"}
+                return {"error": f"Error retrieving drink habit: {str(e)}"}
 
     async def get_smoke(self, people_id: int) -> dict:
         async with self.access_db() as conn:
@@ -251,8 +269,7 @@ class PosgresqClient:
                 )
                 return {"smoke": data}
             except Exception as e:
-                return {"error":
-                        f"Error retrieving smoke habit: {str(e)}"}
+                return {"error": f"Error retrieving smoke habit: {str(e)}"}
 
     async def get_clean_habit(self, people_id: int) -> dict:
         async with self.access_db() as conn:
@@ -356,7 +373,7 @@ class PosgresqClient:
                 return {"negotiate_price": data}
             except Exception as e:
                 return {"error": f"Error retrieving negotiate price: {str(e)}"}
-    
+
     async def get_city(self, people_id: int) -> dict:
         async with self.access_db() as conn:
             try:
@@ -364,12 +381,12 @@ class PosgresqClient:
                     """
                     SELECT "City" FROM "HOUSE" WHERE "People_ID" = $1;
                     """,
-                    people_id
+                    people_id,
                 )
                 return {"city": data}
             except Exception as e:
                 return {"error": f"Error retrieving city: {str(e)}"}
-    
+
     async def get_district(self, people_id: int) -> dict:
         async with self.access_db() as conn:
             try:
@@ -377,12 +394,12 @@ class PosgresqClient:
                     """
                     SELECT "District" FROM "HOUSE" WHERE "People_ID" = $1;
                     """,
-                    people_id
+                    people_id,
                 )
                 return {"district": data}
             except Exception as e:
                 return {"error": f"Error retrieving district: {str(e)}"}
-    
+
     async def get_street(self, people_id: int) -> dict:
         async with self.access_db() as conn:
             try:
@@ -390,7 +407,7 @@ class PosgresqClient:
                     """
                     SELECT "Street" FROM "HOUSE" WHERE "People_ID" = $1;
                     """,
-                    people_id
+                    people_id,
                 )
                 return {"street": data}
             except Exception as e:

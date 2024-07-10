@@ -5,6 +5,7 @@ import os
 import aiohttp
 import numpy as np
 import pandas as pd
+import requests
 import torch.nn.functional as F
 import torch.optim as optim
 from dotenv import load_dotenv
@@ -20,8 +21,17 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
+"""ToDo:
+
+1. Create db table for interaction (pg_init.py)
+2. Write API to access related interaction data (pg_CRUD.py)
+3. request API to access data (this file)
+4. ID mapping
+"""
+
+
 class EmbeddingModel:
-    def __init__(self, target):
+    def __init__(self, target: int, place_dict: dict = None):
         """sumary_line
 
         Keyword arguments:
@@ -34,15 +44,26 @@ class EmbeddingModel:
         self.USER_ID = []
         self.ITEM_ID = []
         self.epoch_num = 100
+        self.place_dict = place_dict
 
-    async def fetch_data(self, session, endpoint):
-        async with session.get(f"{self.api_url}/{endpoint}") as response:
-            return await response.json()
+    async def fetch_data(
+        self, session, endpoint: str, item_params: dict = None
+    ):  # noqa
+        if item_params:
+            url = "http://localhost:7877/item_embedding/"
+            response = requests.post(url, json=item_params)
+            return response.json()
+        else:
+            async with session.get(f"{self.api_url}/{endpoint}") as response:
+                return await response.json()
 
     async def get_embedding_data(self):
         async with aiohttp.ClientSession() as session:
             user_result = await self.fetch_data(session, "user_embedding/")
-            house_result = await self.fetch_data(session, "item_embedding/")
+            house_result = await self.fetch_data(
+                session, "item_embedding/", item_params=self.place_dict
+            )
+            logger.info(f"House Result: {house_result}")
             return user_result, house_result
 
     def process_data(self, user_result, house_result):
@@ -58,6 +79,7 @@ class EmbeddingModel:
         ].values
 
         df_house = pd.DataFrame(house_result)
+
         selected_columns = [
             "Size",
             "Fire",
@@ -79,6 +101,9 @@ class EmbeddingModel:
         else:
             logger.warning("target should be 0 or 1")
 
+        logger.info(f"User Id: {self.USER_ID}")
+        logger.info(f"Item Id: {self.ITEM_ID}")
+
         return young_user_features, elder_user_features, house_features
 
     def build_graph(self, user_features, item_features, interactions):
@@ -86,6 +111,9 @@ class EmbeddingModel:
         item_id_map = {i_id: idx for idx, i_id in enumerate(self.ITEM_ID)}
         reverse_user_id_map = {v: k for k, v in user_id_map.items()}
         reverse_item_id_map = {v: k for k, v in item_id_map.items()}
+
+        logger.info(f"user id map: {user_id_map}")
+        logger.info(f"item id map: {item_id_map}")
 
         interactions_mapped = np.array(
             [[user_id_map[uid], item_id_map[iid]] for uid, iid in interactions]
@@ -111,6 +139,10 @@ class EmbeddingModel:
             mode="constant",
         )
 
+        logger.info("Shape After Padding")
+        logger.info(f"user: {user_features_padded.shape}")
+        logger.info(f"item: {item_features_padded.shape}")
+
         x = tensor(np.vstack((user_features_padded, item_features_padded)), dtype=float)
         edge_index = tensor(
             np.array(
@@ -130,7 +162,7 @@ class EmbeddingModel:
             num_features=data.x.shape[1],
             hidden_channels=8,
             num_embeding=8,
-            heads=2,
+            heads=1,
         )
         optimizer = optim.Adam(model.parameters(), lr=0.01)
 
@@ -146,14 +178,20 @@ class EmbeddingModel:
         for epoch in range(self.epoch_num):
             loss = train()
             if epoch % 20 == 0:
-                logger.info(f"Epoch {epoch + 1}, Loss: {loss:.4f}")
+                # logger.info(f"Epoch {epoch + 1}, Loss: {loss:.4f}")
+                pass
 
         model.eval()
         with no_grad():
             embeddings = model(data)
 
-        user_embeddings = embeddings[: len(data.x) // 2]
-        item_embeddings = embeddings[len(data.x) // 2 :]
+        logger.info(f"Embedding Shape: {embeddings.shape}")
+        logger.info(f"len: {len(data.x)}")
+        user_embeddings = embeddings[: len(self.USER_ID)]
+        item_embeddings = embeddings[len(self.USER_ID) :]
+        logger.info(f"Shape After Embedding")
+        logger.info(f"user: {user_embeddings.shape}")
+        logger.info(f"item: {item_embeddings.shape}")
         return user_embeddings, item_embeddings
 
     async def recommend(
@@ -173,6 +211,9 @@ class EmbeddingModel:
 
         recommendations = {}
         for user_id, recs in enumerate(top_k_recommendations):
+            # ToDo: 找出為甚麼會有 KeyError: 5 這個報錯
+            logger.info(f"user id: {user_id}")
+            logger.info(f"Recommand: {recs}")
             original_user = reverse_user_id_map[user_id]
             original_recs = [reverse_item_id_map[item_id] for item_id in recs]
             recommendations[original_user] = original_recs
@@ -186,7 +227,7 @@ class EmbeddingModel:
             user_result, house_result
         )
 
-        interactions = np.array([[2, 1], [2, 3], [4, 1], [6, 5]])
+        interactions = np.array([[8, 8], [10, 11]])
         if self.target == 0:
             data, reverse_user_id_map, reverse_item_id_map = self.build_graph(
                 young_user_features, house_features, interactions

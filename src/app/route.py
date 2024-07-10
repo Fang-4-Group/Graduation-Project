@@ -238,16 +238,16 @@ async def embedding(k_mean: bool = 0, n_clusters: int = 3):
 
 
 @router.get("/get_house_info/")
-async def get_house_info():
+async def get_house_info(city: str = Query(None), district: str = Query(None)):
     client = PosgresqClient()
-    result = await client.get_house_info()
+    result = await client.get_house_info(city=city, district=district)
     return result
 
 
-@router.get("/item_embedding/")
-async def item_embedding():
+@router.post("/item_embedding/")
+async def item_embedding(place_dict: dict = None):
     client = ItemEmbedding()
-    result = await client.item_embedding()
+    result = await client.item_embedding(place_dict["data"])
     return result
 
 
@@ -392,7 +392,7 @@ async def get_pref_house_lst(people_id: int):
 
 # Model
 @router.get("/embeddingModel/{target}")
-async def embeddingModel(target: int):
-    model = EmbeddingModel(target)
+async def embeddingModel(target: int, place_dict: dict = None):
+    model = EmbeddingModel(target, place_dict)
     result = await model.run()
     return result
