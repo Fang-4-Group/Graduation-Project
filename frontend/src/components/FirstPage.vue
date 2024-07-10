@@ -25,11 +25,11 @@
           <input type="number" id="sleepTime" v-model="user_data.Sleep_Time" required>
         </div>
         <div class="form-group">
-          <label for="drink" style="font-weight: bold;">飲酒程度：(1~5分 弱~強)</label>
+          <label for="drink" style="font-weight: bold;">飲酒程度：(0~5分 弱~強)</label>
           <input type="number" id="drink" v-model="user_data.Drink" required>
         </div>
         <div class="form-group">
-          <label for="smoke" style="font-weight: bold;">抽菸程度：(1~5分 弱~強)</label>
+          <label for="smoke" style="font-weight: bold;">抽菸程度：(0~5分 弱~強)</label>
           <input type="number" id="smoke" v-model="user_data.Smoke" required>
         </div>
         <div class="form-group">
