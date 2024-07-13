@@ -1,10 +1,6 @@
-import os
-
 from fastapi.testclient import TestClient
 
 from src.main import app
-
-os.environ["API_URL"] = "graduation-project://host.docker.internal:7877"
 
 client = TestClient(app)
 
