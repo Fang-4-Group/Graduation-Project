@@ -29,6 +29,8 @@ logger = logging.getLogger(__name__)
 4. ID mapping
 """
 
+load_dotenv()
+
 
 class EmbeddingModel:
     def __init__(self, target: int, place_dict: dict = None):
@@ -37,8 +39,6 @@ class EmbeddingModel:
         Keyword arguments:
         target -- 0: for young; 1: for the elderly
         """
-
-        load_dotenv()
         self.api_url = os.getenv("API_URL")
         self.target = target
         self.USER_ID = []
