@@ -179,8 +179,7 @@ class EmbeddingModel:
         for epoch in range(self.epoch_num):
             loss = train()
             if epoch % 20 == 0:
-                # logger.info(f"Epoch {epoch + 1}, Loss: {loss:.4f}")
-                pass
+                logger.info(f"Epoch {epoch + 1}, Loss: {loss:.4f}")
 
         model.eval()
         with no_grad():
@@ -246,11 +245,3 @@ class EmbeddingModel:
             reverse_user_id_map,
             reverse_item_id_map,
         )
-
-
-# To use the EmbeddingModel class
-# you would create an instance
-# and call the `run` method in an asynchronous context.
-# Example:
-# embedding_model = EmbeddingModel()
-# asyncio.run(embedding_model.run())
