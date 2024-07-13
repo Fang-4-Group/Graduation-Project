@@ -108,17 +108,17 @@ def test_get_house_info():
 
 
 def test_item_embedding():
-    response = client.get("/item_embedding/")
+    place_dict = {"data": [["臺北市", "士林區"], ["臺北市", "北投區"]]}
+    response = client.post("/item_embedding/", json=place_dict)
     assert response.status_code == 200
     assert response.json()
-    assert response.json()  # assure that there are content in response
 
 
 def test_get_name():
     people_id = 1
     response = client.get(f"/get_name/{people_id}")
     assert response.status_code == 200
-    assert response.json()  # 確保回應有內容
+    assert response.json()
 
 
 def test_get_sleep_time():
@@ -295,3 +295,13 @@ def test_get_pref_house():
     people_id = 2
     response = client.get(f"/get_pref_house_lst/{people_id}")
     assert response.status_code == 200
+
+
+def test_embedding_model():
+    place_dict = {"data": [["臺北市", "士林區"], ["臺北市", "北投區"]]}
+    response_0 = client.post("/embedding_model/0", json=place_dict)
+    response_1 = client.post("/embedding_model/1", json=place_dict)
+    assert response_0.status_code == 200
+    assert response_0.json()
+    assert response_1.status_code == 200
+    assert response_1.json()

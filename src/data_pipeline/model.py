@@ -50,9 +50,10 @@ class EmbeddingModel:
         self, session, endpoint: str, item_params: dict = None
     ):  # noqa
         if item_params:
-            url = "http://localhost:7877/item_embedding/"
-            response = requests.post(url, json=item_params)
-            return response.json()
+            async with session.post(
+                f"{self.api_url}/{endpoint}", json=item_params
+            ) as response:  # noqa
+                return await response.json()
         else:
             async with session.get(f"{self.api_url}/{endpoint}") as response:
                 return await response.json()
@@ -227,12 +228,13 @@ class EmbeddingModel:
             user_result, house_result
         )
 
-        interactions = np.array([[8, 8], [10, 11]])
         if self.target == 0:
+            interactions = np.array([[8, 8], [10, 8]])  # Temporary setting
             data, reverse_user_id_map, reverse_item_id_map = self.build_graph(
                 young_user_features, house_features, interactions
             )
         else:
+            interactions = np.array([[1, 2], [3, 8]])  # Temporary setting
             data, reverse_user_id_map, reverse_item_id_map = self.build_graph(
                 elder_user_features, young_user_features, interactions
             )

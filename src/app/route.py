@@ -391,7 +391,7 @@ async def get_pref_house_lst(people_id: int):
 
 
 # Model
-@router.get("/embeddingModel/{target}")
+@router.post("/embedding_model/{target}")
 async def embeddingModel(target: int, place_dict: dict = None):
     model = EmbeddingModel(target, place_dict)
     result = await model.run()
