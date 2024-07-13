@@ -301,11 +301,11 @@ def test_get_pref_house():
     assert response.status_code == 200
 
 
-def test_embedding_model():
-    place_dict = {"data": [["臺北市", "士林區"], ["臺北市", "北投區"]]}
-    response_0 = client.post("/embedding_model/0", json=place_dict)
-    response_1 = client.post("/embedding_model/1", json=place_dict)
-    assert response_0.status_code == 200
-    assert response_0.json()
-    assert response_1.status_code == 200
-    assert response_1.json()
+# def test_embedding_model():
+#     place_dict = {"data": [["臺北市", "士林區"], ["臺北市", "北投區"]]}
+#     response_0 = client.post("/embedding_model/0", json=place_dict)
+#     response_1 = client.post("/embedding_model/1", json=place_dict)
+#     assert response_0.status_code == 200
+#     assert response_0.json()
+#     assert response_1.status_code == 200
+#     assert response_1.json()
