@@ -295,3 +295,12 @@ def test_get_pref_house():
     people_id = 2
     response = client.get(f"/get_pref_house_lst/{people_id}")
     assert response.status_code == 200
+
+
+def test_add_recommendation():
+    sample_data = {
+        "People_ID": 2,
+        "House_ID": [1, 3],
+    }
+    response = client.post("/add_recommendation/", json=sample_data)
+    assert response.status_code == 200

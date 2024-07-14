@@ -377,6 +377,13 @@ async def get_house_traffic(people_id: int):
     return result
 
 
+@router.post("/add_recommendation/")
+async def model_run(recommendation_info: dict):
+    client = PosgresqClient()
+    result = await client.add_recommendation(recommendation_info)
+    return result
+
+
 # ToDo: Complete  API (edit and insert) outlined in ticket [GP102]
 
 

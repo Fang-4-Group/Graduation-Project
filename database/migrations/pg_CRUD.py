@@ -182,7 +182,7 @@ class PosgresqClient:
                     """
                     SELECT "Name" FROM "PEOPLE" WHERE "People_ID" = $1;
                     """,
-                    people_id
+                    people_id,
                 )
                 return {"name": data}
             except Exception as e:
@@ -232,12 +232,11 @@ class PosgresqClient:
                     SELECT "Drink"
                     FROM "PEOPLE" WHERE "People_ID" = $1;
                     """,
-                    people_id
+                    people_id,
                 )
                 return {"drink": data}
             except Exception as e:
-                return {"error":
-                        f"Error retrieving drink habit: {str(e)}"}
+                return {"error": f"Error retrieving drink habit: {str(e)}"}
 
     async def get_smoke(self, people_id: int) -> dict:
         async with self.access_db() as conn:
@@ -251,8 +250,7 @@ class PosgresqClient:
                 )
                 return {"smoke": data}
             except Exception as e:
-                return {"error":
-                        f"Error retrieving smoke habit: {str(e)}"}
+                return {"error": f"Error retrieving smoke habit: {str(e)}"}
 
     async def get_clean_habit(self, people_id: int) -> dict:
         async with self.access_db() as conn:
@@ -356,7 +354,7 @@ class PosgresqClient:
                 return {"negotiate_price": data}
             except Exception as e:
                 return {"error": f"Error retrieving negotiate price: {str(e)}"}
-    
+
     async def get_city(self, people_id: int) -> dict:
         async with self.access_db() as conn:
             try:
@@ -364,12 +362,12 @@ class PosgresqClient:
                     """
                     SELECT "City" FROM "HOUSE" WHERE "People_ID" = $1;
                     """,
-                    people_id
+                    people_id,
                 )
                 return {"city": data}
             except Exception as e:
                 return {"error": f"Error retrieving city: {str(e)}"}
-    
+
     async def get_district(self, people_id: int) -> dict:
         async with self.access_db() as conn:
             try:
@@ -377,12 +375,12 @@ class PosgresqClient:
                     """
                     SELECT "District" FROM "HOUSE" WHERE "People_ID" = $1;
                     """,
-                    people_id
+                    people_id,
                 )
                 return {"district": data}
             except Exception as e:
                 return {"error": f"Error retrieving district: {str(e)}"}
-    
+
     async def get_street(self, people_id: int) -> dict:
         async with self.access_db() as conn:
             try:
@@ -390,7 +388,7 @@ class PosgresqClient:
                     """
                     SELECT "Street" FROM "HOUSE" WHERE "People_ID" = $1;
                     """,
-                    people_id
+                    people_id,
                 )
                 return {"street": data}
             except Exception as e:
@@ -666,5 +664,30 @@ class PosgresqClient:
                 return {
                     "message": "Data inserted successfully",
                 }
+            except Exception as e:
+                return {"message": f"Error when inserting data: {str(e)}"}
+
+    # Recommadation
+    async def add_recommendation(self, recommendation_info: dict):
+        async with self.access_db() as conn:
+            try:
+                people_id = recommendation_info["People_ID"]
+                house_ids = recommendation_info["House_ID"]
+
+                # 插入数据到 RECOMMENDATIONS 表
+                for house_id in house_ids:
+                    await conn.execute(
+                        """
+                        INSERT INTO "RECOMMENDATIONS" ("People_ID", "House_ID", "Timestamp")
+                        VALUES ($1, $2, CURRENT_TIMESTAMP)
+                        """,  # noqa
+                        people_id,
+                        house_id,
+                    )
+
+                return {
+                    "message": f"{people_id}'s recommendation inserted successfully",  # noqa
+                }
+
             except Exception as e:
                 return {"message": f"Error when inserting data: {str(e)}"}
