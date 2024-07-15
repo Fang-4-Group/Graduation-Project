@@ -1,9 +1,10 @@
+# isort: skip_file
 from typing import List
 
 import httpx
+
 # flake8: noqa
-from fastapi import (APIRouter, FastAPI, File, HTTPException, Request,
-                     UploadFile)
+from fastapi import APIRouter, FastAPI, File, HTTPException, Request, UploadFile
 
 app = FastAPI()
 
