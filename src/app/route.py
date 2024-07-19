@@ -378,9 +378,17 @@ async def get_house_traffic(people_id: int):
 
 
 @router.post("/add_recommendation/")
-async def model_run(recommendation_info: dict):
+async def add_recommendation(recommendation_info: dict):
     client = PosgresqClient()
     result = await client.add_recommendation(recommendation_info)
+    return result
+
+
+@router.post("/get_recommendation/")
+async def get_recommendation(condition: dict = None):
+    house_ids = condition["house_ids"]
+    client = PosgresqClient()
+    result = await client.get_recommendation(house_ids)
     return result
 
 

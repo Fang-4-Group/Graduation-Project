@@ -11,7 +11,7 @@ load_dotenv()
 
 class MongoDBInitClient:
     def __init__(self):
-        self.url = os.getenv("MONGO_URI")
+        self.url = os.getenv("MONGO_DB_URI")
         self.db_name = os.getenv("MONGO_DB_NAME", "Graduation-Project")
         self.collection_name = os.getenv(
             "MONGO_DB_COLLECTION", "group-chat-record"

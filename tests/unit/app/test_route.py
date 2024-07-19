@@ -304,3 +304,11 @@ def test_add_recommendation():
     }
     response = client.post("/add_recommendation/", json=sample_data)
     assert response.status_code == 200
+
+
+def test_get_recommendation():
+    sample_data = {
+        "house_ids": [1]
+    }
+    response = client.post("/get_recommendation/", json=sample_data)
+    assert response.status_code == 200

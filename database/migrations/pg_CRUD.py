@@ -1,3 +1,4 @@
+import logging
 import os
 from contextlib import asynccontextmanager
 
@@ -5,6 +6,10 @@ import asyncpg
 from dotenv import load_dotenv
 
 load_dotenv()
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 class PosgresqClient:
@@ -686,8 +691,26 @@ class PosgresqClient:
                     )
 
                 return {
-                    "message": f"{people_id}'s recommendation inserted successfully",  # noqa
+                    "message": f"People id {people_id}'s recommendation inserted successfully",  # noqa
                 }
+
+            except Exception as e:
+                return {"message": f"Error when inserting data: {str(e)}"}
+
+    # Recommadation
+    async def get_recommendation(self, house_ids: list = []):
+        async with self.access_db() as conn:
+            try:
+                logging.info(f"receive ids: {house_ids}")
+                data = await conn.fetch(
+                    """
+                    SELECT * FROM "RECOMMENDATIONS"
+                    WHERE "House_ID" = ANY($1::int[]);
+                    """,
+                    house_ids,
+                )
+
+                return data
 
             except Exception as e:
                 return {"message": f"Error when inserting data: {str(e)}"}
