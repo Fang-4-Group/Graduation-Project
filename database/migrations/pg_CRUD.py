@@ -431,8 +431,9 @@ class PosgresqClient:
                     WHERE "House_ID" = (
                         SELECT "House_ID" FROM "HOUSE"
                         WHERE "People_ID" = $1
+                        LIMIT 1
                     );
-                    """,
+                     """,
                     people_id,
                 )
                 furniture = [row["Furniture"] for row in data]
@@ -447,8 +448,9 @@ class PosgresqClient:
                     """
                     SELECT "Traffic" FROM "HOUSE_TRAFFIC"
                     WHERE "House_ID" = (
-                        SELECT "House_ID" FROM "HOUSE"
-                        WHERE "People_ID" = $1
+                    SELECT "House_ID" FROM "HOUSE"
+                    WHERE "People_ID" = $1
+                    LIMIT 1
                     );
                     """,
                     people_id,
