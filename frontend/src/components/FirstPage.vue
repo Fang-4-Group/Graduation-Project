@@ -23,7 +23,7 @@
         </div>
         <div class="form-group">
           <label for="sleepTime" style="font-weight: bold;">睡覺時間：</label>
-          <select id="sleepTime" v-model="user_data.Sleep_Time" required>
+          <select id="sleepTime" v-model.number="user_data.Sleep_Time" required>
             <option value="1">1 (早)</option>
             <option value="2">2</option>
             <option value="3">3</option>
@@ -33,7 +33,7 @@
         </div>
         <div class="form-group">
           <label for="drink" style="font-weight: bold;">飲酒程度：</label>
-          <select id="drink" v-model="user_data.Drink" required>
+          <select id="drink" v-model.number="user_data.Drink" required>
             <option value="0">0 (不喝)</option>
             <option value="1">1</option>
             <option value="2">2</option>
@@ -44,7 +44,7 @@
         </div>
         <div class="form-group">
           <label for="smoke" style="font-weight: bold;">抽菸程度：</label>
-          <select id="smoke" v-model="user_data.Smoke" required>
+          <select id="smoke" v-model.number="user_data.Smoke" required>
             <option value="0">0 (不抽)</option>
             <option value="1">1</option>
             <option value="2">2</option>
@@ -55,7 +55,7 @@
         </div>
         <div class="form-group">
           <label for="clean_habit" style="font-weight: bold;">愛乾淨程度：</label>
-          <select id="clean_habit" v-model="user_data.Clean" required>
+          <select id="clean_habit" v-model.number="user_data.Clean" required>
             <option value="1">1 (弱)</option>
             <option value="2">2</option>
             <option value="3">3</option>
@@ -243,11 +243,12 @@ import { useRouter } from 'vue-router';
 const router = useRouter();
 
 async function submitForm() {
+  
   try {
     const userResponse = await axios.post('http://localhost:7877/post_user_basic_info', user_data.value);
     console.log(userResponse.data);
     const People_ID = userResponse.data.People_ID;
-
+    
     if (user_data.value.Role === 1) {
       const houseResponse = await axios.post('http://localhost:7877/post_house_info', {
         ...house_data.value,
