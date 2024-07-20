@@ -1,8 +1,14 @@
+# flake8:noqa
 import os
 from datetime import datetime
+from io import BytesIO
 
 import requests
+import speech_recognition as sr
+from fastapi.concurrency import run_in_threadpool
 from linebot import LineBotApi
+from linebot.models import TextSendMessage
+from pydub import AudioSegment
 
 import src.chatbot.models as models
 from src.chatbot.database import save_group_msg_to_db
@@ -41,3 +47,56 @@ def house_recommendation():
         error_message = f"API Request Failed: {http_err}"
         result = error_message
     return result
+
+
+async def voice_recognition(msg_id):
+    result_content = ""
+    try:
+        message_content = line_bot_api.get_message_content(msg_id)
+        m4a_audio_bytes_io = BytesIO()
+        for chunk in message_content.iter_content():
+            m4a_audio_bytes_io.write(chunk)
+        m4a_audio_bytes_io.seek(0)
+
+        request_audio = AudioSegment.from_file(m4a_audio_bytes_io, format="M4A")
+        wav_audio_bytes_io = request_audio.export(format="wav")
+        r = sr.Recognizer()
+        with sr.AudioFile(wav_audio_bytes_io) as source:
+            recognizer_audio = r.record(source)
+        result_content = await run_in_threadpool(
+            lambda: r.recognize_google(recognizer_audio, language="zh-TW")
+        )
+    except Exception as e:
+        result_content = f"Failed to recognize audio. {e}"
+
+    return result_content
+
+
+async def handle_async_audio(event):
+    try:
+        msg_id = event.message.id
+        recognized_text = await voice_recognition(msg_id)
+
+        if recognized_text is not None:
+            response = line_bot_api.reply_message(
+                event.reply_token, TextSendMessage(text=recognized_text)
+            )
+            if response:
+                await response
+        else:
+            response = line_bot_api.reply_message(
+                event.reply_token, TextSendMessage(text="Failed to recognize audio.")
+            )
+            if response:
+                await response
+
+    except Exception as e:
+        print(f"Errors occurred when recognizing audio: {e}")
+        response = line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(
+                text="Some errors occurred when recognizing audio. Please wait a minute and try again."
+            ),
+        )
+        if response:
+            await response

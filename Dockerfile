@@ -8,6 +8,7 @@ WORKDIR ${WORKDIR}
 # Install necessary system dependencies
 RUN apt-get update
 RUN apt-get install -y wget unzip
+RUN apt-get install -y ffmpeg
 RUN rm -rf /var/lib/apt/lists/*
 
 # Set up Python environment
