@@ -49,3 +49,8 @@ def house_recommendation():
 def summary_checklist():
     buttom_message = create_check_button()
     return buttom_message
+
+
+def call_llm_api():
+    result = "call_llm_api()"
+    return result

@@ -6,11 +6,20 @@ from fastapi import APIRouter, FastAPI, Request
 from fastapi.responses import JSONResponse
 from linebot import LineBotApi
 from linebot.exceptions import InvalidSignatureError
-from linebot.models import MessageEvent, TextMessage
+from linebot.models import (  # noqa
+    MessageEvent,
+    PostbackEvent,
+    TextMessage,
+    TextSendMessage,
+)
 from linebot.webhook import WebhookHandler
 
-from src.chatbot.services import save_group_msg  # noqa
-from src.chatbot.services import house_recommendation, summary_checklist
+from src.chatbot.services import (  # noqa
+    call_llm_api,
+    house_recommendation,
+    save_group_msg,
+    summary_checklist,
+)
 
 app = FastAPI()
 
@@ -47,6 +56,7 @@ def text_msg_handler(event):
         if user_message == "@推薦":
             result = house_recommendation()
             line_bot_api.reply_message(event.reply_token, result)
+
     elif source_type == "group":  # group chat
         group_id = event.source.group_id
         group_message = event.message.text
@@ -57,6 +67,16 @@ def text_msg_handler(event):
         if group_message == "@check":
             result = summary_checklist()
             line_bot_api.reply_message(event.reply_token, result)
+
+
+@handler.add(PostbackEvent)
+def handle_postback(event):
+    data = event.postback.data
+    if data == "action=call_llm_api":
+        result = call_llm_api()
+        line_bot_api.reply_message(
+            event.reply_token, TextSendMessage(text=result)
+        )  # noqa
 
 
 app.include_router(router)

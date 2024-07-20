@@ -3,12 +3,11 @@ from linebot.models import ButtonsTemplate, PostbackAction, TemplateSendMessage
 
 def create_check_button():
     template = ButtonsTemplate(
-        title="Checklist",
-        text="Press the button to get the checklist.",
+        title="Summary Checklist",
+        text="See the checklist to keep track of your chatting progress.",
         actions=[
             PostbackAction(
-                label="Call LLM API",
-                display_text="Checking progress...",
+                label="Check my checklist",
                 data="action=call_llm_api",
             )
         ],
