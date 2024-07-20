@@ -12,8 +12,6 @@ router = APIRouter(prefix="/anythingllm")
 
 API_KEY = "236B76T-B694TWM-G78QPR0-GMFCJQW"
 
-workspaces = {}
-documents = {}
 url_first = "http://localhost:3001/api/"
 
 
