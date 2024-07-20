@@ -1,3 +1,4 @@
+import logging
 import os
 from contextlib import asynccontextmanager
 
@@ -5,6 +6,10 @@ import asyncpg
 from dotenv import load_dotenv
 
 load_dotenv()
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 class PosgresqClient:
@@ -182,7 +187,7 @@ class PosgresqClient:
                     """
                     SELECT "Name" FROM "PEOPLE" WHERE "People_ID" = $1;
                     """,
-                    people_id
+                    people_id,
                 )
                 return {"name": data}
             except Exception as e:
@@ -232,12 +237,11 @@ class PosgresqClient:
                     SELECT "Drink"
                     FROM "PEOPLE" WHERE "People_ID" = $1;
                     """,
-                    people_id
+                    people_id,
                 )
                 return {"drink": data}
             except Exception as e:
-                return {"error":
-                        f"Error retrieving drink habit: {str(e)}"}
+                return {"error": f"Error retrieving drink habit: {str(e)}"}
 
     async def get_smoke(self, people_id: int) -> dict:
         async with self.access_db() as conn:
@@ -251,8 +255,7 @@ class PosgresqClient:
                 )
                 return {"smoke": data}
             except Exception as e:
-                return {"error":
-                        f"Error retrieving smoke habit: {str(e)}"}
+                return {"error": f"Error retrieving smoke habit: {str(e)}"}
 
     async def get_clean_habit(self, people_id: int) -> dict:
         async with self.access_db() as conn:
@@ -356,7 +359,7 @@ class PosgresqClient:
                 return {"negotiate_price": data}
             except Exception as e:
                 return {"error": f"Error retrieving negotiate price: {str(e)}"}
-    
+
     async def get_city(self, people_id: int) -> dict:
         async with self.access_db() as conn:
             try:
@@ -364,12 +367,12 @@ class PosgresqClient:
                     """
                     SELECT "City" FROM "HOUSE" WHERE "People_ID" = $1;
                     """,
-                    people_id
+                    people_id,
                 )
                 return {"city": data}
             except Exception as e:
                 return {"error": f"Error retrieving city: {str(e)}"}
-    
+
     async def get_district(self, people_id: int) -> dict:
         async with self.access_db() as conn:
             try:
@@ -377,12 +380,12 @@ class PosgresqClient:
                     """
                     SELECT "District" FROM "HOUSE" WHERE "People_ID" = $1;
                     """,
-                    people_id
+                    people_id,
                 )
                 return {"district": data}
             except Exception as e:
                 return {"error": f"Error retrieving district: {str(e)}"}
-    
+
     async def get_street(self, people_id: int) -> dict:
         async with self.access_db() as conn:
             try:
@@ -390,7 +393,7 @@ class PosgresqClient:
                     """
                     SELECT "Street" FROM "HOUSE" WHERE "People_ID" = $1;
                     """,
-                    people_id
+                    people_id,
                 )
                 return {"street": data}
             except Exception as e:
@@ -666,5 +669,65 @@ class PosgresqClient:
                 return {
                     "message": "Data inserted successfully",
                 }
+            except Exception as e:
+                return {"message": f"Error when inserting data: {str(e)}"}
+
+    # Recommadation
+    async def add_recommendation(self, type: int, recommendation_info: dict):
+        async with self.access_db() as conn:
+            try:
+                people_id = recommendation_info["People_ID"]
+                item_Ids = recommendation_info["Item_ID"]
+                sql = "INSERT INTO "
+                if type == 0:
+                    sql += '"RECOMMENDATIONS_YOUNG"'
+                elif type == 1:
+                    sql += '"RECOMMENDATIONS_ELDERLY"'
+                else:
+                    return {
+                        "message": "Please use valid type number, 0 for young and 1 for elderly" # noqa
+                    }
+
+                sql += """ ("People_ID", "Item_ID", "Timestamp")
+                        VALUES ($1, $2, CURRENT_TIMESTAMP)
+                        """
+
+                for item_id in item_Ids:
+                    await conn.execute(
+                        sql,
+                        people_id,
+                        item_id,
+                    )
+
+                return {
+                    "message": f"People id {people_id}'s recommendation inserted successfully",  # noqa
+                }
+
+            except Exception as e:
+                return {"message": f"Error when inserting data: {str(e)}"}
+
+    # Recommadation
+    async def get_recommendation(self, type: int, item_ids: list = []):
+        async with self.access_db() as conn:
+            try:
+                sql = "SELECT * FROM "
+                if type == 0:
+                    sql += '"RECOMMENDATIONS_YOUNG"'
+                elif type == 1:
+                    sql += '"RECOMMENDATIONS_ELDERLY"'
+                else:
+                    return {
+                        "message": "Please use valid type number, 0 for young and 1 for elderly" # noqa
+                    }
+
+                sql += 'WHERE "Item_ID" = ANY($1::int[]);'
+
+                data = await conn.fetch(
+                    sql,
+                    item_ids,
+                )
+
+                return data
+
             except Exception as e:
                 return {"message": f"Error when inserting data: {str(e)}"}
