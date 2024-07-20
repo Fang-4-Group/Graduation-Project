@@ -39,7 +39,7 @@ jobs:
         echo "DOCKER_PLATFORM=${{ secrets.DOCKER_PLATFORM }}" >> $GITHUB_ENV
         echo "MONGO_DB_NAME=${{ secrets.MONGO_DB_NAME }}" >> $GITHUB_ENV
         echo "MONGO_DB_COLLECTION=${{ secrets.MONGO_DB_COLLECTION }}" >> $GITHUB_ENV
-        echo "MONGO_URI=${{ secrets.MONGO_URI }}" >> $GITHUB_ENV
+        echo "MONGO_DB_URI=${{ secrets.MONGO_DB_URI }}" >> $GITHUB_ENV
 
     - name: Build and run with docker-compose
       run: |

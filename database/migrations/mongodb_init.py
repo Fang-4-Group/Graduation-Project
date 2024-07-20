@@ -28,9 +28,6 @@ def load_data(file_path):
 class MongoDBInitClient:
     def __init__(self):
         self.url = os.getenv("MONGO_DB_URI")
-        print(f"Connecting to MongoDB with URI: {self.url}")  # Debug print
-        if not self.url:
-            raise ValueError("MONGO_DB_URI environment variable is not set.")
         self.db_name = os.getenv("MONGO_DB_NAME", "Graduation-Project")
         self.collection_name = os.getenv(
             "MONGO_DB_COLLECTION", "group-chat-record"
