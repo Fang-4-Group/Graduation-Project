@@ -6,7 +6,10 @@ from linebot import LineBotApi
 
 import src.chatbot.models as models
 from src.chatbot.database import save_group_msg_to_db
-from src.chatbot.message_templates import create_houses_carousel
+from src.chatbot.message_templates.buttom_template import create_check_button
+from src.chatbot.message_templates.carousel_template import (  # noqa
+    create_houses_carousel,
+)
 
 line_bot_api = LineBotApi(os.getenv("CHANNEL_ACCESS_TOKEN"))
 
@@ -41,3 +44,8 @@ def house_recommendation():
         error_message = f"API Request Failed: {http_err}"
         result = error_message
     return result
+
+
+def summary_checklist():
+    buttom_message = create_check_button()
+    return buttom_message

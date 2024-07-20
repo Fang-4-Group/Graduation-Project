@@ -9,7 +9,8 @@ from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage
 from linebot.webhook import WebhookHandler
 
-from src.chatbot.services import house_recommendation, save_group_msg
+from src.chatbot.services import save_group_msg  # noqa
+from src.chatbot.services import house_recommendation, summary_checklist
 
 app = FastAPI()
 
@@ -48,9 +49,14 @@ def text_msg_handler(event):
             line_bot_api.reply_message(event.reply_token, result)
     elif source_type == "group":  # group chat
         group_id = event.source.group_id
+        group_message = event.message.text
         print("Group ID: ", group_id)
         result = save_group_msg(user_id, group_id, msg)
         print("MongoDB insert result: ", result)
+
+        if group_message == "@check":
+            result = summary_checklist()
+            line_bot_api.reply_message(event.reply_token, result)
 
 
 app.include_router(router)
