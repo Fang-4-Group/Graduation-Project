@@ -83,11 +83,3 @@ async def chat(workspace_slug: str, message: str):
         if response.status_code != 200:
             raise HTTPException(status_code=response.status_code)
     return response.json()
-
-
-app.include_router(router)
-
-if __name__ == "__main__":
-    import uvicorn
-
-    uvicorn.run(app, host="0.0.0.0", port=8000)
