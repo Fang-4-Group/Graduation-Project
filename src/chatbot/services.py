@@ -77,26 +77,9 @@ async def handle_async_audio(event):
         msg_id = event.message.id
         recognized_text = await voice_recognition(msg_id)
 
-        if recognized_text is not None:
-            response = line_bot_api.reply_message(
-                event.reply_token, TextSendMessage(text=recognized_text)
-            )
-            if response:
-                await response
-        else:
-            response = line_bot_api.reply_message(
-                event.reply_token, TextSendMessage(text="Failed to recognize audio.")
-            )
-            if response:
-                await response
+        line_bot_api.reply_message(
+            event.reply_token, TextSendMessage(text=recognized_text)
+        )
 
     except Exception as e:
-        print(f"Errors occurred when recognizing audio: {e}")
-        response = line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(
-                text="Some errors occurred when recognizing audio. Please wait a minute and try again."
-            ),
-        )
-        if response:
-            await response
+        print(f"Errors occurred when handling async audio: {e}")
