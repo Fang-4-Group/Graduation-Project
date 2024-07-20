@@ -298,17 +298,28 @@ def test_get_pref_house():
 
 
 def test_add_recommendation():
-    sample_data = {
+    sample_data_0 = {
         "People_ID": 2,
-        "House_ID": [1, 3],
+        "Item_ID": [1, 3],
     }
-    response = client.post("/add_recommendation/", json=sample_data)
-    assert response.status_code == 200
+    response_0 = client.post("/add_recommendation/0", json=sample_data_0)
+    sample_data_1 = {
+        "People_ID": 1,
+        "Item_ID": [2, 4],
+    }
+    response_1 = client.post("/add_recommendation/1", json=sample_data_1)
+    assert response_0.status_code == 200
+    assert response_1.status_code == 200
 
 
 def test_get_recommendation():
-    sample_data = {
-        "house_ids": [1]
+    sample_data_0 = {
+        "Item_ID": [1]
     }
-    response = client.post("/get_recommendation/", json=sample_data)
-    assert response.status_code == 200
+    response_0 = client.post("/get_recommendation/0", json=sample_data_0)
+    sample_data_1 = {
+        "Item_ID": [2]
+    }
+    response_1 = client.post("/get_recommendation/1", json=sample_data_1)
+    assert response_0.status_code == 200
+    assert response_1.status_code == 200

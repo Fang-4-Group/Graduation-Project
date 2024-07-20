@@ -673,21 +673,30 @@ class PosgresqClient:
                 return {"message": f"Error when inserting data: {str(e)}"}
 
     # Recommadation
-    async def add_recommendation(self, recommendation_info: dict):
+    async def add_recommendation(self, type: int, recommendation_info: dict):
         async with self.access_db() as conn:
             try:
                 people_id = recommendation_info["People_ID"]
-                house_ids = recommendation_info["House_ID"]
+                item_Ids = recommendation_info["Item_ID"]
+                sql = "INSERT INTO "
+                if type == 0:
+                    sql += '"RECOMMENDATIONS_YOUNG"'
+                elif type == 1:
+                    sql += '"RECOMMENDATIONS_ELDERLY"'
+                else:
+                    return {
+                        "message": "Please use valid type number, 0 for young and 1 for elderly" # noqa
+                    }
 
-                # 插入数据到 RECOMMENDATIONS 表
-                for house_id in house_ids:
-                    await conn.execute(
-                        """
-                        INSERT INTO "RECOMMENDATIONS" ("People_ID", "House_ID", "Timestamp")
+                sql += """ ("People_ID", "Item_ID", "Timestamp")
                         VALUES ($1, $2, CURRENT_TIMESTAMP)
-                        """,  # noqa
+                        """
+
+                for item_id in item_Ids:
+                    await conn.execute(
+                        sql,
                         people_id,
-                        house_id,
+                        item_id,
                     )
 
                 return {
@@ -698,16 +707,24 @@ class PosgresqClient:
                 return {"message": f"Error when inserting data: {str(e)}"}
 
     # Recommadation
-    async def get_recommendation(self, house_ids: list = []):
+    async def get_recommendation(self, type: int, item_ids: list = []):
         async with self.access_db() as conn:
             try:
-                logging.info(f"receive ids: {house_ids}")
+                sql = "SELECT * FROM "
+                if type == 0:
+                    sql += '"RECOMMENDATIONS_YOUNG"'
+                elif type == 1:
+                    sql += '"RECOMMENDATIONS_ELDERLY"'
+                else:
+                    return {
+                        "message": "Please use valid type number, 0 for young and 1 for elderly" # noqa
+                    }
+
+                sql += 'WHERE "Item_ID" = ANY($1::int[]);'
+
                 data = await conn.fetch(
-                    """
-                    SELECT * FROM "RECOMMENDATIONS"
-                    WHERE "House_ID" = ANY($1::int[]);
-                    """,
-                    house_ids,
+                    sql,
+                    item_ids,
                 )
 
                 return data
