@@ -10,7 +10,7 @@ app = FastAPI()
 
 router = APIRouter(prefix="/anythingllm")
 
-API_KEY = ""
+API_KEY = "236B76T-B694TWM-G78QPR0-GMFCJQW"
 
 workspaces = {}
 documents = {}
