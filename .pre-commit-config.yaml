@@ -20,4 +20,4 @@ repos:
     rev: 5.13.2
     hooks:
       - id: isort
-        exclude: 'src/chatbot/main.py'
+        args: ["--profile", "black"]
