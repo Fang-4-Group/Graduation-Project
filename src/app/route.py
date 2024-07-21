@@ -10,6 +10,7 @@ from database.seeds.mongo_api_for_testing import MongoDBClient
 from database.seeds.pg_api_for_testing import PosgresqTestClient
 from src.chatbot.database import get_group_chat_records_by_id
 from src.data_pipeline.item_embedding import ItemEmbedding
+from src.data_pipeline.model import EmbeddingModel
 from src.data_pipeline.prediction import Prediction
 from src.data_pipeline.user_embedding import UserEmbedding
 
@@ -238,16 +239,16 @@ async def embedding(k_mean: bool = 0, n_clusters: int = 3):
 
 
 @router.get("/get_house_info/")
-async def get_house_info():
+async def get_house_info(city: str = Query(None), district: str = Query(None)):
     client = PosgresqClient()
-    result = await client.get_house_info()
+    result = await client.get_house_info(city=city, district=district)
     return result
 
 
-@router.get("/item_embedding/")
-async def item_embedding():
+@router.post("/item_embedding/")
+async def item_embedding(place_dict: dict = None):
     client = ItemEmbedding()
-    result = await client.item_embedding()
+    result = await client.item_embedding(place_dict["data"])
     return result
 
 
@@ -402,6 +403,14 @@ async def get_recommendation(type: int, condition: dict = None):
 async def get_pref_house_lst(people_id: int):
     client = Prediction()
     result = await client.get_pref_house_lst(people_id)
+    return result
+
+
+# Model
+@router.post("/embedding_model/{target}")
+async def embeddingModel(target: int, place_dict: dict = None):
+    model = EmbeddingModel(target, place_dict)
+    result = await model.run()
     return result
 
 

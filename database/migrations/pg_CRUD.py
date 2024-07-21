@@ -163,17 +163,31 @@ class PosgresqClient:
                     "message": f"Error when selecting data: {str(e)}",
                 }
 
-    async def get_house_info(self) -> dict:
+    async def get_house_info(
+        self, city: str = None, district: str = None
+    ) -> dict:  # noqa
         async with self.access_db() as conn:
             try:
-                data = await conn.fetch(
-                    """
+                query = """
                     SELECT
                         *
                     FROM
                         "HOUSE"
-                    """
-                )
+                """
+                conditions = []
+                params = []
+
+                if city:
+                    conditions.append('"City" = $1')
+                    params.append(city)
+                if district:
+                    conditions.append('"District" = $2')
+                    params.append(district)
+
+                if conditions:
+                    query += " WHERE " + " AND ".join(conditions)
+                logger.info("Query: %s", query)
+                data = await conn.fetch(query, *params)
                 return {"message": data}
             except Exception as e:
                 return {
