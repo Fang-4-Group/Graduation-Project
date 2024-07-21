@@ -21,19 +21,19 @@
           <input type="text" id="name" v-model="user_data.Name" required>
         </div>
         <div class="form-group">
-          <label for="sleepTime" style="font-weight: bold;">睡覺時間：</label>
+          <label for="sleepTime" style="font-weight: bold;">睡覺時間：(1~5分 早~晚)</label>
           <input type="number" id="sleepTime" v-model="user_data.Sleep_Time" required>
         </div>
         <div class="form-group">
-          <label for="drink" style="font-weight: bold;">飲酒程度：</label>
+          <label for="drink" style="font-weight: bold;">飲酒程度：(0~5分 弱~強)</label>
           <input type="number" id="drink" v-model="user_data.Drink" required>
         </div>
         <div class="form-group">
-          <label for="smoke" style="font-weight: bold;">抽菸程度：</label>
+          <label for="smoke" style="font-weight: bold;">抽菸程度：(0~5分 弱~強)</label>
           <input type="number" id="smoke" v-model="user_data.Smoke" required>
         </div>
         <div class="form-group">
-          <label for="clean_habit" style="font-weight: bold;">愛乾淨程度：</label>
+          <label for="clean_habit" style="font-weight: bold;">愛乾淨程度：(1~5分 弱~強)</label>
           <input type="number" id="clean_habit" v-model="user_data.Clean" required>
         </div>
         <div class="form-group">
@@ -86,7 +86,7 @@
           </select>
         </div>
         <div class="form-group">
-          <label for="size" style="font-weight: bold;">房屋大小：</label>
+          <label for="size" style="font-weight: bold;">房屋大小：(單位:平方公尺)</label>
           <input type="number" id="size" v-model="house_data.Size" required>
         </div>
         
