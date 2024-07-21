@@ -111,6 +111,26 @@ class PosgresqlInitClient:
                         "Longitude" FLOAT,
                         "Latitude" FLOAT
                     );
+
+                    CREATE TABLE IF NOT EXISTS "RECOMMENDATIONS_YOUNG" (
+                        "Recommendation_ID" SERIAL PRIMARY KEY,
+                        "People_ID" INT,
+                        "Item_ID" INT,
+                        "Score" FLOAT,
+                        "Timestamp" TIMESTAMP,
+                        FOREIGN KEY ("People_ID") REFERENCES "PEOPLE" ("People_ID"),
+                        FOREIGN KEY ("Item_ID") REFERENCES "HOUSE" ("House_ID")
+                    );
+
+                    CREATE TABLE IF NOT EXISTS "RECOMMENDATIONS_ELDERLY" (
+                        "Recommendation_ID" SERIAL PRIMARY KEY,
+                        "People_ID" INT,
+                        "Item_ID" INT,
+                        "Score" FLOAT,
+                        "Timestamp" TIMESTAMP,
+                        FOREIGN KEY ("People_ID") REFERENCES "PEOPLE" ("People_ID"),
+                        FOREIGN KEY ("Item_ID") REFERENCES "PEOPLE" ("People_ID")
+                    );
                     """  # noqa
                 )
                 return {"message": "success to create all tables"}

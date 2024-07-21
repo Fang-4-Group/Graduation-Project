@@ -13,6 +13,7 @@ matplotlib==3.8.0
 numpy==1.25.2
 pandas==2.0.3
 psycopg2
+pydub==0.25.1
 pymongo
 pytest
 pytest-asyncio
@@ -21,5 +22,6 @@ PyYAML==6.0.1
 requests
 scikit-learn
 services
+SpeechRecognition
 uvicorn
 uvicorn[standard]
