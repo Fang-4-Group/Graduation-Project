@@ -1,3 +1,4 @@
+import asyncio
 import os
 
 import uvicorn
@@ -6,10 +7,14 @@ from fastapi import APIRouter, FastAPI, Request
 from fastapi.responses import JSONResponse
 from linebot import LineBotApi
 from linebot.exceptions import InvalidSignatureError
-from linebot.models import MessageEvent, TextMessage
+from linebot.models import AudioMessage, MessageEvent, TextMessage
 from linebot.webhook import WebhookHandler
 
-from src.chatbot.services import house_recommendation, save_group_msg
+from src.chatbot.services import (
+    handle_async_audio,
+    house_recommendation,
+    save_group_msg,
+)
 
 app = FastAPI()
 
@@ -51,6 +56,11 @@ def text_msg_handler(event):
         print("Group ID: ", group_id)
         result = save_group_msg(user_id, group_id, msg)
         print("MongoDB insert result: ", result)
+
+
+@handler.add(MessageEvent, message=AudioMessage)
+def audio_msg_handler(event):
+    asyncio.create_task(handle_async_audio(event))
 
 
 app.include_router(router)
