@@ -9,6 +9,7 @@ WORKDIR ${WORKDIR}
 RUN apt-get update
 RUN apt-get install -y wget unzip
 RUN apt-get install -y ffmpeg
+RUN apt-get install -y flac
 RUN rm -rf /var/lib/apt/lists/*
 
 # Set up Python environment
