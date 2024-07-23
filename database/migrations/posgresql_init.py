@@ -41,95 +41,143 @@ class PosgresqlInitClient:
                     """
                     DROP SCHEMA public CASCADE;
                     CREATE SCHEMA public;
-                    CREATE TABLE IF NOT EXISTS "PEOPLE" (
-                        "People_ID" SERIAL PRIMARY KEY,
-                        "Name" varchar,
-                        "Role" integer,
-                        "Sleep_Time" integer,
-                        "Drink" integer,
-                        "Smoke" integer,
-                        "Clean" integer,
-                        "Mbti" varchar,
-                        "Shopping" integer,
-                        "Movie" integer,
-                        "Travel" integer,
-                        "Music" integer,
-                        "Read" integer,
-                        "Game" integer,
-                        "PE" integer,
-                        "Science" integer,
-                        "Food" integer
+                    CREATE TABLE IF NOT EXISTS PEOPLE (
+                        People_ID SERIAL PRIMARY KEY,
+                        Name varchar,
+                        Role integer,
+                        Sleep_Time integer,
+                        Drink integer,
+                        Smoke integer,
+                        Clean integer,
+                        Mbti varchar,
+                        Shopping integer,
+                        Movie integer,
+                        Travel integer,
+                        Music integer,
+                        Read integer,
+                        Game integer,
+                        PE integer,
+                        Science integer,
+                        Food integer
                     );
 
-                    CREATE TABLE IF NOT EXISTS "PEOPLE_CHARACTER" (
-                        "People_ID" integer,
-                        "Character" varchar,
-                        PRIMARY KEY ("People_ID", "Character")
+                    CREATE TABLE IF NOT EXISTS PEOPLE_CHARACTER (
+                        People_ID integer,
+                        Character varchar,
+                        PRIMARY KEY (People_ID, Character)
                     );
 
-                    CREATE TABLE IF NOT EXISTS "HOUSE" (
-                        "House_ID" SERIAL PRIMARY KEY,
-                        "People_ID" integer,
-                        "Size" float,
-                        "Fire" integer,
-                        "Negotiate_Price" integer,
-                        "Photo" varchar,
-                        "City" varchar,
-                        "District" varchar,
-                        "Street" varchar,
-                        "Floor" integer,
-                        "Type" varchar
+                    CREATE TABLE IF NOT EXISTS HOUSE (
+                        House_ID SERIAL PRIMARY KEY,
+                        People_ID integer,
+                        Size float,
+                        Fire integer,
+                        Negotiate_Price integer,
+                        Photo varchar,
+                        City varchar,
+                        District varchar,
+                        Street varchar,
+                        Floor integer,
+                        Type varchar
                     );
 
-                    CREATE TABLE IF NOT EXISTS "HOUSE_FURNITURE" (
-                        "House_ID" integer,
-                        "Furniture" varchar,
-                        PRIMARY KEY ("House_ID", "Furniture")
+                    CREATE TABLE IF NOT EXISTS HOUSE_FURNITURE (
+                        House_ID integer,
+                        Furniture varchar,
+                        PRIMARY KEY (House_ID, Furniture)
                     );
 
-                    CREATE TABLE IF NOT EXISTS "HOUSE_TRAFFIC" (
-                        "House_ID" integer,
-                        "Traffic" varchar,
-                        PRIMARY KEY ("House_ID", "Traffic")
+                    CREATE TABLE IF NOT EXISTS HOUSE_TRAFFIC (
+                        House_ID integer,
+                        Traffic varchar,
+                        PRIMARY KEY (House_ID, Traffic)
                     );
 
-                    CREATE TABLE IF NOT EXISTS "PREFERENCE" (
-                        "Preference_ID" integer PRIMARY KEY,
-                        "People_ID" integer
+                    CREATE TABLE IF NOT EXISTS PREFERENCE (
+                        Preference_ID integer PRIMARY KEY,
+                        People_ID integer
                     );
 
-                    CREATE TABLE IF NOT EXISTS "PREFERENCE_HOUSE_PLACE" (
-                    "Preference_ID" integer,
-                    "Preference_House_Place" varchar,
-                    PRIMARY KEY ("Preference_ID", "Preference_House_Place")
+                    CREATE TABLE IF NOT EXISTS PREFERENCE_HOUSE_PLACE (
+                    Preference_ID integer,
+                    Preference_House_Place varchar,
+                    PRIMARY KEY (Preference_ID, Preference_House_Place)
                     );
 
-                    CREATE TABLE "DISTRICT_LOCATIONS" (
-                        "ID" SERIAL PRIMARY KEY,
-                        "City" VARCHAR(50),
-                        "District" VARCHAR(50),
-                        "Longitude" FLOAT,
-                        "Latitude" FLOAT
+                    CREATE TABLE DISTRICT_LOCATIONS (
+                        ID SERIAL PRIMARY KEY,
+                        City VARCHAR(50),
+                        District VARCHAR(50),
+                        Longitude FLOAT,
+                        Latitude FLOAT
                     );
 
-                    CREATE TABLE IF NOT EXISTS "RECOMMENDATIONS_YOUNG" (
-                        "Recommendation_ID" SERIAL PRIMARY KEY,
-                        "People_ID" INT,
-                        "Item_ID" INT,
-                        "Score" FLOAT,
-                        "Timestamp" TIMESTAMP,
-                        FOREIGN KEY ("People_ID") REFERENCES "PEOPLE" ("People_ID"),
-                        FOREIGN KEY ("Item_ID") REFERENCES "HOUSE" ("House_ID")
+                    CREATE TABLE IF NOT EXISTS RECOMMENDATIONS_YOUNG (
+                        Recommendation_ID SERIAL PRIMARY KEY,
+                        People_ID INT,
+                        Item_ID INT,
+                        Score FLOAT,
+                        Timestamp TIMESTAMP,
+                        FOREIGN KEY (People_ID) REFERENCES PEOPLE (People_ID),
+                        FOREIGN KEY (Item_ID) REFERENCES HOUSE (House_ID)
                     );
 
-                    CREATE TABLE IF NOT EXISTS "RECOMMENDATIONS_ELDERLY" (
-                        "Recommendation_ID" SERIAL PRIMARY KEY,
-                        "People_ID" INT,
-                        "Item_ID" INT,
-                        "Score" FLOAT,
-                        "Timestamp" TIMESTAMP,
-                        FOREIGN KEY ("People_ID") REFERENCES "PEOPLE" ("People_ID"),
-                        FOREIGN KEY ("Item_ID") REFERENCES "PEOPLE" ("People_ID")
+                    CREATE TABLE IF NOT EXISTS RECOMMENDATIONS_ELDERLY (
+                        Recommendation_ID SERIAL PRIMARY KEY,
+                        People_ID INT,
+                        Item_ID INT,
+                        Score FLOAT,
+                        Timestamp TIMESTAMP,
+                        FOREIGN KEY (People_ID) REFERENCES PEOPLE (People_ID),
+                        FOREIGN KEY (Item_ID) REFERENCES PEOPLE (People_ID)
+                    );
+
+                    CREATE TABLE INTERACTION_YOUNG (
+                        Interaction_ID_y INT PRIMARY KEY AUTO_INCREMENT,
+                        People_ID INT,
+                        House_Option_1 INT,
+                        House_Option_2 INT,
+                        House_Option_3 INT,
+                        Interaction_Date TIMESTAMP,
+                        FOREIGN KEY (People_ID) REFERENCES People(People_ID),
+                        FOREIGN KEY (House_Option_1) REFERENCES House(House_ID),
+                        FOREIGN KEY (House_Option_2) REFERENCES House(House_ID),
+                        FOREIGN KEY (House_Option_3) REFERENCES House(House_ID)
+                    );
+
+                    CREATE TABLE INTERACTION_DETAILS_YOUNG (
+                        Detail_ID_y INT PRIMARY KEY AUTO_INCREMENT,
+                        Interaction_ID INT,
+                        House_ID INT,
+                        Viewed TINYINT(1) DEFAULT 0,
+                        Grouped TINYINT(1) DEFAULT 0,
+                        Selected TINYINT(1) DEFAULT 0,
+                        FOREIGN KEY (Interaction_ID) REFERENCES INTERACTION_YOUNG(Interaction_ID_y),
+                        FOREIGN KEY (House_ID) REFERENCES House(House_ID)
+                    );
+
+                    CREATE TABLE INTERACTION_ELDERLY (
+                        Interaction_ID_e INT PRIMARY KEY AUTO_INCREMENT,
+                        People_ID INT,
+                        People_Option_1 INT,
+                        People_Option_2 INT,
+                        People_Option_3 INT,
+                        Interaction_Date DATE,
+                        FOREIGN KEY (People_ID) REFERENCES People(People_ID),
+                        FOREIGN KEY (People_Option_1) REFERENCES People(People_ID),
+                        FOREIGN KEY (People_Option_2) REFERENCES People(People_ID),
+                        FOREIGN KEY (People_Option_3) REFERENCES People(People_ID)
+                    );
+
+                    CREATE TABLE INTERACTION_DETAILS_ELDERLY (
+                        Detail_ID_e INT PRIMARY KEY AUTO_INCREMENT,
+                        Interaction_ID INT,
+                        People_ID INT,
+                        Viewed TINYINT(1) DEFAULT 0,
+                        Grouped TINYINT(1) DEFAULT 0,
+                        Selected TINYINT(1) DEFAULT 0,
+                        FOREIGN KEY (Interaction_ID) REFERENCES INTERACTION_ELDERLY(Interaction_ID_e),
+                        FOREIGN KEY (People_ID) REFERENCES People(People_ID)
                     );
                     """  # noqa
                 )
