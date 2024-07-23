@@ -56,11 +56,11 @@
         <div class="form-group">
           <label for="clean_habit" style="font-weight: bold;">愛乾淨程度：</label>
           <select id="clean_habit" v-model.number="user_data.Clean" required>
-            <option value="1">1 (弱)</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5 (強)</option>
+            <option value="1">不愛乾淨</option>
+            <option value="2">稍微愛乾淨</option>
+            <option value="3">正常愛乾淨</option>
+            <option value="4">很愛乾淨</option>
+            <option value="5">極度潔癖</option>
           </select>
         </div>
         <div class="form-group">
