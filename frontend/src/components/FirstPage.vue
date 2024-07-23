@@ -24,33 +24,33 @@
         <div class="form-group">
           <label for="sleepTime" style="font-weight: bold;">睡覺時間：</label>
           <select id="sleepTime" v-model.number="user_data.Sleep_Time" required>
-            <option value="1">1 (早)</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5 (晚)</option>
+            <option value="1">晚上7:00~9:00</option>
+            <option value="2">晚上9:00~11:00</option>
+            <option value="3">晚上11:00~隔天1:00</option>
+            <option value="4">凌晨1:00~3:00</option>
+            <option value="5">凌晨3:00以後</option>
           </select>
         </div>
         <div class="form-group">
           <label for="drink" style="font-weight: bold;">飲酒程度：</label>
           <select id="drink" v-model.number="user_data.Drink" required>
-            <option value="0">0 (不喝)</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5 (強)</option>
+            <option value="0">從不飲酒</option>
+            <option value="1">很少飲酒</option>
+            <option value="2">偶爾小酌</option>
+            <option value="3">經常飲酒</option>
+            <option value="4">每天飲酒</option>
+            <option value="5">酗酒</option>
           </select>
         </div>
         <div class="form-group">
           <label for="smoke" style="font-weight: bold;">抽菸程度：</label>
           <select id="smoke" v-model.number="user_data.Smoke" required>
-            <option value="0">0 (不抽)</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5 (強)</option>
+            <option value="0">從不抽菸</option>
+            <option value="1">很少抽菸</option>
+            <option value="2">偶爾抽菸</option>
+            <option value="3">經常抽菸</option>
+            <option value="4">每天抽菸</option>
+            <option value="5">重度菸癮</option>
           </select>
         </div>
         <div class="form-group">
