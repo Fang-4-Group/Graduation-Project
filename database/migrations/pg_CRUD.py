@@ -687,19 +687,19 @@ class PosgresqClient:
                 return {"message": f"Error when inserting data: {str(e)}"}
 
     # Recommadation
-    async def add_recommendation(self, type: int, recommendation_info: dict):
+    async def add_recommendation(self, role: int, recommendation_info: dict):
         async with self.access_db() as conn:
             try:
                 people_id = recommendation_info["People_ID"]
                 item_Ids = recommendation_info["Item_ID"]
                 sql = "INSERT INTO "
-                if type == 0:
+                if role == 0:
                     sql += '"RECOMMENDATIONS_YOUNG"'
-                elif type == 1:
+                elif role == 1:
                     sql += '"RECOMMENDATIONS_ELDERLY"'
                 else:
                     return {
-                        "message": "Please use valid type number, 0 for young and 1 for elderly" # noqa
+                        "message": "Please use valid role number, 0 for young and 1 for elderly" # noqa
                     }
 
                 sql += """ ("People_ID", "Item_ID", "Timestamp")
@@ -720,18 +720,17 @@ class PosgresqClient:
             except Exception as e:
                 return {"message": f"Error when inserting data: {str(e)}"}
 
-    # Recommadation
-    async def get_recommendation(self, type: int, item_ids: list = []):
+    async def get_recommendation(self, role: int, item_ids: list = []):
         async with self.access_db() as conn:
             try:
                 sql = "SELECT * FROM "
-                if type == 0:
+                if role == 0:
                     sql += '"RECOMMENDATIONS_YOUNG"'
-                elif type == 1:
+                elif role == 1:
                     sql += '"RECOMMENDATIONS_ELDERLY"'
                 else:
                     return {
-                        "message": "Please use valid type number, 0 for young and 1 for elderly" # noqa
+                        "message": "Please use valid role number, 0 for young and 1 for elderly" # noqa
                     }
 
                 sql += 'WHERE "Item_ID" = ANY($1::int[]);'
@@ -742,6 +741,53 @@ class PosgresqClient:
                 )
 
                 return data
+
+            except Exception as e:
+                return {"message": f"Error when inserting data: {str(e)}"}
+
+    async def add_interaction_young(self, interaction_info: dict):
+        async with self.access_db() as conn:
+            try:
+                sql = """INSERT INTO "INTERACTION_YOUNG" 
+                        ("People_ID", "House_Option_1", "House_Option_2", "House_Option_3", "Interaction_Date")
+                        VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP)
+                        RETURNING "Interaction_ID_y"
+                        """ # noqa
+                data = await conn.fetch(
+                    sql,
+                    interaction_info["People_ID"],
+                    interaction_info["Option_1"],
+                    interaction_info["Option_2"],
+                    interaction_info["Option_3"]
+                )
+                return {
+                    "message": "Data inserted successfully",
+                    "Interaction_ID_y": data[0]["Interaction_ID_y"],
+                }
+
+            except Exception as e:
+                return {"message": f"Error when inserting data: {str(e)}"}
+
+    async def add_interaction_elder(self, interaction_info: dict):
+        async with self.access_db() as conn:
+            try:
+                sql = """INSERT INTO "INTERACTION_ELDERLY" 
+                        ("People_ID", "People_Option_1", "People_Option_2", "People_Option_3", "Interaction_Date")
+                        VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP)
+                        RETURNING "Interaction_ID_e"
+                        """ # noqa
+                data = await conn.fetch(
+                    sql,
+                    interaction_info["People_ID"],
+                    interaction_info["Option_1"],
+                    interaction_info["Option_2"],
+                    interaction_info["Option_3"]
+                )
+
+                return {
+                    "message": "Data inserted successfully",
+                    "Interaction_ID_e": data[0]["Interaction_ID_e"],
+                }
 
             except Exception as e:
                 return {"message": f"Error when inserting data: {str(e)}"}

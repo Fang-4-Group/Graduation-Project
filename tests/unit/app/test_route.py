@@ -312,11 +312,11 @@ def test_add_recommendation():
         "People_ID": 2,
         "Item_ID": [1, 3],
     }
-    response_0 = client.post("/add_recommendation/0", json=sample_data_0)
     sample_data_1 = {
         "People_ID": 1,
         "Item_ID": [2, 4],
     }
+    response_0 = client.post("/add_recommendation/0", json=sample_data_0)
     response_1 = client.post("/add_recommendation/1", json=sample_data_1)
     assert response_0.status_code == 200
     assert response_1.status_code == 200
@@ -326,10 +326,31 @@ def test_get_recommendation():
     sample_data_0 = {
         "Item_ID": [1]
     }
-    response_0 = client.post("/get_recommendation/0", json=sample_data_0)
     sample_data_1 = {
         "Item_ID": [2]
     }
+    response_0 = client.post("/get_recommendation/0", json=sample_data_0)
     response_1 = client.post("/get_recommendation/1", json=sample_data_1)
     assert response_0.status_code == 200
     assert response_1.status_code == 200
+
+
+def test_add_interaction():
+    sample_data_y = {
+        "People_ID": 2,
+        "Option_1": 7,
+        "Option_2": 8,
+        "Option_3": 10
+    }
+    sample_data_e = {
+        "People_ID": 1,
+        "Option_1": 2,
+        "Option_2": 4,
+        "Option_3": 10
+    }
+
+    response_y = client.post("/add_interaction/0", json=sample_data_y)
+    response_e = client.post("/add_interaction/1", json=sample_data_e)
+
+    assert response_y.status_code == 200
+    assert response_e.status_code == 200

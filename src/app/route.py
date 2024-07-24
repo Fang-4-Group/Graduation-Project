@@ -378,18 +378,18 @@ async def get_house_traffic(people_id: int):
     return result
 
 
-@router.post("/add_recommendation/{type}")
-async def add_recommendation(type: int, recommendation_info: dict):
+@router.post("/add_recommendation/{role}")
+async def add_recommendation(role: int, recommendation_info: dict):
     client = PosgresqClient()
-    result = await client.add_recommendation(type, recommendation_info)
+    result = await client.add_recommendation(role, recommendation_info)
     return result
 
 
-@router.post("/get_recommendation/{type}")
-async def get_recommendation(type: int, condition: dict = None):
+@router.post("/get_recommendation/{role}")
+async def get_recommendation(role: int, condition: dict = None):
     item_ids = condition["Item_ID"]
     client = PosgresqClient()
-    result = await client.get_recommendation(type, item_ids)
+    result = await client.get_recommendation(role, item_ids)
     return result
 
 
@@ -418,4 +418,19 @@ async def embeddingModel(target: int, place_dict: dict = None):
 @router.get("/get_group_chat_records/{group_id}")
 async def get_group_chat_records(group_id: str):
     result = get_group_chat_records_by_id(group_id)
+    return result
+
+
+# API for Interaction
+@router.post("/add_interaction/{role}")
+async def add_interaction(role: int, interaction_info: dict):
+    client = PosgresqClient()
+    if role == 0:
+        result = await client.add_interaction_young(interaction_info)
+    elif role == 1:
+        result = await client.add_interaction_elder(interaction_info)
+    else:
+        return {
+            "message": "Please input valid role"
+        }
     return result
