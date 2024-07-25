@@ -686,6 +686,32 @@ class PosgresqClient:
             except Exception as e:
                 return {"message": f"Error when inserting data: {str(e)}"}
 
+    # Update profile info
+    async def update_user_info(self, user_update_data: dict):
+        async with self.access_db() as conn:
+            try:
+                user_id = user_update_data["People_ID"]
+                data = user_update_data["data"]
+                set_clauses = ", ".join(
+                    [f'"{key}" = ${i+1}' for i, key in enumerate(data.keys())]
+                )  # noqa
+
+                query = f"""
+                UPDATE "PEOPLE"
+                SET {set_clauses}
+                WHERE "People_ID" = {user_id}
+                RETURNING "People_ID"
+                """
+                values = list(data.values())
+
+                await conn.fetch(query, *values)
+
+                return {
+                    "message": "Data updated successfully",
+                }
+            except Exception as e:
+                return {"message": f"Error when updating data: {str(e)}"}
+
     # Recommadation
     async def add_recommendation(self, type: int, recommendation_info: dict):
         async with self.access_db() as conn:
@@ -699,7 +725,7 @@ class PosgresqClient:
                     sql += '"RECOMMENDATIONS_ELDERLY"'
                 else:
                     return {
-                        "message": "Please use valid type number, 0 for young and 1 for elderly" # noqa
+                        "message": "Please use valid type number, 0 for young and 1 for elderly"  # noqa
                     }
 
                 sql += """ ("People_ID", "Item_ID", "Timestamp")
@@ -731,7 +757,7 @@ class PosgresqClient:
                     sql += '"RECOMMENDATIONS_ELDERLY"'
                 else:
                     return {
-                        "message": "Please use valid type number, 0 for young and 1 for elderly" # noqa
+                        "message": "Please use valid type number, 0 for young and 1 for elderly"  # noqa
                     }
 
                 sql += 'WHERE "Item_ID" = ANY($1::int[]);'
