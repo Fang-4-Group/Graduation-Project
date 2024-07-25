@@ -143,7 +143,7 @@
       }else if(s == 2){
         sleepTime.value = "晚上9:00~11:00";
       }else if(s == 3){
-        sleepTime.value = "晚上11:00~隔天1:00";
+        sleepTime.value = "晚上11:00~凌晨1:00";
       }else if(s == 4){
         sleepTime.value ="凌晨1:00~3:00";
       }else if(s == 5){
@@ -162,8 +162,6 @@
         drink.value = "經常飲酒";
       }else if(d == 4){
         drink.value ="每天飲酒";
-      }else if(d == 5){
-        drink.value = "酗酒";
       }
       
 
@@ -179,8 +177,6 @@
         smoke.value = "經常抽菸";
       }else if(sm == 4){
         smoke.value ="每天抽菸";
-      }else if(sm == 5){
-        smoke.value = "重度菸癮";
       }
 
       const clean_habit_Response = await axios.get(`${BASE_URL}/get_clean_habit/${People_ID}`); 

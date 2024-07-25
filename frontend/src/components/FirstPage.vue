@@ -11,7 +11,7 @@
         </div>
         <div style="display: inline-block;">
           <input type="radio" id="old" :value="1" v-model="user_data.Role">
-          <label for="old">老人</label>
+          <label for="old">年長者</label>
         </div>
       </div>
 
@@ -26,7 +26,7 @@
           <select id="sleepTime" v-model.number="user_data.Sleep_Time" required>
             <option value="1">晚上7:00~9:00</option>
             <option value="2">晚上9:00~11:00</option>
-            <option value="3">晚上11:00~隔天1:00</option>
+            <option value="3">晚上11:00~凌晨1:00</option>
             <option value="4">凌晨1:00~3:00</option>
             <option value="5">凌晨3:00以後</option>
           </select>
@@ -39,7 +39,6 @@
             <option value="2">偶爾小酌</option>
             <option value="3">經常飲酒</option>
             <option value="4">每天飲酒</option>
-            <option value="5">酗酒</option>
           </select>
         </div>
         <div class="form-group">
@@ -50,7 +49,6 @@
             <option value="2">偶爾抽菸</option>
             <option value="3">經常抽菸</option>
             <option value="4">每天抽菸</option>
-            <option value="5">重度菸癮</option>
           </select>
         </div>
         <div class="form-group">
@@ -65,7 +63,25 @@
         </div>
         <div class="form-group">
           <label for="mbti" style="font-weight: bold;">Mbti：</label>
-          <input type="text" id="mbti" v-model="user_data.Mbti" required>
+          <div class="address-group">
+            <select id="EI" v-model="All_MBTI.EI" required>
+              <option value="E">E(外向)</option>
+              <option value="I">I(內向)</option>
+            </select>
+            <select id="SN" v-model="All_MBTI.SN" required>
+              <option value="S">S(實際)</option>
+              <option value="N">N(直覺)</option>
+            </select>
+            <select id="FT" v-model="All_MBTI.FT" required>
+              <option value="F">F(感覺)</option>
+              <option value="T">T(思考)</option>
+            </select>
+            <select id="PJ" v-model="All_MBTI.PJ" required>
+              <option value="P">P(感知)</option>
+              <option value="J">J(判斷)</option>
+            </select>
+          </div>
+          <!--<input type="text" id="mbti" v-model="user_data.Mbti" required>-->
         </div>
 
         <!-- Interests -->
@@ -167,6 +183,13 @@
 import { ref } from 'vue';
 import axios from 'axios';
 
+const All_MBTI = ref({
+  EI:'',
+  SN:'',
+  FT:'',
+  PJ:''
+})
+
 const user_data = ref({
   Name: '',
   Role: 0,
@@ -245,6 +268,8 @@ const router = useRouter();
 async function submitForm() {
   
   try {
+    user_data.value.Mbti = All_MBTI.value.EI + All_MBTI.value.SN + All_MBTI.value.FT + All_MBTI.value.PJ;
+
     const userResponse = await axios.post('http://localhost:7877/post_user_basic_info', user_data.value);
     console.log(userResponse.data);
     const People_ID = userResponse.data.People_ID;
