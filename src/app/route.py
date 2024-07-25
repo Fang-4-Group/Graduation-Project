@@ -425,12 +425,13 @@ async def get_group_chat_records(group_id: str):
 @router.post("/add_interaction/{role}")
 async def add_interaction(role: int, interaction_info: dict):
     client = PosgresqClient()
-    if role == 0:
-        result = await client.add_interaction_young(interaction_info)
-    elif role == 1:
-        result = await client.add_interaction_elder(interaction_info)
-    else:
-        return {
-            "message": "Please input valid role"
+    result = await client.add_interaction(role, interaction_info)
+    if result["message"] == "Data inserted successfully":
+        detail_info = {
+            "Interaction_ID": result["Interaction_ID"],
+            "Options": interaction_info["Options"],
         }
-    return result
+        result_detail = await client.add_interaction_detail(role, detail_info)
+        return result_detail
+    else:
+        return result

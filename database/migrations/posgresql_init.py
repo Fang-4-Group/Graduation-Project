@@ -147,12 +147,12 @@ class PosgresqlInitClient:
 
                     CREATE TABLE "INTERACTION_DETAILS_YOUNG" (
                         "Detail_ID_y" SERIAL PRIMARY KEY,
-                        "Interaction_ID" INT,
+                        "Interaction_ID_y" INT,
                         "House_ID" INT,
                         "Viewed"  INT DEFAULT 0,
                         "Grouped" INT DEFAULT 0,
                         "Selected" INT DEFAULT 0,
-                        FOREIGN KEY ("Interaction_ID") REFERENCES "INTERACTION_YOUNG"("Interaction_ID_y"),
+                        FOREIGN KEY ("Interaction_ID_y") REFERENCES "INTERACTION_YOUNG"("Interaction_ID_y"),
                         FOREIGN KEY ("House_ID") REFERENCES "HOUSE"("House_ID")
                     );
 
@@ -171,12 +171,12 @@ class PosgresqlInitClient:
 
                     CREATE TABLE "INTERACTION_DETAILS_ELDERLY" (
                         "Detail_ID_e" SERIAL PRIMARY KEY,
-                        "Interaction_ID" INT,
+                        "Interaction_ID_e" INT,
                         "People_ID" INT,
                         "Viewed" INT DEFAULT 0,
                         "Grouped" INT DEFAULT 0,
                         "Selected" INT DEFAULT 0,
-                        FOREIGN KEY ("Interaction_ID") REFERENCES "INTERACTION_ELDERLY"("Interaction_ID_e"),
+                        FOREIGN KEY ("Interaction_ID_e") REFERENCES "INTERACTION_ELDERLY"("Interaction_ID_e"),
                         FOREIGN KEY ("People_ID") REFERENCES "PEOPLE"("People_ID")
                     );
                     """  # noqa

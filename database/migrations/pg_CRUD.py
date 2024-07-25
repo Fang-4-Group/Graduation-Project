@@ -699,7 +699,7 @@ class PosgresqClient:
                     sql += '"RECOMMENDATIONS_ELDERLY"'
                 else:
                     return {
-                        "message": "Please use valid role number, 0 for young and 1 for elderly" # noqa
+                        "message": "Please use valid role number, 0 for young and 1 for elderly"  # noqa
                     }
 
                 sql += """ ("People_ID", "Item_ID", "Timestamp")
@@ -730,7 +730,7 @@ class PosgresqClient:
                     sql += '"RECOMMENDATIONS_ELDERLY"'
                 else:
                     return {
-                        "message": "Please use valid role number, 0 for young and 1 for elderly" # noqa
+                        "message": "Please use valid role number, 0 for young and 1 for elderly"  # noqa
                     }
 
                 sql += 'WHERE "Item_ID" = ANY($1::int[]);'
@@ -745,48 +745,67 @@ class PosgresqClient:
             except Exception as e:
                 return {"message": f"Error when inserting data: {str(e)}"}
 
-    async def add_interaction_young(self, interaction_info: dict):
+    async def add_interaction(self, role: int, interaction_info: dict):
         async with self.access_db() as conn:
             try:
-                sql = """INSERT INTO "INTERACTION_YOUNG" 
+                sql = "INSERT INTO "
+                if role == 0:
+                    sql += """"INTERACTION_YOUNG"
                         ("People_ID", "House_Option_1", "House_Option_2", "House_Option_3", "Interaction_Date")
                         VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP)
                         RETURNING "Interaction_ID_y"
-                        """ # noqa
+                        """  # noqa
+                    key = "Interaction_ID_y"
+                elif role == 1:
+                    sql += """"INTERACTION_ELDERLY"
+                        ("People_ID", "People_Option_1", "People_Option_2", "People_Option_3", "Interaction_Date")
+                        VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP)
+                        RETURNING "Interaction_ID_e"
+                        """  # noqa
+                    key = "Interaction_ID_e"
+                else:
+                    return {"message": "Please input valid role"}
+
                 data = await conn.fetch(
                     sql,
                     interaction_info["People_ID"],
-                    interaction_info["Option_1"],
-                    interaction_info["Option_2"],
-                    interaction_info["Option_3"]
+                    interaction_info["Options"][0],
+                    interaction_info["Options"][1],
+                    interaction_info["Options"][2],
                 )
                 return {
                     "message": "Data inserted successfully",
-                    "Interaction_ID_y": data[0]["Interaction_ID_y"],
+                    "Interaction_ID": data[0][key],
                 }
 
             except Exception as e:
                 return {"message": f"Error when inserting data: {str(e)}"}
 
-    async def add_interaction_elder(self, interaction_info: dict):
+    async def add_interaction_detail(self, role: int, detail_info: dict):
         async with self.access_db() as conn:
             try:
-                sql = """INSERT INTO "INTERACTION_ELDERLY" 
-                        ("People_ID", "People_Option_1", "People_Option_2", "People_Option_3", "Interaction_Date")
-                        VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP)
-                        RETURNING "Interaction_ID_e"
-                        """ # noqa
-                data = await conn.fetch(
-                    sql,
-                    interaction_info["People_ID"],
-                    interaction_info["Option_1"],
-                    interaction_info["Option_2"],
-                    interaction_info["Option_3"]
-                )
+                if role == 0:
+                    sql = """INSERT INTO "INTERACTION_DETAILS_YOUNG"
+                            ("Interaction_ID_y", "House_ID")
+                            VALUES ($1, $2)
+                            """  # noqa
+                    role = "Young"
+                elif role == 1:
+                    sql = """INSERT INTO "INTERACTION_DETAILS_ELDERLY"
+                            ("Interaction_ID_e", "People_ID")
+                            VALUES ($1, $2)
+                            """  # noqa
+                    role = "Elderly"
+                else:
+                    return {"message": "Please input valid role"}
+                for option_id in detail_info["Options"]:
+                    await conn.execute(
+                        sql, detail_info["Interaction_ID"], option_id
+                    )  # noqa
 
                 return {
-                    "message": "Data inserted successfully",
-                    "Interaction_ID_e": data[0]["Interaction_ID_e"],
+                    "role": role,
+                    "message": f"Initial detail for Interaction ID {detail_info['Interaction_ID']} inserted successfully",  # noqa
                 }
 
             except Exception as e:
