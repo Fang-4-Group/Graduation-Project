@@ -186,10 +186,17 @@ async def post_house_traffic_info(house_traffic_data: dict):
     return result
 
 
-@router.post("/update_younger_user_info/")
-async def update_younger_user_info(user_update_data: dict):
+@router.post("/update_user_info/")
+async def update_user_info(user_update_data: dict):
     client = PosgresqClient()
-    result = await client.update_younger_user_info(user_update_data)
+    result = await client.update_user_info(user_update_data)
+    return result
+
+
+@router.post("/update_house_info/")
+async def update_house_info(user_update_data: dict):
+    client = PosgresqClient()
+    result = await client.update_house_info(user_update_data)
     return result
 
 

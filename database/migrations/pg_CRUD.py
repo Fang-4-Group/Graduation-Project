@@ -687,24 +687,24 @@ class PosgresqClient:
                 return {"message": f"Error when inserting data: {str(e)}"}
 
     # Update profile info
-    async def update_younger_user_info(self, user_update_data: dict):
+    async def update_user_info(self, user_update_data: dict):
         async with self.access_db() as conn:
             try:
                 user_id = user_update_data["People_ID"]
                 data = user_update_data["data"]
                 set_clauses = ", ".join(
-                    [f'"{key}" = ${i+1}' for i, key in enumerate(data.keys())]
+                    [f'"{key}" = ${i+2}' for i, key in enumerate(data.keys())]
                 )  # noqa
 
                 query = f"""
                 UPDATE "PEOPLE"
                 SET {set_clauses}
-                WHERE "People_ID" = {user_id}
+                WHERE "People_ID" = $1
                 RETURNING "People_ID"
                 """
                 values = list(data.values())
 
-                await conn.fetch(query, *values)
+                await conn.fetch(query, user_id, *values)
 
                 return {
                     "message": "Data updated successfully",
