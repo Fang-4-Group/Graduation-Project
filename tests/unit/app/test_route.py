@@ -340,3 +340,24 @@ def test_add_interaction():
 
     assert response_y.status_code == 200
     assert response_e.status_code == 200
+
+
+def test_update_viewed():
+    sample_data = {"Detail_ID": 2}
+    response = client.post("/update_viewed/0", json=sample_data)
+    assert response.status_code == 200
+    assert response.json() == {"message": "Update Successfully"}
+
+
+def test_update_grouped():
+    sample_data = {"Detail_ID": 2}
+    response = client.post("/update_grouped/0", json=sample_data)
+    assert response.status_code == 200
+    assert response.json() == {"message": "Update Successfully"}
+
+
+def test_update_selected():
+    sample_data = {"Detail_ID": 2}
+    response = client.post("/update_selected/0", json=sample_data)
+    assert response.status_code == 200
+    assert response.json() == {"message": "Update Successfully"}

@@ -435,3 +435,35 @@ async def add_interaction(role: int, interaction_info: dict):
         return result_detail
     else:
         return result
+
+
+@router.post("/update_viewed/{role}")
+async def update_viewed(role: int, detail_info: dict):
+    client = PosgresqClient()
+    detail_id = detail_info["Detail_ID"]
+    result = await client.update_field(role, detail_id, field="Viewed")
+    return result
+
+
+@router.post("/update_grouped/{role}")
+async def update_grouped(role: int, detail_info: dict):
+    client = PosgresqClient()
+    detail_id = detail_info["Detail_ID"]
+    result = await client.update_field(role, detail_id, field="Grouped")
+    return result
+
+
+@router.post("/update_selected/{role}")
+async def update_selected(role: int, detail_info: dict):
+    client = PosgresqClient()
+    detail_id = detail_info["Detail_ID"]
+    result = await client.update_field(role, detail_id, field="Selected")
+    return result
+
+
+@router.post("/get_interaction/{role}")
+async def get_interaction(role: int, detail_info: dict):
+    detail_id = detail_info["Detail_ID"]
+    client = PosgresqClient()
+    result = await client.get_interaction(role, detail_id)
+    return result

@@ -810,3 +810,58 @@ class PosgresqClient:
 
             except Exception as e:
                 return {"message": f"Error when inserting data: {str(e)}"}
+
+    async def update_field(self, role: int, detail_id: int, field: str):
+        valid_fields = ["Viewed", "Grouped", "Selected"]
+        if field not in valid_fields:
+            return {"message": "Invalid field name"}
+        async with self.access_db() as conn:
+            try:
+                if role == 0:
+                    sql = f"""
+                        UPDATE "INTERACTION_DETAILS_YOUNG"
+                        SET "{field}" = 1
+                        WHERE "Detail_ID_y" = $1
+                        """
+                elif role == 1:
+                    sql = f"""
+                        UPDATE ""INTERACTION_DETAILS_ELDERLY""
+                        SET "{field}" = 1
+                        WHERE "Detail_ID_e" = $1
+                        """
+                else:
+                    return {"message": "Please input valid role number"}
+
+                await conn.execute(
+                    sql,
+                    detail_id,
+                )
+                return {"message": "Update Successfully"}
+            except Exception as e:
+                return {"message": f"Error when inserting data: {str(e)}"}
+
+    async def get_interaction(self, role: int, detail_id: int):
+        async with self.access_db() as conn:
+            try:
+                if role == 0:
+                    sql = """SELECT * FROM "INTERACTION_DETAILS_YOUNG"
+                        WHERE "Detail_ID_y" = $1
+                        """
+                elif role == 1:
+                    sql = """SELECT * FROM "INTERACTION_DETAILS_ELDERLY"
+                        WHERE "Detail_ID_e" = $1
+                        """
+                else:
+                    return {
+                        "message": "Please use valid role number, 0 for young and 1 for elderly"  # noqa
+                    }
+
+                data = await conn.fetch(
+                    sql,
+                    detail_id,
+                )
+
+                return data
+
+            except Exception as e:
+                return {"message": f"Error when inserting data: {str(e)}"}
