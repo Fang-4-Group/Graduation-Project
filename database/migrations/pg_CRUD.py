@@ -687,7 +687,7 @@ class PosgresqClient:
                 return {"message": f"Error when inserting data: {str(e)}"}
 
     # Update profile info
-    async def update_user_info(self, user_update_data: dict):
+    async def update_younger_user_info(self, user_update_data: dict):
         async with self.access_db() as conn:
             try:
                 user_id = user_update_data["People_ID"]
@@ -711,60 +711,6 @@ class PosgresqClient:
                 }
             except Exception as e:
                 return {"message": f"Error when updating data: {str(e)}"}
-
-    async def update_house_info(self, house_update_data: dict):
-        async with self.access_db() as conn:
-            try:
-                user_id = house_update_data["People_ID"]
-                data = house_update_data["data"]
-                set_clauses = ", ".join(
-                    [f'"{key}" = ${i+1}' for i, key in enumerate(data.keys())]
-                )  # noqa
-
-                query = f"""
-                UPDATE "HOUSE"
-                SET {set_clauses}
-                WHERE "People_ID" = {user_id}
-                RETURNING "People_ID"
-                """
-                values = list(data.values())
-
-                await conn.fetch(query, *values)
-
-                return {
-                    "message": "Data updated successfully",
-                }
-            except Exception as e:
-                return {"message": f"Error when updating data: {str(e)}"}
-
-    async def update_house_furniture_info(
-        self, house_furniture_update_data: dict
-    ):  # noqa
-        pass
-        # async with self.access_db() as conn:
-        #     try:
-        #         house_id = house_furniture_update_data["House_ID"]
-        #         data = house_furniture_update_data["data"]
-        #         set_clauses = ", ".join(
-        #             [f'"{key}" = ${i+1}' for i,
-        # key in enumerate(data.keys())]
-        #         )  # noqa
-
-        #         query = f"""
-        #         UPDATE "HOUSE_FURNITURE"
-        #         SET {set_clauses}
-        #         WHERE "People_ID" = {user_id}
-        #         RETURNING "People_ID"
-        #         """
-        #         values = list(data.values())
-
-        #         await conn.fetch(query, *values)
-
-        #         return {
-        #             "message": "Data updated successfully",
-        #         }
-        #     except Exception as e:
-        #         return {"message": f"Error when updating data: {str(e)}"}
 
     # Recommadation
     async def add_recommendation(self, type: int, recommendation_info: dict):
