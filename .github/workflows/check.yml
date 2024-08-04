@@ -1,7 +1,7 @@
 name: Check space left
 
 on:
-  # push:
+  push:
 
 jobs:
   build:
