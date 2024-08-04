@@ -22,8 +22,12 @@ jobs:
       - name: Check disk space usage
         run: df -h
 
-      # - name: Delete old and unused docker image
-      #   run: docker system prune -f
+      - name: Delete old and unused docker image
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf "/usr/local/share/boost"
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
 
-      - name: Chech home
-        run: ls -la /home
+      - name: Chech again
+        run: df -h
