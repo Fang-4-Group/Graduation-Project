@@ -477,6 +477,23 @@ class PosgresqClient:
             except Exception as e:
                 return {"error": f"Error retrieving house traffic: {str(e)}"}
 
+    async def get_elder_info_by_house_id(self, house_id: int) -> dict:
+        async with self.access_db() as conn:
+            try:
+                data = await conn.fetch(
+                    """
+                    SELECT * FROM "PEOPLE"
+                    WHERE "People_ID" = (
+                        SELECT "People_ID" FROM "HOUSE"
+                        WHERE "House_ID" = $1
+                    );
+                    """,
+                    house_id,
+                )
+                return data
+            except Exception as e:
+                return {"error": f"Error retrieving elder info: {str(e)}"}
+
     async def update_sleep_time(
         self, people_id: int, new_sleep_time: int
     ) -> dict:  # noqa
@@ -701,7 +718,7 @@ class PosgresqClient:
                     sql += '"RECOMMENDATIONS_ELDERLY"'
                 else:
                     return {
-                        "message": "Please use valid type number, 0 for young and 1 for elderly" # noqa
+                        "message": "Please use valid type number, 0 for young and 1 for elderly"  # noqa
                     }
 
                 sql += """ ("People_ID", "Item_ID", "Timestamp")
@@ -733,7 +750,7 @@ class PosgresqClient:
                     sql += '"RECOMMENDATIONS_ELDERLY"'
                 else:
                     return {
-                        "message": "Please use valid type number, 0 for young and 1 for elderly" # noqa
+                        "message": "Please use valid type number, 0 for young and 1 for elderly"  # noqa
                     }
 
                 sql += 'WHERE "Item_ID" = ANY($1::int[]);'
