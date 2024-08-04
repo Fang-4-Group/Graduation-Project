@@ -13,8 +13,6 @@ jobs:
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
-        with:
-          node-version: '20'
 
       # Check
 
@@ -24,8 +22,8 @@ jobs:
       - name: Check disk space usage
         run: df -h
 
-      - name: Delete old and unused docker image
-        run: docker system prune -f
+      # - name: Delete old and unused docker image
+      #   run: docker system prune -f
 
-      - name: Chech again
-        run: df -h
+      - name: Chech home
+        run: ls -la /home
