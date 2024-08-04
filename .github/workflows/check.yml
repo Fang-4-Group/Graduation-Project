@@ -19,5 +19,8 @@ jobs:
       - name: Check disk space usage
         run: df -h
 
-      - name: Check
-        run: df -h /var/lib
+      - name: Delete old and unused docker image
+        run: docker system prune -af
+
+      - name: Chech again
+        run: df -h

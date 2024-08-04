@@ -2,7 +2,7 @@
 name: Python Application Testing
 
 on:
-  push:
+  # push:
   pull_request:
 
 jobs:
