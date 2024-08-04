@@ -30,3 +30,4 @@ jobs:
         run: |
           df -h
           ls -al /
+          ls -al /tmp
