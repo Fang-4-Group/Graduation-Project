@@ -18,6 +18,3 @@ jobs:
 
       - name: Check disk space usage
         run: df -h
-
-      - name: Check root
-        run: du -h /dev/root

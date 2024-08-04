@@ -2,7 +2,7 @@
 name: Python Application Testing
 
 on:
-  # push:
+  push:
   pull_request:
 
 jobs:
@@ -43,7 +43,7 @@ jobs:
 
     - name: Build and run with docker-compose
       run: |
-        docker-compose up -d
+        docker compose up -d
 
     - name: Install dependencies
       run: pip install -e .
@@ -61,7 +61,7 @@ jobs:
 
     - name: Run and test
       run: |
-        docker-compose exec -T app pytest
+        docker compose exec -T app pytest
 
     - name: Cleanup
       run: docker-compose down
