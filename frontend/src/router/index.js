@@ -10,6 +10,8 @@ import EditHouseFurniture from'../components/EditHouseFurniture.vue' ;
 import EditHouseTraffic from'../components/EditHouseTraffic.vue' ;
 import EditHouseBasic from'../components/EditHouseBasic.vue' ;
 import LIFF from '../components/LIFF.vue'; 
+import UpdateYoung from '@/components/UpdateYoung.vue';
+import UpdateOld from '@/components/UpdateOld.vue';
 
 const routes = [
   {path: '/', component: FirstPage },
@@ -23,6 +25,8 @@ const routes = [
   { path: '/edithousefur', component: EditHouseFurniture },
   { path: '/edithousetraf', component: EditHouseTraffic },
   { path: '/edithousebasic', component: EditHouseBasic },
+  { path: '/updateyoung', component: UpdateYoung },
+  { path: '/updateold', component: UpdateOld }
 ];
 
 const router = createRouter({

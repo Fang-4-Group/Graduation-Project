@@ -1,10 +1,16 @@
 <template>
     <div class="container">
       <h1 class="user-info">用戶(老人)資訊</h1>
-       <!-- Add Image Section -->
-    <div class="header">
-      <img src="path_to_your_image.jpg" alt="Your Image" class="header-image">
-    </div>
+    
+      <!-- Add Image Section -->
+      <div class="header-left">
+        <!--<img src="path_to_your_image.jpg" alt="Your Image" class="header-image">-->
+      </div>
+    
+      <!-- Add Button Section -->
+      <div class="header-right">
+        <h2><button class="add-button" @click="goToPage('/updateold')">更改個人資料</button></h2>
+      </div>
 
     <!-- User Info Section -->
     <div class="section-boxed">
@@ -25,7 +31,7 @@
 
     <!-- Basic Info Section -->
     <div class="section-boxed">
-      <h2>生活習慣 <button class="add-button" @click="goToPage('/editbasic')">新增</button></h2>
+      <h2>生活習慣</h2>
       <div class="data-item">
         <div class="data-item-content">
           <label>睡覺時間：</label>
@@ -49,7 +55,7 @@
   
       <!-- Personality Traits Section -->
       <div class="section-boxed">
-        <h2>個人特質 <button class="add-button" @click="goToPage('/editpersonality')">新增</button></h2>
+        <h2>個人特質</h2>
         <ul class="traits-list">
           <li v-for="trait in characters" :key="trait">{{ trait }}</li>
           <li>{{ mbti }}</li>
@@ -58,7 +64,7 @@
   
       <!-- Interests Section -->
       <div class="section-boxed">
-        <h2>興趣 <button class="add-button" @click="goToPage('/editinterests')">新增</button></h2>
+        <h2>興趣</h2>
         <ul class="interests-list">
           <li v-for="interest in interests" :key="interest">{{ interest }}</li>
         </ul>
@@ -66,7 +72,7 @@
   
         <!-- House Basic Info -->
         <div class="section-boxed">
-          <h3>房屋資本資料<button class="add-button" @click="goToPage('/edithousebasic')">新增</button></h3>
+          <h3>房屋資本資料</h3>
           <ul class="house-list">
             <li>房屋大小：{{ size }}</li>
             <li>是否可開火：{{ fire }}</li>
@@ -81,7 +87,7 @@
   
         <!-- House Furniture -->
         <div class="section-boxed">
-          <h3>房屋家具<button class="add-button" @click="goToPage('/edithousefur')">新增</button></h3>
+          <h3>房屋家具</h3>
           <ul class="furniture-list">
             <li v-for="(item, index) in houseFurniture" :key="index">{{ item }}</li>
           </ul>
@@ -89,7 +95,7 @@
   
         <!-- House Traffic-->
         <div class="section-boxed">
-          <h3>房屋交通<button class="add-button" @click="goToPage('/edithousetraf')">新增</button></h3>
+          <h3>房屋交通</h3>
           <ul class="traffic-list">
             <li v-for="(item, index) in houseTraffic" :key="index">{{ item }}</li>
           </ul>
@@ -245,7 +251,10 @@
  
   
   function goToPage(path) {
-    router.push({ path, query: { from: '/HomeOld' } });
+    router.push({
+      path,
+      query: { People_ID: People_ID }
+    });
   }
   </script>
   
@@ -264,10 +273,14 @@
 }
 
 .section-boxed {
-  background-color: #f5f5f5; 
+  background-color: #f5f5f5;
   padding: 20px;
   margin-bottom: 20px;
   border-radius: 10px;
+  display: flex;
+  flex-direction: column; /* 使內容垂直排列 */
+  position: relative; /* 使 .add-button 能夠定位在右側 */
+  margin-bottom: 20px; /* 增加下邊距 */
 }
 
 .data-item {
@@ -324,8 +337,12 @@
   margin-bottom: 10px;
 }
 
-.header {
+.header-left {
   text-align: left;
+  margin-bottom: 20px;
+}
+.header-right {
+  text-align: right;
   margin-bottom: 20px;
 }
 
@@ -335,7 +352,19 @@
 }
 
 .add-button {
-  float: right;
-  margin-top: -10px;
+  padding: 8px 16px;
+  background-color: #606973;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  transition: background-color 0.3s ease;
+}
+
+.add-button:hover {
+  background-color: #0056b3;
 }
 </style>

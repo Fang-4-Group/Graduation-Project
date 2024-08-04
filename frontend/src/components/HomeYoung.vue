@@ -3,8 +3,13 @@
     <h1 class="user-info">用戶(年輕人)資訊</h1>
     
     <!-- Add Image Section -->
-    <div class="header">
-      <img src="path_to_your_image.jpg" alt="Your Image" class="header-image">
+    <div class="header-left">
+      <!--<img src="path_to_your_image.jpg" alt="Your Image" class="header-image">-->
+    </div>
+    
+    <!-- Add Button Section -->
+    <div class="header-right">
+      <h2><button class="add-button" @click="goToPage('/updateyoung')">更改個人資料</button></h2>
     </div>
 
     <!-- User Info Section -->
@@ -26,7 +31,7 @@
 
     <!-- Basic Info Section -->
     <div class="section-boxed">
-      <h2>生活習慣 <button class="add-button" @click="goToPage('/editbasic')">新增</button></h2>
+      <h2>生活習慣</h2>
       <div class="data-item">
         <div class="data-item-content">
           <label>睡覺時間：</label>
@@ -49,7 +54,7 @@
 
     <!-- Personality Traits Section -->
     <div class="section-boxed">
-      <h2>個人特質 <button class="add-button" @click="goToPage('/editpersonality')">新增</button></h2>
+      <h2>個人特質 </h2>
       <ul class="traits-list">
         <li v-for="trait in characters" :key="trait">{{ trait }}</li>
         <li>{{ mbti }}</li>
@@ -58,7 +63,7 @@
 
     <!-- Interests Section -->
     <div class="section-boxed">
-      <h2>興趣 <button class="add-button" @click="goToPage('/editinterests')">新增</button></h2>
+      <h2>興趣</h2>
       <ul class="interests-list">
         <li v-for="interest in interests" :key="interest">{{ interest }}</li>
       </ul>
@@ -85,8 +90,8 @@ const sleepTime = ref("");
 const characters = ref([]);
 const interests = ref([]);
 const mbti = ref();
-const preference_furniture = ref([]);
-const preference_house_place = ref([]);
+//const preference_furniture = ref([]);
+//const preference_house_place = ref([]);
 const BASE_URL = 'http://localhost:7877';
 
 
@@ -163,11 +168,11 @@ onMounted(async () => {
     const mbti_Response = await axios.get(`${BASE_URL}/get_mbti/${People_ID}`); 
     mbti.value = mbti_Response.data.mbti;
 
-    const preference_furniture_Response = await axios.get(`${BASE_URL}/get_preference_furniture/${People_ID}`); 
-    preference_furniture.value = preference_furniture_Response.data.message;  
+    // const preference_furniture_Response = await axios.get(`${BASE_URL}/get_preference_furniture/${People_ID}`); 
+    // preference_furniture.value = preference_furniture_Response.data.message;  
 
-    const preference_house_place_Response = await axios.get(`${BASE_URL}/get_preference_house_place/${People_ID}`); 
-    preference_house_place.value = preference_house_place_Response.data.message; 
+    // const preference_house_place_Response = await axios.get(`${BASE_URL}/get_preference_house_place/${People_ID}`); 
+    // preference_house_place.value = preference_house_place_Response.data.message; 
 
   } catch (error) {
     console.error('Error fetching user information:', error);
@@ -175,8 +180,11 @@ onMounted(async () => {
 });
 
 function goToPage(path) {
-    router.push({ path, query: { from: '/homeyoung' } });
-  }
+  router.push({
+    path,
+    query: { People_ID: People_ID }
+  });
+}
 </script>
 
 <style scoped>
@@ -197,6 +205,10 @@ function goToPage(path) {
   padding: 20px;
   margin-bottom: 20px;
   border-radius: 10px;
+  display: flex;
+  flex-direction: column; /* 使內容垂直排列 */
+  position: relative; /* 使 .add-button 能夠定位在右側 */
+  margin-bottom: 20px; /* 增加下邊距 */
 }
 
 .data-item {
@@ -245,8 +257,12 @@ function goToPage(path) {
   display: inline-block;
 }
 
-.header {
+.header-left {
   text-align: left;
+  margin-bottom: 20px;
+}
+.header-right {
+  text-align: right;
   margin-bottom: 20px;
 }
 
@@ -256,7 +272,20 @@ function goToPage(path) {
 }
 
 .add-button {
-  float: right;
-  margin-top: -10px;
+  padding: 8px 16px;
+  background-color: #606973;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  transition: background-color 0.3s ease;
 }
+
+.add-button:hover {
+  background-color: #0056b3;
+}
+
 </style>
