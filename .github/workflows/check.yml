@@ -16,9 +16,6 @@ jobs:
 
       # Check
 
-      - name: Check log file sizes
-        run: du -sh /home/runner/runners/2.317.0/_diag/*
-
       - name: Check disk space usage
         run: df -h
 
