@@ -24,7 +24,8 @@ jobs:
       - name: Check disk space usage
         run: df -h
 
-      - name: Chech detail
-        run: |
-          df -h /var/lib/postgresql
-          df -h /app
+      - name: Delete old and unused docker image
+        run: docker system prune -f
+
+      - name: Chech again
+        run: df -h
