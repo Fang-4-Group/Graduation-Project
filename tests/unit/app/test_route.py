@@ -307,6 +307,51 @@ def test_get_pref_house():
 #     assert response_1.json()
 
 
+def test_update_user_info():
+    sample_data = {
+        "People_ID": 1,
+        "data": {
+            "Name": "湯螞蟻",
+            "Sleep_Time": 1,
+            "Drink": 1,
+            "Smoke": 1,
+            "Clean": 1,
+            "Mbti": "ENFP",
+            "Shopping": 1,
+            "Movie": 1,
+            "Travel": 1,
+            "Music": 1,
+            "Read": 1,
+            "Game": 1,
+            "PE": 1,
+            "Science": 1,
+            "Food": 1,
+        },
+    }
+    response = client.post("/update_user_info/", json=sample_data)
+    assert response.status_code == 200
+
+
+def test_update_house_info():
+    sample_data = {
+        "House_ID": 1,
+        "Basic": {
+            "Size": 10,
+            "Fire": 1,
+            "Negotiate_Price": 0,
+            "City": "更新臺北市",
+            "District": "更新文山區",
+            "Street": "木柵路",
+            "Floor": 3,
+            "Type": "公寓",
+        },
+        "Furniture": ["更新沙發", "更新書桌"],
+        "Traffic": ["更新捷運", "更新公車"],
+    }
+    response = client.post("/update_house_info/", json=sample_data)
+    assert response.status_code == 200
+
+
 def test_add_recommendation():
     sample_data_0 = {
         "People_ID": 2,
@@ -323,13 +368,9 @@ def test_add_recommendation():
 
 
 def test_get_recommendation():
-    sample_data_0 = {
-        "Item_ID": [1]
-    }
+    sample_data_0 = {"Item_ID": [1]}
     response_0 = client.post("/get_recommendation/0", json=sample_data_0)
-    sample_data_1 = {
-        "Item_ID": [2]
-    }
+    sample_data_1 = {"Item_ID": [2]}
     response_1 = client.post("/get_recommendation/1", json=sample_data_1)
     assert response_0.status_code == 200
     assert response_1.status_code == 200

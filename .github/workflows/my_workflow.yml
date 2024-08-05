@@ -43,7 +43,7 @@ jobs:
 
     - name: Build and run with docker-compose
       run: |
-        docker-compose up -d
+        docker compose up -d
 
     - name: Install dependencies
       run: pip install -e .
