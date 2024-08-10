@@ -2,10 +2,12 @@
 import os
 from datetime import datetime
 from io import BytesIO
+from xml.dom.minidom import Document
 
 import requests
 import speech_recognition as sr
 from fastapi.concurrency import run_in_threadpool
+from fastapi.responses import FileResponse
 from linebot import LineBotApi
 from linebot.models import TextSendMessage
 from pydub import AudioSegment
@@ -83,3 +85,26 @@ async def handle_async_audio(event):
 
     except Exception as e:
         print(f"Errors occurred when handling async audio: {e}")
+
+
+async def build_consensus_document(input_text):
+    doc = Document()
+    doc.add_heading("青銀共居協議書", 0).alignment = 1  # Large title, centered
+
+    sections = input_text.strip().split("**")
+    for section in sections:
+        if section.strip():
+            heading, *content = section.split("\n")
+            doc.add_heading(heading.strip(), level=2)
+            for line in content:
+                if line.strip().startswith("*"):
+                    line_content = line.strip().lstrip("*").strip()
+                    doc.add_paragraph(line_content, style="ListBullet")
+                elif line.strip().startswith("+"):
+                    line_content = line.strip().lstrip("+").strip()
+                    doc.add_paragraph(line_content, style="ListBullet2")
+
+    file_path = "src/chatbot/contract.docx"
+    doc.save(file_path)
+
+    return FileResponse(path=file_path, filename="Rental_Contract.docx")
