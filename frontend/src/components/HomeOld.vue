@@ -10,6 +10,7 @@
       <!-- Add Button Section -->
       <div class="header-right">
         <h2><button class="add-button" @click="goToPage('/updateold')">更改個人資料</button></h2>
+        <h2><button class="add-button" @click="goToPage('/showotherold')">(暫時)給其他用戶看的(銀)</button></h2>
       </div>
 
     <!-- User Info Section -->

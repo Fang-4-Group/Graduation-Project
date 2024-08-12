@@ -83,7 +83,7 @@
         </div>
     </form>
 
-    <div style="height: 70px;"></div>
+    <div style="height:140px;"></div>
 
     <form @submit.prevent="submitFormHouse">
         <div class="form-group">
