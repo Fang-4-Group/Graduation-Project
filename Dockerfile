@@ -18,8 +18,8 @@ COPY ./requirements.txt ./
 RUN pip install -r requirements.txt
 
 # Copy and install extra dependencies
-COPY ./extra-requirements.txt ./
-RUN pip install -r extra-requirements.txt
+# COPY ./extra-requirements.txt ./
+# RUN pip install -r extra-requirements.txt
 
 # Add the rest of the application
 ADD . ${WORKDIR}
