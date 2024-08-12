@@ -1,4 +1,3 @@
-# noqa
 name: Python Application Testing
 
 on:
@@ -25,25 +24,13 @@ jobs:
 
     - name: Set environment variables
       run: |
-        echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> $GITHUB_ENV
-        echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> $GITHUB_ENV
-        echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> $GITHUB_ENV
-        echo "POSTGRES_HOST=postgres_db" >> $GITHUB_ENV
-        echo "POSTGRES_PORT=5432" >> $GITHUB_ENV
-        echo "PGADMIN_DEFAULT_EMAIL=${{ secrets.PGADMIN_DEFAULT_EMAIL }}" >> $GITHUB_ENV
-        echo "PGADMIN_DEFAULT_PASSWORD=${{ secrets.PGADMIN_DEFAULT_PASSWORD }}" >> $GITHUB_ENV
-        echo "MONGO_HOST=${{ secrets.MONGO_HOST }}" >> $GITHUB_ENV
-        echo "MONGO_PORT=${{ secrets.MONGO_PORT }}" >> $GITHUB_ENV
-        echo "MONGO_DB=${{ secrets.MONGO_DB }}" >> $GITHUB_ENV
-        echo "MONGO_COLLECTION=${{ secrets.MONGO_COLLECTION }}" >> $GITHUB_ENV
-        echo "DOCKER_PLATFORM=${{ secrets.DOCKER_PLATFORM }}" >> $GITHUB_ENV
-        echo "MONGO_DB_NAME=${{ secrets.MONGO_DB_NAME }}" >> $GITHUB_ENV
-        echo "MONGO_DB_COLLECTION=${{ secrets.MONGO_DB_COLLECTION }}" >> $GITHUB_ENV
-        echo "MONGO_DB_URI=${{ secrets.MONGO_DB_URI }}" >> $GITHUB_ENV
+        # (Your environment variable settings here)
+
+    - name: Disk Space Before Docker Operations
+      run: df -h
 
     - name: Build and run with docker-compose
-      run: |
-        docker compose up -d
+      run: docker compose up -d
 
     - name: Install dependencies
       run: pip install -e .
@@ -65,4 +52,12 @@ jobs:
 
     - name: Cleanup
       run: docker compose down
+      if: always()
+
+    - name: Docker Prune
+      run: docker system prune -af
+      if: always()
+
+    - name: Disk Space After Cleanup
+      run: df -h
       if: always()
