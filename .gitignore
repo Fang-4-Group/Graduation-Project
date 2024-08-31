@@ -5,3 +5,4 @@ myvenv/
 ./frontend/node_modules
 ngrok/
 src/services/google_oidc/client.json
+src/data_pipeline/graph/*

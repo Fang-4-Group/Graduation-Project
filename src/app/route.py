@@ -462,8 +462,7 @@ async def update_selected(role: int, detail_info: dict):
 
 
 @router.post("/get_interaction/{role}")
-async def get_interaction(role: int, detail_info: dict):
-    detail_id = detail_info["Detail_ID"]
+async def get_interaction(role: int):
     client = PosgresqClient()
-    result = await client.get_interaction(role, detail_id)
+    result = await client.get_whole_interaction(role)
     return result

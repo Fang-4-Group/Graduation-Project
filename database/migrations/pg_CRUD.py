@@ -448,8 +448,9 @@ class PosgresqClient:
                     WHERE "House_ID" = (
                         SELECT "House_ID" FROM "HOUSE"
                         WHERE "People_ID" = $1
+                        LIMIT 1
                     );
-                    """,
+                     """,
                     people_id,
                 )
                 furniture = [row["Furniture"] for row in data]
@@ -464,8 +465,9 @@ class PosgresqClient:
                     """
                     SELECT "Traffic" FROM "HOUSE_TRAFFIC"
                     WHERE "House_ID" = (
-                        SELECT "House_ID" FROM "HOUSE"
-                        WHERE "People_ID" = $1
+                    SELECT "House_ID" FROM "HOUSE"
+                    WHERE "People_ID" = $1
+                    LIMIT 1
                     );
                     """,
                     people_id,
@@ -786,13 +788,13 @@ class PosgresqClient:
             try:
                 if role == 0:
                     sql = """INSERT INTO "INTERACTION_DETAILS_YOUNG"
-                            ("Interaction_ID_y", "House_ID")
+                            ("Interaction_ID_y", "Item_ID")
                             VALUES ($1, $2)
                             """  # noqa
                     role = "Young"
                 elif role == 1:
                     sql = """INSERT INTO "INTERACTION_DETAILS_ELDERLY"
-                            ("Interaction_ID_e", "People_ID")
+                            ("Interaction_ID_e", "Item_ID")
                             VALUES ($1, $2)
                             """  # noqa
                     role = "Elderly"
@@ -860,6 +862,39 @@ class PosgresqClient:
                     sql,
                     detail_id,
                 )
+
+                return data
+
+            except Exception as e:
+                return {"message": f"Error when inserting data: {str(e)}"}
+
+    async def get_whole_interaction(self, role: int):
+        async with self.access_db() as conn:
+            try:
+                if role == 0:
+                    sql = """
+                        SELECT
+                            inte_y."People_ID", detail_y.*
+                        FROM
+                            "INTERACTION_DETAILS_YOUNG" AS detail_y
+                            LEFT JOIN "INTERACTION_YOUNG" AS inte_y
+                            ON detail_y."Interaction_ID_y" = inte_y."Interaction_ID_y"
+                        """
+                elif role == 1:
+                    sql = """
+                        SELECT
+                            inte_e."People_ID" , detail_e.*
+                        FROM
+                            "INTERACTION_DETAILS_ELDERLY" AS detail_e
+                            LEFT JOIN "INTERACTION_ELDERLY" AS inte_e
+                            ON detail_e."Interaction_ID_e" = inte_e."Interaction_ID_e"
+                        """
+                else:
+                    return {
+                        "message": "Please use valid role number, 0 for young and 1 for elderly"  # noqa
+                    }
+
+                data = await conn.fetch(sql)
 
                 return data
 
