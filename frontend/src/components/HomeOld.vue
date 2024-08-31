@@ -46,7 +46,7 @@
       </div>
     </div>
 
-  
+
       <!-- Personality Traits Section -->
       <div class="section-boxed">
         <h2>個人特質 <button class="add-button" @click="goToPage('/editpersonality')">新增</button></h2>
@@ -55,7 +55,7 @@
           <li>{{ mbti }}</li>
         </ul>
       </div>
-  
+
       <!-- Interests Section -->
       <div class="section-boxed">
         <h2>興趣 <button class="add-button" @click="goToPage('/editinterests')">新增</button></h2>
@@ -63,7 +63,7 @@
           <li v-for="interest in interests" :key="interest">{{ interest }}</li>
         </ul>
       </div>
-  
+
         <!-- House Basic Info -->
         <div class="section-boxed">
           <h3>房屋資本資料<button class="add-button" @click="goToPage('/edithousebasic')">新增</button></h3>
@@ -78,7 +78,7 @@
             <li>房屋類別：{{ houseType }}</li>
           </ul>
         </div>
-  
+
         <!-- House Furniture -->
         <div class="section-boxed">
           <h3>房屋家具<button class="add-button" @click="goToPage('/edithousefur')">新增</button></h3>
@@ -86,7 +86,7 @@
             <li v-for="(item, index) in houseFurniture" :key="index">{{ item }}</li>
           </ul>
         </div>
-  
+
         <!-- House Traffic-->
         <div class="section-boxed">
           <h3>房屋交通<button class="add-button" @click="goToPage('/edithousetraf')">新增</button></h3>
@@ -96,11 +96,11 @@
         </div>
       </div>
   </template>
-  
+
   <script setup>
   import { ref,onMounted } from 'vue';
   import axios from 'axios';
-  import router from '../router'; 
+  import router from '../router';
   import { useRoute } from 'vue-router';
 
   const route = useRoute();
@@ -110,10 +110,10 @@
   const name = ref("")
   const useremail = ref("jony12@gmail.com")
 
-  const drink = ref(0);
-  const smoke = ref(0);
-  const clean_habit = ref(0);
-  const sleepTime = ref(0);
+  const drink = ref("");
+  const smoke = ref("");
+  const clean_habit = ref("");
+  const sleepTime = ref("");
   const characters = ref([]);
   const interests = ref([]);
   const mbti = ref();
@@ -128,50 +128,95 @@
   const houseFurniture = ref([]);
   const houseTraffic = ref([]);
   const BASE_URL = 'http://localhost:7877';
-  
-  
+
+
   onMounted(async () => {
     try {
-      const name_Response = await axios.get(`${BASE_URL}/get_name/${People_ID}`); 
+      const name_Response = await axios.get(`${BASE_URL}/get_name/${People_ID}`);
       name.value = name_Response.data.name;
       console.log("Name data fetched:", name_Response.data);
 
-      const sleep_Response = await axios.get(`${BASE_URL}/get_sleep_time/${People_ID}`); 
-      sleepTime.value = sleep_Response.data.sleep_time;
+      const sleep_Response = await axios.get(`${BASE_URL}/get_sleep_time/${People_ID}`);
+      const s= sleep_Response.data.sleep_time;
+      if(s == 1){
+        sleepTime.value = "晚上7:00~9:00";
+      }else if(s == 2){
+        sleepTime.value = "晚上9:00~11:00";
+      }else if(s == 3){
+        sleepTime.value = "晚上11:00~凌晨1:00";
+      }else if(s == 4){
+        sleepTime.value ="凌晨1:00~3:00";
+      }else if(s == 5){
+        sleepTime.value = "凌晨3:00以後";
+      }
 
-      const drink_Response = await axios.get(`${BASE_URL}/get_drink/${People_ID}`); 
-      drink.value = drink_Response.data.drink;
+      const drink_Response = await axios.get(`${BASE_URL}/get_drink/${People_ID}`);
+      const d = drink_Response.data.drink;
+      if(d == 0){
+        drink.value = "從不飲酒";
+      }else if(d == 1){
+        drink.value = "很少飲酒";
+      }else if(d == 2){
+        drink.value = "偶爾小酌";
+      }else if(d == 3){
+        drink.value = "經常飲酒";
+      }else if(d == 4){
+        drink.value ="每天飲酒";
+      }
 
-      const smoke_Response = await axios.get(`${BASE_URL}/get_smoke/${People_ID}`); 
-      smoke.value = smoke_Response.data.smoke;
 
-      const clean_habit_Response = await axios.get(`${BASE_URL}/get_clean_habit/${People_ID}`); 
-      clean_habit.value = clean_habit_Response.data.clean_habit;
+      const smoke_Response = await axios.get(`${BASE_URL}/get_smoke/${People_ID}`);
+      const sm = smoke_Response.data.smoke;
+      if(sm == 0){
+        smoke.value = "從不抽菸";
+      }else if(sm == 1){
+        smoke.value = "很少抽菸";
+      }else if(sm == 2){
+        smoke.value = "偶爾抽菸";
+      }else if(sm == 3){
+        smoke.value = "經常抽菸";
+      }else if(sm == 4){
+        smoke.value ="每天抽菸";
+      }
 
-      const characters_Response = await axios.get(`${BASE_URL}/get_characters/${People_ID}`); 
+      const clean_habit_Response = await axios.get(`${BASE_URL}/get_clean_habit/${People_ID}`);
+      const c = clean_habit_Response.data.clean_habit;
+      if(c == 1){
+        clean_habit.value = "不愛乾淨";
+      }else if(c == 2){
+        clean_habit.value = "稍微愛乾淨";
+      }else if(c == 3){
+        clean_habit.value = "正常愛乾淨";
+      }else if(c == 4){
+        clean_habit.value ="很愛乾淨";
+      }else if(c == 5){
+        clean_habit.value = "極度潔癖";
+      }
+
+      const characters_Response = await axios.get(`${BASE_URL}/get_characters/${People_ID}`);
       characters.value = characters_Response.data.characters;
 
-      const interests_Response = await axios.get(`${BASE_URL}/get_interests/${People_ID}`); 
+      const interests_Response = await axios.get(`${BASE_URL}/get_interests/${People_ID}`);
       interests.value = interests_Response.data.interests;
 
-      const mbti_Response = await axios.get(`${BASE_URL}/get_mbti/${People_ID}`); 
+      const mbti_Response = await axios.get(`${BASE_URL}/get_mbti/${People_ID}`);
       mbti.value = mbti_Response.data.mbti;
 
-      const size_Response = await axios.get(`${BASE_URL}/get_size/${People_ID}`); 
+      const size_Response = await axios.get(`${BASE_URL}/get_size/${People_ID}`);
       size.value = size_Response.data.size;
 
-      const fire_Response = await axios.get(`${BASE_URL}/get_fire/${People_ID}`); 
+      const fire_Response = await axios.get(`${BASE_URL}/get_fire/${People_ID}`);
       if (fire_Response.data.fire == 1)
         fire.value='是'
       else
         fire.value='否'
 
-      const canNegotiate_Response = await axios.get(`${BASE_URL}/get_negotiate/${People_ID}`); 
+      const canNegotiate_Response = await axios.get(`${BASE_URL}/get_negotiate/${People_ID}`);
       if (canNegotiate_Response.data.negotiate_price.fire == 1)
         canNegotiate.value='是'
       else
         canNegotiate.value='否'
-      
+
       const city_Response = await axios.get(`${BASE_URL}/get_city/${People_ID}`);
       city.value = city_Response.data.city;
 
@@ -184,26 +229,26 @@
       const floor_Response = await axios.get(`${BASE_URL}/get_floor/${People_ID}`);
       floor.value = floor_Response.data.floor;
 
-      const houseType_Response = await axios.get(`${BASE_URL}/get_house_type/${People_ID}`); 
+      const houseType_Response = await axios.get(`${BASE_URL}/get_house_type/${People_ID}`);
       houseType.value = houseType_Response.data.type;
 
-      const houseFurniture_Response = await axios.get(`${BASE_URL}/get_house_furniture/${People_ID}`); 
-      houseFurniture.value = houseFurniture_Response.data.furniture; 
+      const houseFurniture_Response = await axios.get(`${BASE_URL}/get_house_furniture/${People_ID}`);
+      houseFurniture.value = houseFurniture_Response.data.furniture;
 
-      const houseTraffic_Response = await axios.get(`${BASE_URL}/get_house_traffic/${People_ID}`); 
-      houseTraffic.value = houseTraffic_Response.data.traffic; 
+      const houseTraffic_Response = await axios.get(`${BASE_URL}/get_house_traffic/${People_ID}`);
+      houseTraffic.value = houseTraffic_Response.data.traffic;
 
     } catch (error) {
       console.error('Error fetching user information:', error);
     }
   });
- 
-  
+
+
   function goToPage(path) {
     router.push({ path, query: { from: '/HomeOld' } });
   }
   </script>
-  
+
   <style scoped>
 .container {
   max-width: 800px;
@@ -214,12 +259,12 @@
 
 .user-info {
   display: flex;
-  justify-content: center; 
-  margin-bottom: 20px; 
+  justify-content: center;
+  margin-bottom: 20px;
 }
 
 .section-boxed {
-  background-color: #f5f5f5; 
+  background-color: #f5f5f5;
   padding: 20px;
   margin-bottom: 20px;
   border-radius: 10px;
@@ -256,7 +301,7 @@
   margin-bottom: 5px;
   padding: 5px 10px;
   border-radius: 20px;
-  background-color: #c2d4dc; 
+  background-color: #c2d4dc;
   color: #333;
   display: inline-block;
 }
@@ -266,7 +311,7 @@
   margin-bottom: 5px;
   padding: 5px 10px;
   border-radius: 20px;
-  background-color: #d9b9b0; 
+  background-color: #d9b9b0;
   color: #333;
   display: inline-block;
 }
