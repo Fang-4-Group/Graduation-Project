@@ -3,12 +3,10 @@ import logging
 import os
 from datetime import datetime
 
-import aiohttp
 import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
 import pandas as pd
-import requests
 import torch.nn.functional as F
 import torch.optim as optim
 from dotenv import load_dotenv
@@ -180,23 +178,8 @@ class EmbeddingModel:
         user_indices = range(num_users)
         item_indices = range(num_users, num_users + num_items)
 
-        # pos = nx.spring_layout(G, seed=42)
-
         plt.figure(figsize=(10, 8))
 
-        # # 繪製邊
-        # nx.draw_networkx_edges(G, pos=nx.spring_layout(G), edge_color='gray')
-
-        # # 繪製 user 節點（红色）
-        # nx.draw_networkx_nodes(G, pos=nx.spring_layout(G), nodelist=user_indices, node_color='red', node_size=500, label='Users')
-
-        # # 繪製 item 節點（藍色）
-        # nx.draw_networkx_nodes(G, pos=nx.spring_layout(G), nodelist=item_indices, node_color='blue', node_size=500, label='Items')
-
-        # # 繪製標籤
-        # labels = {i: f"User {i}" for i in user_indices}
-        # labels.update({i: f"Item {i - num_users}" for i in item_indices})
-        # nx.draw_networkx_labels(G, pos, labels, font_color='white', verticalalignment='bottom', horizontalalignment='center') # noqa
         plt.figure(figsize=(8, 6))
         nx.draw(
             G,
