@@ -133,6 +133,54 @@ class PosgresqlInitClient:
                         FOREIGN KEY ("People_ID") REFERENCES "PEOPLE" ("People_ID"),
                         FOREIGN KEY ("Item_ID") REFERENCES "PEOPLE" ("People_ID")
                     );
+
+                    CREATE TABLE "INTERACTION_YOUNG" (
+                        "Interaction_ID_y" SERIAL PRIMARY KEY,
+                        "People_ID" INT,
+                        "House_Option_1" INT,
+                        "House_Option_2" INT,
+                        "House_Option_3" INT,
+                        "Interaction_Date" TIMESTAMP,
+                        FOREIGN KEY ("People_ID") REFERENCES "PEOPLE"("People_ID"),
+                        FOREIGN KEY ("House_Option_1") REFERENCES "HOUSE"("House_ID"),
+                        FOREIGN KEY ("House_Option_2") REFERENCES "HOUSE"("House_ID"),
+                        FOREIGN KEY ("House_Option_3") REFERENCES "HOUSE"("House_ID")
+                    );
+
+                    CREATE TABLE "INTERACTION_DETAILS_YOUNG" (
+                        "Detail_ID_y" SERIAL PRIMARY KEY,
+                        "Interaction_ID_y" INT,
+                        "House_ID" INT,
+                        "Viewed"  INT DEFAULT 0,
+                        "Grouped" INT DEFAULT 0,
+                        "Selected" INT DEFAULT 0,
+                        FOREIGN KEY ("Interaction_ID_y") REFERENCES "INTERACTION_YOUNG"("Interaction_ID_y"),
+                        FOREIGN KEY ("House_ID") REFERENCES "HOUSE"("House_ID")
+                    );
+
+                    CREATE TABLE "INTERACTION_ELDERLY" (
+                        "Interaction_ID_e" SERIAL PRIMARY KEY,
+                        "People_ID" INT,
+                        "People_Option_1" INT,
+                        "People_Option_2" INT,
+                        "People_Option_3" INT,
+                        "Interaction_Date" TIMESTAMP,
+                        FOREIGN KEY ("People_ID") REFERENCES "PEOPLE"("People_ID"),
+                        FOREIGN KEY ("People_Option_1") REFERENCES "PEOPLE"("People_ID"),
+                        FOREIGN KEY ("People_Option_2") REFERENCES "PEOPLE"("People_ID"),
+                        FOREIGN KEY ("People_Option_3") REFERENCES "PEOPLE"("People_ID")
+                    );
+
+                    CREATE TABLE "INTERACTION_DETAILS_ELDERLY" (
+                        "Detail_ID_e" SERIAL PRIMARY KEY,
+                        "Interaction_ID_e" INT,
+                        "People_ID" INT,
+                        "Viewed" INT DEFAULT 0,
+                        "Grouped" INT DEFAULT 0,
+                        "Selected" INT DEFAULT 0,
+                        FOREIGN KEY ("Interaction_ID_e") REFERENCES "INTERACTION_ELDERLY"("Interaction_ID_e"),
+                        FOREIGN KEY ("People_ID") REFERENCES "PEOPLE"("People_ID")
+                    );
                     """  # noqa
                 )
                 return {"message": "success to create all tables"}
