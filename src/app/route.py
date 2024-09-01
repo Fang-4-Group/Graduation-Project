@@ -378,6 +378,13 @@ async def get_house_traffic(people_id: int):
     return result
 
 
+@router.get("/get_elder_info_by_house_id/{house_id}")
+async def get_elder_info_by_house_id(house_id: int):
+    client = PosgresqClient()
+    result = await client.get_elder_info_by_house_id(house_id)
+    return result
+
+
 @router.post("/add_recommendation/{role}")
 async def add_recommendation(role: int, recommendation_info: dict):
     client = PosgresqClient()

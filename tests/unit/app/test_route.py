@@ -326,6 +326,7 @@ def test_get_recommendation():
     sample_data_0 = {"Item_ID": [1]}
     sample_data_1 = {"Item_ID": [2]}
     response_0 = client.post("/get_recommendation/0", json=sample_data_0)
+    sample_data_1 = {"Item_ID": [2]}
     response_1 = client.post("/get_recommendation/1", json=sample_data_1)
     assert response_0.status_code == 200
     assert response_1.status_code == 200
@@ -361,3 +362,9 @@ def test_update_selected():
     response = client.post("/update_selected/0", json=sample_data)
     assert response.status_code == 200
     assert response.json() == {"message": "Update Successfully"}
+
+
+def test_get_elder_info_by_id():
+    house_id = 1
+    response = client.get(f"/get_elder_info_by_house_id/{house_id}")
+    assert response.status_code == 200
