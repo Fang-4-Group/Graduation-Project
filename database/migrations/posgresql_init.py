@@ -43,8 +43,10 @@ class PosgresqlInitClient:
                     CREATE SCHEMA public;
                     CREATE TABLE IF NOT EXISTS "PEOPLE" (
                         "People_ID" SERIAL PRIMARY KEY,
+                        "Line_ID" varchar,
                         "Name" varchar,
                         "Role" integer,
+                        "Mail" varchar,
                         "Sleep_Time" integer,
                         "Drink" integer,
                         "Smoke" integer,
@@ -219,18 +221,18 @@ class PosgresqlInitClient:
             try:
                 await conn.execute(
                     """
-                    INSERT INTO "PEOPLE" ("Name", "Role", "Sleep_Time", "Drink", "Smoke", "Clean", "Mbti", "Shopping", "Movie", "Travel", "Music", "Read", "Game", "PE", "Science", "Food")
+                    INSERT INTO "PEOPLE" ("Name", "Line_ID", "Role", "Sleep_Time", "Drink", "Smoke", "Clean", "Mbti", "Shopping", "Movie", "Travel", "Music", "Read", "Game", "PE", "Science", "Food", "Mail")
                     VALUES
-                    ('AA', 1, 3, 2, 0, 4, 'INTJ', 0, 1, 0, 0, 0, 0, 0, 1, 0),
-                    ('BB', 0, 4, 1, 3, 3, 'INFP', 1, 1, 0, 1, 1, 0, 0, 0, 1),
-                    ('CC', 1, 2, 3, 1, 5, 'ISTJ', 0, 1, 1, 0, 0, 0, 1, 0, 0),
-                    ('DD', 0, 3, 2, 0, 4, 'ENFP', 0, 0, 1, 0, 1, 1, 1, 0, 1),
-                    ('EE', 1, 4, 1, 2, 5, 'ENTP', 0, 1, 1, 0, 1, 0, 1, 1, 0),
-                    ('FF', 0, 2, 3, 4, 0, 'ISFP', 1, 1, 0, 1, 0, 0, 0, 0, 1),
-                    ('GG', 1, 3, 2, 2, 3, 'ESTJ', 0, 0, 1, 0, 1, 1, 1, 0, 0),
-                    ('HH', 0, 4, 1, 2, 5, 'INFJ', 0, 1, 0, 0, 1, 0, 0, 0, 1),
-                    ('II', 1, 2, 3, 1, 4, 'ENTJ', 0, 1, 1, 0, 0, 0, 1, 1, 0),
-                    ('JJ', 0, 3, 2, 1, 3, 'ESFP', 1, 0, 1, 0, 1, 0, 1, 0, 1);
+                    ('AA', 'fake_line_id', 1, 3, 2, 0, 4, 'INTJ', 0, 1, 0, 0, 0, 0, 0, 1, 0, 'sample@.google.com'),
+                    ('BB', 'fake_line_id', 0, 4, 1, 3, 3, 'INFP', 1, 1, 0, 1, 1, 0, 0, 0, 1, 'sample@.google.com'),
+                    ('CC', 'fake_line_id', 1, 2, 3, 1, 5, 'ISTJ', 0, 1, 1, 0, 0, 0, 1, 0, 0, 'sample@.google.com'),
+                    ('DD', 'fake_line_id', 0, 3, 2, 0, 4, 'ENFP', 0, 0, 1, 0, 1, 1, 1, 0, 1, 'sample@.google.com'),
+                    ('EE', 'fake_line_id', 1, 4, 1, 2, 5, 'ENTP', 0, 1, 1, 0, 1, 0, 1, 1, 0, 'sample@.google.com'),
+                    ('FF', 'fake_line_id', 0, 2, 3, 4, 0, 'ISFP', 1, 1, 0, 1, 0, 0, 0, 0, 1, 'sample@.google.com'),
+                    ('GG', 'fake_line_id', 1, 3, 2, 2, 3, 'ESTJ', 0, 0, 1, 0, 1, 1, 1, 0, 0, 'sample@.google.com'),
+                    ('HH', 'fake_line_id', 0, 4, 1, 2, 5, 'INFJ', 0, 1, 0, 0, 1, 0, 0, 0, 1, 'sample@.google.com'),
+                    ('II', 'fake_line_id', 1, 2, 3, 1, 4, 'ENTJ', 0, 1, 1, 0, 0, 0, 1, 1, 0, 'sample@.google.com'),
+                    ('JJ', 'fake_line_id', 0, 3, 2, 1, 3, 'ESFP', 1, 0, 1, 0, 1, 0, 1, 0, 1, 'sample@.google.com');
 
                     INSERT INTO "PEOPLE_CHARACTER" ("People_ID", "Character")
                     VALUES
