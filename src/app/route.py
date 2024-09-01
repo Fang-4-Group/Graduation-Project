@@ -385,18 +385,18 @@ async def get_elder_info_by_house_id(house_id: int):
     return result
 
 
-@router.post("/add_recommendation/{type}")
-async def add_recommendation(type: int, recommendation_info: dict):
+@router.post("/add_recommendation/{role}")
+async def add_recommendation(role: int, recommendation_info: dict):
     client = PosgresqClient()
-    result = await client.add_recommendation(type, recommendation_info)
+    result = await client.add_recommendation(role, recommendation_info)
     return result
 
 
-@router.post("/get_recommendation/{type}")
-async def get_recommendation(type: int, condition: dict = None):
+@router.post("/get_recommendation/{role}")
+async def get_recommendation(role: int, condition: dict = None):
     item_ids = condition["Item_ID"]
     client = PosgresqClient()
-    result = await client.get_recommendation(type, item_ids)
+    result = await client.get_recommendation(role, item_ids)
     return result
 
 
@@ -425,4 +425,52 @@ async def embeddingModel(target: int, place_dict: dict = None):
 @router.get("/get_group_chat_records/{group_id}")
 async def get_group_chat_records(group_id: str):
     result = get_group_chat_records_by_id(group_id)
+    return result
+
+
+# API for Interaction
+@router.post("/add_interaction/{role}")
+async def add_interaction(role: int, interaction_info: dict):
+    client = PosgresqClient()
+    result = await client.add_interaction(role, interaction_info)
+    if result["message"] == "Data inserted successfully":
+        detail_info = {
+            "Interaction_ID": result["Interaction_ID"],
+            "Options": interaction_info["Options"],
+        }
+        result_detail = await client.add_interaction_detail(role, detail_info)
+        return result_detail
+    else:
+        return result
+
+
+@router.post("/update_viewed/{role}")
+async def update_viewed(role: int, detail_info: dict):
+    client = PosgresqClient()
+    detail_id = detail_info["Detail_ID"]
+    result = await client.update_field(role, detail_id, field="Viewed")
+    return result
+
+
+@router.post("/update_grouped/{role}")
+async def update_grouped(role: int, detail_info: dict):
+    client = PosgresqClient()
+    detail_id = detail_info["Detail_ID"]
+    result = await client.update_field(role, detail_id, field="Grouped")
+    return result
+
+
+@router.post("/update_selected/{role}")
+async def update_selected(role: int, detail_info: dict):
+    client = PosgresqClient()
+    detail_id = detail_info["Detail_ID"]
+    result = await client.update_field(role, detail_id, field="Selected")
+    return result
+
+
+@router.post("/get_interaction/{role}")
+async def get_interaction(role: int, detail_info: dict):
+    detail_id = detail_info["Detail_ID"]
+    client = PosgresqClient()
+    result = await client.get_interaction(role, detail_id)
     return result

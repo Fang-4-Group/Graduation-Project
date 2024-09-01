@@ -706,19 +706,19 @@ class PosgresqClient:
                 return {"message": f"Error when inserting data: {str(e)}"}
 
     # Recommadation
-    async def add_recommendation(self, type: int, recommendation_info: dict):
+    async def add_recommendation(self, role: int, recommendation_info: dict):
         async with self.access_db() as conn:
             try:
                 people_id = recommendation_info["People_ID"]
                 item_Ids = recommendation_info["Item_ID"]
                 sql = "INSERT INTO "
-                if type == 0:
+                if role == 0:
                     sql += '"RECOMMENDATIONS_YOUNG"'
-                elif type == 1:
+                elif role == 1:
                     sql += '"RECOMMENDATIONS_ELDERLY"'
                 else:
                     return {
-                        "message": "Please use valid type number, 0 for young and 1 for elderly"  # noqa
+                        "message": "Please use valid role number, 0 for young and 1 for elderly"  # noqa
                     }
 
                 sql += """ ("People_ID", "Item_ID", "Timestamp")
@@ -739,18 +739,17 @@ class PosgresqClient:
             except Exception as e:
                 return {"message": f"Error when inserting data: {str(e)}"}
 
-    # Recommadation
-    async def get_recommendation(self, type: int, item_ids: list = []):
+    async def get_recommendation(self, role: int, item_ids: list = []):
         async with self.access_db() as conn:
             try:
                 sql = "SELECT * FROM "
-                if type == 0:
+                if role == 0:
                     sql += '"RECOMMENDATIONS_YOUNG"'
-                elif type == 1:
+                elif role == 1:
                     sql += '"RECOMMENDATIONS_ELDERLY"'
                 else:
                     return {
-                        "message": "Please use valid type number, 0 for young and 1 for elderly"  # noqa
+                        "message": "Please use valid role number, 0 for young and 1 for elderly"  # noqa
                     }
 
                 sql += 'WHERE "Item_ID" = ANY($1::int[]);'
@@ -758,6 +757,127 @@ class PosgresqClient:
                 data = await conn.fetch(
                     sql,
                     item_ids,
+                )
+
+                return data
+
+            except Exception as e:
+                return {"message": f"Error when inserting data: {str(e)}"}
+
+    async def add_interaction(self, role: int, interaction_info: dict):
+        async with self.access_db() as conn:
+            try:
+                sql = "INSERT INTO "
+                if role == 0:
+                    sql += """"INTERACTION_YOUNG"
+                        ("People_ID", "House_Option_1", "House_Option_2", "House_Option_3", "Interaction_Date")
+                        VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP)
+                        RETURNING "Interaction_ID_y"
+                        """  # noqa
+                    key = "Interaction_ID_y"
+                elif role == 1:
+                    sql += """"INTERACTION_ELDERLY"
+                        ("People_ID", "People_Option_1", "People_Option_2", "People_Option_3", "Interaction_Date")
+                        VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP)
+                        RETURNING "Interaction_ID_e"
+                        """  # noqa
+                    key = "Interaction_ID_e"
+                else:
+                    return {"message": "Please input valid role"}
+
+                data = await conn.fetch(
+                    sql,
+                    interaction_info["People_ID"],
+                    interaction_info["Options"][0],
+                    interaction_info["Options"][1],
+                    interaction_info["Options"][2],
+                )
+                return {
+                    "message": "Data inserted successfully",
+                    "Interaction_ID": data[0][key],
+                }
+
+            except Exception as e:
+                return {"message": f"Error when inserting data: {str(e)}"}
+
+    async def add_interaction_detail(self, role: int, detail_info: dict):
+        async with self.access_db() as conn:
+            try:
+                if role == 0:
+                    sql = """INSERT INTO "INTERACTION_DETAILS_YOUNG"
+                            ("Interaction_ID_y", "House_ID")
+                            VALUES ($1, $2)
+                            """  # noqa
+                    role = "Young"
+                elif role == 1:
+                    sql = """INSERT INTO "INTERACTION_DETAILS_ELDERLY"
+                            ("Interaction_ID_e", "People_ID")
+                            VALUES ($1, $2)
+                            """  # noqa
+                    role = "Elderly"
+                else:
+                    return {"message": "Please input valid role"}
+                for option_id in detail_info["Options"]:
+                    await conn.execute(
+                        sql, detail_info["Interaction_ID"], option_id
+                    )  # noqa
+
+                return {
+                    "role": role,
+                    "message": f"Initial detail for Interaction ID {detail_info['Interaction_ID']} inserted successfully",  # noqa
+                }
+
+            except Exception as e:
+                return {"message": f"Error when inserting data: {str(e)}"}
+
+    async def update_field(self, role: int, detail_id: int, field: str):
+        valid_fields = ["Viewed", "Grouped", "Selected"]
+        if field not in valid_fields:
+            return {"message": "Invalid field name"}
+        async with self.access_db() as conn:
+            try:
+                if role == 0:
+                    sql = f"""
+                        UPDATE "INTERACTION_DETAILS_YOUNG"
+                        SET "{field}" = 1
+                        WHERE "Detail_ID_y" = $1
+                        """
+                elif role == 1:
+                    sql = f"""
+                        UPDATE ""INTERACTION_DETAILS_ELDERLY""
+                        SET "{field}" = 1
+                        WHERE "Detail_ID_e" = $1
+                        """
+                else:
+                    return {"message": "Please input valid role number"}
+
+                await conn.execute(
+                    sql,
+                    detail_id,
+                )
+                return {"message": "Update Successfully"}
+            except Exception as e:
+                return {"message": f"Error when inserting data: {str(e)}"}
+
+    async def get_interaction(self, role: int, detail_id: int):
+        async with self.access_db() as conn:
+            try:
+                if role == 0:
+                    sql = """SELECT * FROM "INTERACTION_DETAILS_YOUNG"
+                        WHERE "Detail_ID_y" = $1
+                        """
+                elif role == 1:
+                    sql = """SELECT * FROM "INTERACTION_DETAILS_ELDERLY"
+                        WHERE "Detail_ID_e" = $1
+                        """
+                else:
+                    return {
+                        "message": "Please use valid role number, 0 for young and 1 for elderly"  # noqa
+                    }
+
+                data = await conn.fetch(
+                    sql,
+                    detail_id,
                 )
 
                 return data
