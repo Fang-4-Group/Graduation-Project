@@ -150,12 +150,12 @@ class PosgresqlInitClient:
                     CREATE TABLE "INTERACTION_DETAILS_YOUNG" (
                         "Detail_ID_y" SERIAL PRIMARY KEY,
                         "Interaction_ID_y" INT,
-                        "House_ID" INT,
+                        "Item_ID" INT,
                         "Viewed"  INT DEFAULT 0,
                         "Grouped" INT DEFAULT 0,
                         "Selected" INT DEFAULT 0,
                         FOREIGN KEY ("Interaction_ID_y") REFERENCES "INTERACTION_YOUNG"("Interaction_ID_y"),
-                        FOREIGN KEY ("House_ID") REFERENCES "HOUSE"("House_ID")
+                        FOREIGN KEY ("Item_ID") REFERENCES "HOUSE"("House_ID")
                     );
 
                     CREATE TABLE "INTERACTION_ELDERLY" (
@@ -174,12 +174,12 @@ class PosgresqlInitClient:
                     CREATE TABLE "INTERACTION_DETAILS_ELDERLY" (
                         "Detail_ID_e" SERIAL PRIMARY KEY,
                         "Interaction_ID_e" INT,
-                        "People_ID" INT,
+                        "Item_ID" INT,
                         "Viewed" INT DEFAULT 0,
                         "Grouped" INT DEFAULT 0,
                         "Selected" INT DEFAULT 0,
                         FOREIGN KEY ("Interaction_ID_e") REFERENCES "INTERACTION_ELDERLY"("Interaction_ID_e"),
-                        FOREIGN KEY ("People_ID") REFERENCES "PEOPLE"("People_ID")
+                        FOREIGN KEY ("Item_ID") REFERENCES "PEOPLE"("People_ID")
                     );
                     """  # noqa
                 )
@@ -311,6 +311,34 @@ class PosgresqlInitClient:
                     (4, '北投區'),
                     (5, '士林區'),
                     (5, '北投區');
+
+                    INSERT INTO "INTERACTION_YOUNG" ("People_ID", "House_Option_1", "House_Option_2", "House_Option_3", "Interaction_Date")
+                    VALUES
+                    (4, 2, 5, 10, NOW()),
+                    (2, 2, 5, 8, NOW());
+
+                    INSERT INTO "INTERACTION_DETAILS_YOUNG" ("Interaction_ID_y", "Item_ID", "Viewed", "Grouped", "Selected")
+                    VALUES
+                    (1, 2, 1, 1, 0),
+                    (1, 5, 1, 0, 0),
+                    (1, 10, 0, 0, 0),
+                    (2, 2, 1, 0, 0),
+                    (2, 5, 1, 1, 0),
+                    (2, 8, 0, 0, 0);
+
+                    INSERT INTO "INTERACTION_ELDERLY" ("People_ID", "People_Option_1", "People_Option_2", "People_Option_3", "Interaction_Date")
+                    VALUES
+                    (1, 2, 4, 10, NOW()),
+                    (3, 2, 8, 10, NOW());
+
+                    INSERT INTO "INTERACTION_DETAILS_ELDERLY" ("Interaction_ID_e", "Item_ID", "Viewed", "Grouped", "Selected")
+                    VALUES
+                    (1, 2, 1, 0, 0),
+                    (1, 4, 1, 0, 0),
+                    (1, 10, 0, 0, 0),
+                    (2, 2, 1, 0, 0),
+                    (2, 8, 1, 1, 0),
+                    (2, 10, 0, 0, 0);
                     """  # noqa
                 )
                 return {

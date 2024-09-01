@@ -9,10 +9,8 @@ from database.migrations.posgresql_init import PosgresqlInitClient
 from database.seeds.mongo_api_for_testing import MongoDBClient
 from database.seeds.pg_api_for_testing import PosgresqTestClient
 from src.chatbot.database import get_group_chat_records_by_id
-from src.data_pipeline.item_embedding import ItemEmbedding
 from src.data_pipeline.model import EmbeddingModel
 from src.data_pipeline.prediction import Prediction
-from src.data_pipeline.user_embedding import UserEmbedding
 
 from ..services.google_oidc.oidc import OIDCService
 
@@ -228,27 +226,10 @@ async def auth(request: Request):
         )  # noqa
 
 
-# Embedding
-
-
-@router.get("/user_embedding/")
-async def embedding(k_mean: bool = 0, n_clusters: int = 3):
-    client = UserEmbedding()
-    result = client.embedding(k_mean, n_clusters)
-    return result
-
-
 @router.get("/get_house_info/")
 async def get_house_info(city: str = Query(None), district: str = Query(None)):
     client = PosgresqClient()
     result = await client.get_house_info(city=city, district=district)
-    return result
-
-
-@router.post("/item_embedding/")
-async def item_embedding(place_dict: dict = None):
-    client = ItemEmbedding()
-    result = await client.item_embedding(place_dict["data"])
     return result
 
 
@@ -469,8 +450,7 @@ async def update_selected(role: int, detail_info: dict):
 
 
 @router.post("/get_interaction/{role}")
-async def get_interaction(role: int, detail_info: dict):
-    detail_id = detail_info["Detail_ID"]
+async def get_interaction(role: int):
     client = PosgresqClient()
-    result = await client.get_interaction(role, detail_id)
+    result = await client.get_whole_interaction(role)
     return result
