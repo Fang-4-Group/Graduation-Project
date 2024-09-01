@@ -194,10 +194,14 @@ class EmbeddingModel:
         plt.title("Graph Visualization with User and Item Nodes")
 
         # 保存圖形
+        folder_path = "src/data_pipeline/graph"
+        if not os.path.exists(folder_path):
+            os.makedirs(folder_path)
+
         now = datetime.now()
         timestamp = now.strftime("%Y%m%d_%H%M%S")
         filename = f"graph_visualization_{timestamp}.png"
-        plt.savefig(f"src/data_pipeline/graph/{filename}", format="png", dpi=300)
+        plt.savefig(f"{folder_path}/{filename}", format="png", dpi=300)
 
         return data, reverse_user_id_map, reverse_item_id_map
 
