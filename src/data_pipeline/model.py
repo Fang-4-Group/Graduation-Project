@@ -43,13 +43,11 @@ class EmbeddingModel:
         self.epoch_num = 100
         self.place_dict = place_dict
 
-    async def fetch_data(
-        self, session, endpoint: str, item_params: dict = None
-    ):  # noqa
+    async def fetch_data(self, session, endpoint: str, item_params: dict = None):
         if item_params:
             async with session.post(
                 f"{self.api_url}/{endpoint}", json=item_params
-            ) as response:  # noqa
+            ) as response:
                 return await response.json()
         else:
             async with session.get(f"{self.api_url}/{endpoint}") as response:
@@ -105,14 +103,19 @@ class EmbeddingModel:
         client = PosgresqClient()
         interaction = await client.get_whole_interaction(self.target)
         interaction = [dict(record) for record in interaction]
-        logger.info(f"interaction type: {type(interaction)}")
+        logger.info(f"interaction: {interaction}")
+
         df_interaction = pd.DataFrame(interaction)
-        logger.info(f"interaction df columns: {df_interaction.columns}")
+        logger.info(f"interaction df: {df_interaction}")
 
         edge_index = []
         edge_weight = []
 
-        weight_dict = {"Viewed": 1, "Grouped": 2, "Selected": 3}
+        weight_dict = {
+            "Selected": 3,
+            "Grouped": 2,
+            "Viewed": 1,
+        }
 
         for _, row in df_interaction.iterrows():
             user_id = row["People_ID"]
@@ -122,14 +125,64 @@ class EmbeddingModel:
                 if row[interaction_type] > 0:
                     edge_index.append([user_id, item_id])
                     edge_weight.append(weight)
+                    break
 
         edge_index = np.array(edge_index).T
         edge_weight = np.array(edge_weight)
 
-        edge_index = tensor(edge_index, dtype=long)
-        edge_weight = tensor(edge_weight, dtype=float)
+        logger.info(f"edge index: {edge_index}")
+        logger.info(f"edge weight: {edge_weight}")
 
         return edge_index, edge_weight
+
+    def plot_graph(self, edge_index, edge_weight, user_ids, item_ids):
+
+        G = nx.Graph()
+
+        # 添加 user 節點
+        for i, user_id in enumerate(user_ids):
+            G.add_node(f"u_{user_id}", type="user", color="aquamarine")
+
+        # 添加 item 節點
+        for i, item_id in enumerate(item_ids):
+            G.add_node(f"i_{item_id}", type="item", color="lightblue")
+
+        # 添加邊（包含權重）
+        for i in range(len(edge_weight)):
+            source = f"u_{edge_index[0, i]}"
+            target = f"i_{edge_index[1, i]}"
+
+            logger.info(f"{source} - {target}")
+
+            # 加入邊並標記權重
+            G.add_edge(source, target, weight=edge_weight[i])
+
+        # 設置節點顏色
+        node_colors = [G.nodes[node]["color"] for node in G.nodes]
+
+        # 繪製節點和邊
+        pos = nx.circular_layout(G)  # 使用spring布局
+        nx.draw(
+            G,
+            pos,
+            with_labels=True,
+            node_color=node_colors,
+            node_size=500,
+            font_size=10,
+        )
+
+        # 為邊添加權重標籤
+        edge_labels = nx.get_edge_attributes(G, "weight")
+        nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels)
+
+        # 圖片儲存
+        now = datetime.now()
+        timestamp = now.strftime("%Y%m%d_%H%M%S")
+        folder_path = "src/data_pipeline/graph"
+        if not os.path.exists(folder_path):
+            os.makedirs(folder_path)
+        filename = f"graph_{timestamp}.png"
+        plt.savefig(f"{folder_path}/{filename}", format="png", dpi=300)
 
     async def build_graph(self, user_features, item_features):
         user_id_map = {u_id: idx for idx, u_id in enumerate(self.USER_ID)}
@@ -168,40 +221,18 @@ class EmbeddingModel:
 
         edge_index, edge_weight = await self.fetch_and_process_interactiom()
 
-        data = Data(x=x, edge_index=edge_index, edge_attr=edge_weight)
-
-        # 繪製圖形
-        G = to_networkx(data, edge_attrs=["edge_attr"])
-
-        num_users = len(user_features_padded)
-        num_items = len(item_features_padded)
-        user_indices = range(num_users)
-        item_indices = range(num_users, num_users + num_items)
-
-        plt.figure(figsize=(10, 8))
-
-        plt.figure(figsize=(8, 6))
-        nx.draw(
-            G,
-            with_labels=True,
-            node_size=300,
-            node_color="skyblue",
-            font_size=16,
-            font_weight="bold",
-            edge_color="black",
+        # 畫圖
+        self.plot_graph(
+            edge_index=edge_index,
+            edge_weight=edge_weight,
+            user_ids=list(user_id_map.keys()),
+            item_ids=list(item_id_map.keys()),
         )
-        # 添加標題
-        plt.title("Graph Visualization with User and Item Nodes")
 
-        # 保存圖形
-        folder_path = "src/data_pipeline/graph"
-        if not os.path.exists(folder_path):
-            os.makedirs(folder_path)
+        edge_index = tensor(edge_index, dtype=long)
+        edge_weight = tensor(edge_weight, dtype=float)
 
-        now = datetime.now()
-        timestamp = now.strftime("%Y%m%d_%H%M%S")
-        filename = f"graph_visualization_{timestamp}.png"
-        plt.savefig(f"{folder_path}/{filename}", format="png", dpi=300)
+        data = Data(x=x, edge_index=edge_index, edge_attr=edge_weight)
 
         return data, reverse_user_id_map, reverse_item_id_map
 
