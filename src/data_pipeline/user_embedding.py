@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 import requests
-from fastapi.responses import JSONResponse
 
 from src.data_pipeline.utils import kmeans
 
@@ -46,11 +45,7 @@ class UserEmbedding:
             # 替换NaN和Infinity值
             df.replace([np.inf, -np.inf], np.nan, inplace=True)
             df.fillna(0, inplace=True)
-
-            dict_data = df.to_dict(orient="records")
-            return JSONResponse(content=dict_data)
-            # To test whether df can be return directly
-            # return df
+            return df
 
         except Exception as e:
             return {"message": f"Error when embedding user feature: {str(e)}"}

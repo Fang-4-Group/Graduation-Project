@@ -1,11 +1,12 @@
 # flake8: noqa
 import logging
 import os
+from datetime import datetime
 
-import aiohttp
+import matplotlib.pyplot as plt
+import networkx as nx
 import numpy as np
 import pandas as pd
-import requests
 import torch.nn.functional as F
 import torch.optim as optim
 from dotenv import load_dotenv
@@ -13,21 +14,17 @@ from fastapi.responses import JSONResponse
 from sklearn.metrics.pairwise import cosine_similarity
 from torch import float, long, no_grad, tensor
 from torch_geometric.data import Data
+from torch_geometric.utils import to_networkx
 
+from database.migrations.pg_CRUD import PosgresqClient
 from src.data_pipeline.GAT import GAT
+from src.data_pipeline.item_embedding import ItemEmbedding
+from src.data_pipeline.user_embedding import UserEmbedding
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-
-"""ToDo:
-
-1. Create db table for interaction (pg_init.py)
-2. Write API to access related interaction data (pg_CRUD.py)
-3. request API to access data (this file)
-4. ID mapping
-"""
 
 load_dotenv()
 
@@ -59,16 +56,15 @@ class EmbeddingModel:
                 return await response.json()
 
     async def get_embedding_data(self):
-        async with aiohttp.ClientSession() as session:
-            user_result = await self.fetch_data(session, "user_embedding/")
-            house_result = await self.fetch_data(
-                session, "item_embedding/", item_params=self.place_dict
-            )
-            logger.info(f"House Result: {house_result}")
-            return user_result, house_result
+        userEmbeddingClient = UserEmbedding()
+        df_user = userEmbeddingClient.embedding(0, 3)
+        logger.info(f"user return type: {type(df_user)}")
+        itemEmbeddingClient = ItemEmbedding()
+        df_house = await itemEmbeddingClient.item_embedding()
+        logger.info(f"item return type: {type(df_house)}")
+        return df_user, df_house
 
-    def process_data(self, user_result, house_result):
-        df_user = pd.DataFrame(user_result)
+    def process_data(self, df_user, df_house):
         df_role_0 = df_user[df_user["Role"] == 0]
         df_role_1 = df_user[df_user["Role"] == 1]
 
@@ -78,8 +74,6 @@ class EmbeddingModel:
         elder_user_features = df_role_1.iloc[
             :, df_role_1.columns.get_loc("Sleep_Time") :
         ].values
-
-        df_house = pd.DataFrame(house_result)
 
         selected_columns = [
             "Size",
@@ -107,7 +101,37 @@ class EmbeddingModel:
 
         return young_user_features, elder_user_features, house_features
 
-    def build_graph(self, user_features, item_features, interactions):
+    async def fetch_and_process_interactiom(self):
+        client = PosgresqClient()
+        interaction = await client.get_whole_interaction(self.target)
+        interaction = [dict(record) for record in interaction]
+        logger.info(f"interaction type: {type(interaction)}")
+        df_interaction = pd.DataFrame(interaction)
+        logger.info(f"interaction df columns: {df_interaction.columns}")
+
+        edge_index = []
+        edge_weight = []
+
+        weight_dict = {"Viewed": 1, "Grouped": 2, "Selected": 3}
+
+        for _, row in df_interaction.iterrows():
+            user_id = row["People_ID"]
+            item_id = row["Item_ID"]
+
+            for interaction_type, weight in weight_dict.items():
+                if row[interaction_type] > 0:
+                    edge_index.append([user_id, item_id])
+                    edge_weight.append(weight)
+
+        edge_index = np.array(edge_index).T
+        edge_weight = np.array(edge_weight)
+
+        edge_index = tensor(edge_index, dtype=long)
+        edge_weight = tensor(edge_weight, dtype=float)
+
+        return edge_index, edge_weight
+
+    async def build_graph(self, user_features, item_features):
         user_id_map = {u_id: idx for idx, u_id in enumerate(self.USER_ID)}
         item_id_map = {i_id: idx for idx, i_id in enumerate(self.ITEM_ID)}
         reverse_user_id_map = {v: k for k, v in user_id_map.items()}
@@ -115,10 +139,6 @@ class EmbeddingModel:
 
         logger.info(f"user id map: {user_id_map}")
         logger.info(f"item id map: {item_id_map}")
-
-        interactions_mapped = np.array(
-            [[user_id_map[uid], item_id_map[iid]] for uid, iid in interactions]
-        )
 
         # 計算需要填充的列數
         num_padding_columns_user = max(
@@ -145,17 +165,44 @@ class EmbeddingModel:
         logger.info(f"item: {item_features_padded.shape}")
 
         x = tensor(np.vstack((user_features_padded, item_features_padded)), dtype=float)
-        edge_index = tensor(
-            np.array(
-                [
-                    interactions_mapped[:, 0],
-                    interactions_mapped[:, 1] + len(user_features_padded),
-                ]
-            ),
-            dtype=long,
-        )
 
-        data = Data(x=x, edge_index=edge_index)
+        edge_index, edge_weight = await self.fetch_and_process_interactiom()
+
+        data = Data(x=x, edge_index=edge_index, edge_attr=edge_weight)
+
+        # 繪製圖形
+        G = to_networkx(data, edge_attrs=["edge_attr"])
+
+        num_users = len(user_features_padded)
+        num_items = len(item_features_padded)
+        user_indices = range(num_users)
+        item_indices = range(num_users, num_users + num_items)
+
+        plt.figure(figsize=(10, 8))
+
+        plt.figure(figsize=(8, 6))
+        nx.draw(
+            G,
+            with_labels=True,
+            node_size=300,
+            node_color="skyblue",
+            font_size=16,
+            font_weight="bold",
+            edge_color="black",
+        )
+        # 添加標題
+        plt.title("Graph Visualization with User and Item Nodes")
+
+        # 保存圖形
+        folder_path = "src/data_pipeline/graph"
+        if not os.path.exists(folder_path):
+            os.makedirs(folder_path)
+
+        now = datetime.now()
+        timestamp = now.strftime("%Y%m%d_%H%M%S")
+        filename = f"graph_visualization_{timestamp}.png"
+        plt.savefig(f"{folder_path}/{filename}", format="png", dpi=300)
+
         return data, reverse_user_id_map, reverse_item_id_map
 
     async def train_model(self, data):
@@ -211,7 +258,6 @@ class EmbeddingModel:
 
         recommendations = {}
         for user_id, recs in enumerate(top_k_recommendations):
-            # ToDo: 找出為甚麼會有 KeyError: 5 這個報錯
             logger.info(f"user id: {user_id}")
             logger.info(f"Recommand: {recs}")
             original_user = reverse_user_id_map[user_id]
@@ -228,14 +274,12 @@ class EmbeddingModel:
         )
 
         if self.target == 0:
-            interactions = np.array([[8, 8], [10, 8]])  # Temporary setting
-            data, reverse_user_id_map, reverse_item_id_map = self.build_graph(
-                young_user_features, house_features, interactions
+            data, reverse_user_id_map, reverse_item_id_map = await self.build_graph(
+                young_user_features, house_features
             )
         else:
-            interactions = np.array([[1, 2], [3, 8]])  # Temporary setting
-            data, reverse_user_id_map, reverse_item_id_map = self.build_graph(
-                elder_user_features, young_user_features, interactions
+            data, reverse_user_id_map, reverse_item_id_map = await self.build_graph(
+                elder_user_features, young_user_features
             )
 
         user_embeddings, item_embeddings = await self.train_model(data)

@@ -2,6 +2,7 @@
   <div class="container">
     <h1>首次登錄</h1>
     <form @submit.prevent="submitForm">
+      <!-- Role Selection -->
       <div class="form-group">
         <label style="margin-right: 10px; font-weight: bold;">你是：</label>
         <div style="display: inline-block;">
@@ -10,43 +11,85 @@
         </div>
         <div style="display: inline-block;">
           <input type="radio" id="old" :value="1" v-model="user_data.Role">
-          <label for="old">老人</label>
+          <label for="old">年長者</label>
         </div>
       </div>
 
-      <!-- Additional fields for both young and old -->
+      <!-- Common Fields -->
       <div>
         <div class="form-group">
           <label for="name" style="font-weight: bold;">姓名：</label>
           <input type="text" id="name" v-model="user_data.Name" required>
         </div>
         <div class="form-group">
-          <label for="sleepTime" style="font-weight: bold;">睡覺時間：(1~5分 早~晚)</label>
-          <input type="number" id="sleepTime" v-model="user_data.Sleep_Time" required>
+          <label for="sleepTime" style="font-weight: bold;">睡覺時間：</label>
+          <select id="sleepTime" v-model.number="user_data.Sleep_Time" required>
+            <option value="1">晚上7:00~9:00</option>
+            <option value="2">晚上9:00~11:00</option>
+            <option value="3">晚上11:00~凌晨1:00</option>
+            <option value="4">凌晨1:00~3:00</option>
+            <option value="5">凌晨3:00以後</option>
+          </select>
         </div>
         <div class="form-group">
-          <label for="drink" style="font-weight: bold;">飲酒程度：(0~5分 弱~強)</label>
-          <input type="number" id="drink" v-model="user_data.Drink" required>
+          <label for="drink" style="font-weight: bold;">飲酒程度：</label>
+          <select id="drink" v-model.number="user_data.Drink" required>
+            <option value="0">從不飲酒</option>
+            <option value="1">很少飲酒</option>
+            <option value="2">偶爾小酌</option>
+            <option value="3">經常飲酒</option>
+            <option value="4">每天飲酒</option>
+          </select>
         </div>
         <div class="form-group">
-          <label for="smoke" style="font-weight: bold;">抽菸程度：(0~5分 弱~強)</label>
-          <input type="number" id="smoke" v-model="user_data.Smoke" required>
+          <label for="smoke" style="font-weight: bold;">抽菸程度：</label>
+          <select id="smoke" v-model.number="user_data.Smoke" required>
+            <option value="0">從不抽菸</option>
+            <option value="1">很少抽菸</option>
+            <option value="2">偶爾抽菸</option>
+            <option value="3">經常抽菸</option>
+            <option value="4">每天抽菸</option>
+          </select>
         </div>
         <div class="form-group">
-          <label for="clean_habit" style="font-weight: bold;">愛乾淨程度：(1~5分 弱~強)</label>
-          <input type="number" id="clean_habit" v-model="user_data.Clean" required>
+          <label for="clean_habit" style="font-weight: bold;">愛乾淨程度：</label>
+          <select id="clean_habit" v-model.number="user_data.Clean" required>
+            <option value="1">不愛乾淨</option>
+            <option value="2">稍微愛乾淨</option>
+            <option value="3">正常愛乾淨</option>
+            <option value="4">很愛乾淨</option>
+            <option value="5">極度潔癖</option>
+          </select>
         </div>
         <div class="form-group">
           <label for="mbti" style="font-weight: bold;">Mbti：</label>
-          <input type="text" id="mbti" v-model="user_data.Mbti" required>
+          <div class="address-group">
+            <select id="EI" v-model="All_MBTI.EI" required>
+              <option value="E">E(外向)</option>
+              <option value="I">I(內向)</option>
+            </select>
+            <select id="SN" v-model="All_MBTI.SN" required>
+              <option value="S">S(實際)</option>
+              <option value="N">N(直覺)</option>
+            </select>
+            <select id="FT" v-model="All_MBTI.FT" required>
+              <option value="F">F(感覺)</option>
+              <option value="T">T(思考)</option>
+            </select>
+            <select id="PJ" v-model="All_MBTI.PJ" required>
+              <option value="P">P(感知)</option>
+              <option value="J">J(判斷)</option>
+            </select>
+          </div>
+          <!--<input type="text" id="mbti" v-model="user_data.Mbti" required>-->
         </div>
-        
-        <!-- Interest selection -->
+
+        <!-- Interests -->
         <div class="form-group interests">
           <label style="font-weight: bold;">興趣：</label>
           <div class="interest-item-container">
-            <div class="interest-item" 
-              v-for="interest in interests" 
+            <div class="interest-item"
+              v-for="interest in interests"
               :key="interest.key"
               :class="{ selected: selectedInterests.includes(interest.key) }"
               @click="toggleInterest(interest.key)">
@@ -56,8 +99,7 @@
         </div>
       </div>
 
-      <!-- Additional fields for old -->
-       
+      <!-- Additional Fields for Old -->
       <div v-if="user_data.Role === 1">
         <div class="form-group">
           <label for="type" style="font-weight: bold;">房屋類別：</label>
@@ -86,28 +128,20 @@
           </select>
         </div>
         <div class="form-group">
-          <label for="size" style="font-weight: bold;">房屋大小：(單位:平方公尺)</label>
+          <label for="size" style="font-weight: bold;">房屋大小：(平方公尺)</label>
           <input type="number" id="size" v-model="house_data.Size" required>
         </div>
-        
         <div class="form-group">
-          <label for="address" style="font-weight: bold;">地址(城市)：</label>
-          <input type="text" id="city" v-model="house_data.City" required>
-        </div>
-        <div class="form-group">
-          <label for="district" style="font-weight: bold;">地址(行政區)：</label>
-          <input type="text" id="district" v-model="house_data.District" required>
-        </div>
-        <div class="form-group">
-          <label for="street" style="font-weight: bold;">地址(路名)：</label>
-          <input type="text" id="street" v-model="house_data.Street" required>
-        </div>
-        <div class="form-group">
-          <label for="floor" style="font-weight: bold;">樓層：</label>
-          <input type="number" id="floor" v-model="house_data.Floor" required>
+          <label style="font-weight: bold;">地址：</label>
+          <div class="address-group">
+            <input type="text" id="city" v-model="house_data.City" placeholder="城市" required>
+            <input type="text" id="district" v-model="house_data.District" placeholder="行政區" required>
+            <input type="text" id="street" v-model="house_data.Street" placeholder="路名" required>
+            <input type="number" id="floor" v-model="house_data.Floor" placeholder="樓層" required>
+          </div>
         </div>
         <div class="section-boxed">
-          <label for="address" style="font-weight: bold;">房屋家具：</label>
+          <label style="font-weight: bold;">房屋家具：</label>
           <div class="data-item" v-for="(item, index) in house_furn_data.Furniture" :key="index">
             <div class="data-item-content">
               <div class="furniture-input-container">
@@ -121,9 +155,8 @@
           </div>
         </div>
 
-      
-      <div class="section-boxed">
-        <label for="address" style="font-weight: bold;">房屋交通:</label>
+        <div class="section-boxed">
+          <label style="font-weight: bold;">房屋交通：</label>
           <div class="data-item" v-for="(item, index) in house_traffic_data.Traffic" :key="index">
             <div class="data-item-content">
               <div class="traffic-input-container">
@@ -150,12 +183,19 @@
 import { ref } from 'vue';
 import axios from 'axios';
 
+const All_MBTI = ref({
+  EI:'',
+  SN:'',
+  FT:'',
+  PJ:''
+})
+
 const user_data = ref({
   Name: '',
   Role: 0,
   Sleep_Time: 0,
-  Drink: 0,
-  Smoke: 0,
+  Drink: 6,
+  Smoke: 6,
   Clean: 0,
   Mbti: '',
   Shopping: 0,
@@ -182,14 +222,14 @@ const house_data = ref({
 });
 
 const house_furn_data = ref({
-  House_ID:0,
-  Furniture:[]
-})
+  House_ID: 0,
+  Furniture: []
+});
 
 const house_traffic_data = ref({
-  House_ID:0,
-  Traffic:[]
-})
+  House_ID: 0,
+  Traffic: []
+});
 
 const interests = [
   { key: 'Shopping', label: '購物' },
@@ -226,7 +266,10 @@ import { useRouter } from 'vue-router';
 const router = useRouter();
 
 async function submitForm() {
+
   try {
+    user_data.value.Mbti = All_MBTI.value.EI + All_MBTI.value.SN + All_MBTI.value.FT + All_MBTI.value.PJ;
+
     const userResponse = await axios.post('http://localhost:7877/post_user_basic_info', user_data.value);
     console.log(userResponse.data);
     const People_ID = userResponse.data.People_ID;
@@ -234,19 +277,19 @@ async function submitForm() {
     if (user_data.value.Role === 1) {
       const houseResponse = await axios.post('http://localhost:7877/post_house_info', {
         ...house_data.value,
-        People_ID: People_ID 
+        People_ID: People_ID
       });
       const House_ID = houseResponse.data.House_ID;
       const furnitureResponse = await axios.post('http://localhost:7877/post_house_furniture_info', {
         ...house_furn_data.value,
         House_ID: House_ID,
-        Furniture: house_furn_data.value.Furniture.map(f => f.name) 
+        Furniture: house_furn_data.value.Furniture.map(f => f.name)
       });
       console.log(furnitureResponse.data);
       const trafficResponse = await axios.post('http://localhost:7877/post_house_traffic_info', {
-        ...house_furn_data.value,
+        ...house_traffic_data.value,
         House_ID: House_ID,
-        Traffic: house_traffic_data.value.Traffic.map(t => t.name) 
+        Traffic: house_traffic_data.value.Traffic.map(t => t.name)
       });
       console.log(trafficResponse.data);
       router.push({ path: '/homeold', query: { People_ID } });
@@ -276,11 +319,6 @@ function removeTraffic(index) {
 </script>
 
 <style scoped>
-.selected {
-  background-color: #4CAF50;
-  color: white;
-}
-
 .container {
   max-width: 600px;
   margin: 0 auto;
@@ -292,6 +330,11 @@ function removeTraffic(index) {
   margin-bottom: 20px;
 }
 
+.role-options {
+  display: flex;
+  gap: 20px;
+}
+
 .label {
   font-weight: bold;
 }
@@ -299,13 +342,15 @@ function removeTraffic(index) {
 input[type="text"],
 input[type="number"],
 input[type="email"],
-input[type="radio"] {
+input[type="radio"],
+select {
   width: 100%;
   padding: 10px;
   border-radius: 5px;
-  border: 2px solid #333; 
+  border: 2px solid #333;
   font-size: 16px;
   box-sizing: border-box;
+  margin-top: 5px;
 }
 
 .btn-submit {
@@ -323,56 +368,7 @@ input[type="radio"] {
 
 .btn-group {
   text-align: center;
-}
-
-.add-button,
-.delete-button {
-  position: absolute;
-  top: 50%;
-  right: 0;
-  transform: translateY(-50%);
-  padding: 4px 8px;
-  border-radius: 50%;
-  background-color: #f44336;
-  color: white;
-  cursor: pointer;
-}
-
-.add-button {
-  background-color: #4CAF50;
-}
-
-.add-button:hover,
-.delete-button:hover {
-  box-shadow: 0px 4px 8px rgba(0, 0, 255, 0.2); 
-}
-
-.trait-item,
-.interest-item {
-  position: relative;
-}
-
-.delete-button {
-  position: absolute;
-  top: 50%;
-  right: 0;
-  transform: translateY(-50%);
-}
-
-.add-trait-block,
-.add-interest-block {
-  cursor: pointer;
-  display: inline-block;
-  width: calc(100% - 32px); 
-  padding: 8px 16px;
-  background-color: #f0f0f0;
-  border-radius: 5px;
-  margin-bottom: 10px;
-}
-
-.add-trait-block:hover,
-.add-interest-block:hover {
-  background-color: #e0e0e0;
+  margin-top: 20px;
 }
 
 .add-icon {
@@ -382,15 +378,15 @@ input[type="radio"] {
 
 .interests {
   display: flex;
-  flex-direction: column; 
-  align-items: center; 
+  flex-direction: column;
+  align-items: center;
 }
 
 .interest-item-container {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  justify-content: center; 
+  justify-content: center;
 }
 
 .interest-item {
@@ -417,10 +413,48 @@ input[type="radio"] {
   align-items: center;
 }
 
-.furniture-input-container label,
-.traffic-input-containerlabel {
-  margin-right: 10px;
+.delete-button {
+  padding: 4px 8px;
+  border-radius: 50%;
+  background-color: #f44336;
+  color: white;
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
 }
 
+.add-trait-block {
+  cursor: pointer;
+  display: inline-block;
+  width: calc(100% - 32px);
+  padding: 8px 16px;
+  background-color: #f0f0f0;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+.add-trait-block:hover {
+  background-color: #e0e0e0;
+}
+
+.section-boxed {
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-top: 20px;
+}
+
+.address-group {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.section-boxed label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 5px;
+}
 
 </style>
