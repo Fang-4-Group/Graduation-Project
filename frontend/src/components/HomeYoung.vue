@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <h1 class="user-info">用戶(年輕人)資訊</h1>
-    
+
     <!-- Add Image Section -->
     <div class="header-left">
       <!--<img src="path_to_your_image.jpg" alt="Your Image" class="header-image">-->
@@ -75,7 +75,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
-import router from '../router'; 
+import router from '../router';
 import { useRoute } from 'vue-router';
 
 const route = useRoute();
@@ -99,11 +99,11 @@ const BASE_URL = 'http://localhost:7877';
 onMounted(async () => {
   try {
 
-    const name_Response = await axios.get(`${BASE_URL}/get_name/${People_ID}`); 
+    const name_Response = await axios.get(`${BASE_URL}/get_name/${People_ID}`);
     name.value = name_Response.data.name;
     console.log("Name data fetched:", name_Response.data);
 
-    const sleep_Response = await axios.get(`${BASE_URL}/get_sleep_time/${People_ID}`); 
+    const sleep_Response = await axios.get(`${BASE_URL}/get_sleep_time/${People_ID}`);
     const s= sleep_Response.data.sleep_time;
     if(s == 1){
       sleepTime.value = "晚上7:00~9:00";
@@ -117,7 +117,7 @@ onMounted(async () => {
       sleepTime.value = "凌晨3:00以後";
     }
 
-    const drink_Response = await axios.get(`${BASE_URL}/get_drink/${People_ID}`); 
+    const drink_Response = await axios.get(`${BASE_URL}/get_drink/${People_ID}`);
     const d = drink_Response.data.drink;
       if(d == 0){
         drink.value = "從不飲酒";
@@ -131,7 +131,7 @@ onMounted(async () => {
         drink.value ="每天飲酒";
       }
 
-    const smoke_Response = await axios.get(`${BASE_URL}/get_smoke/${People_ID}`); 
+    const smoke_Response = await axios.get(`${BASE_URL}/get_smoke/${People_ID}`);
     const sm = smoke_Response.data.smoke;
     if(sm == 0){
       smoke.value = "從不抽菸";
@@ -146,7 +146,7 @@ onMounted(async () => {
     }
 
 
-    const clean_habit_Response = await axios.get(`${BASE_URL}/get_clean_habit/${People_ID}`); 
+    const clean_habit_Response = await axios.get(`${BASE_URL}/get_clean_habit/${People_ID}`);
     const c = clean_habit_Response.data.clean_habit;
     if(c == 1){
       clean_habit.value = "不愛乾淨";
@@ -160,13 +160,13 @@ onMounted(async () => {
       clean_habit.value = "極度潔癖";
     }
 
-    const characters_Response = await axios.get(`${BASE_URL}/get_characters/${People_ID}`); 
+    const characters_Response = await axios.get(`${BASE_URL}/get_characters/${People_ID}`);
     characters.value = characters_Response.data.characters;
 
-    const interests_Response = await axios.get(`${BASE_URL}/get_interests/${People_ID}`); 
+    const interests_Response = await axios.get(`${BASE_URL}/get_interests/${People_ID}`);
     interests.value = interests_Response.data.interests;
 
-    const mbti_Response = await axios.get(`${BASE_URL}/get_mbti/${People_ID}`); 
+    const mbti_Response = await axios.get(`${BASE_URL}/get_mbti/${People_ID}`);
     mbti.value = mbti_Response.data.mbti;
 
     // const preference_furniture_Response = await axios.get(`${BASE_URL}/get_preference_furniture/${People_ID}`); 
@@ -269,7 +269,7 @@ function goToPage(path) {
 
 .header-image {
   width: 100%;
-  max-width: 200px; 
+  max-width: 200px;
 }
 
 .add-button {

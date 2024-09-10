@@ -3,7 +3,6 @@ import logging
 import aiohttp
 import numpy as np
 import pandas as pd
-from fastapi.responses import JSONResponse
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -67,8 +66,7 @@ class ItemEmbedding:
                 df.replace([np.inf, -np.inf], np.nan, inplace=True)
                 df.fillna(0, inplace=True)
 
-                dict_data = df.to_dict(orient="records")
-                return JSONResponse(content=dict_data)
+                return df
 
         except Exception as e:
             import traceback

@@ -88,8 +88,8 @@
         <div class="form-group interests">
           <label style="font-weight: bold;">興趣：</label>
           <div class="interest-item-container">
-            <div class="interest-item" 
-              v-for="interest in interests" 
+            <div class="interest-item"
+              v-for="interest in interests"
               :key="interest.key"
               :class="{ selected: selectedInterests.includes(interest.key) }"
               @click="toggleInterest(interest.key)">
@@ -266,30 +266,30 @@ import { useRouter } from 'vue-router';
 const router = useRouter();
 
 async function submitForm() {
-  
+
   try {
     user_data.value.Mbti = All_MBTI.value.EI + All_MBTI.value.SN + All_MBTI.value.FT + All_MBTI.value.PJ;
 
     const userResponse = await axios.post('http://localhost:7877/post_user_basic_info', user_data.value);
     console.log(userResponse.data);
     const People_ID = userResponse.data.People_ID;
-    
+
     if (user_data.value.Role === 1) {
       const houseResponse = await axios.post('http://localhost:7877/post_house_info', {
         ...house_data.value,
-        People_ID: People_ID 
+        People_ID: People_ID
       });
       const House_ID = houseResponse.data.House_ID;
       const furnitureResponse = await axios.post('http://localhost:7877/post_house_furniture_info', {
         ...house_furn_data.value,
         House_ID: House_ID,
-        Furniture: house_furn_data.value.Furniture.map(f => f.name) 
+        Furniture: house_furn_data.value.Furniture.map(f => f.name)
       });
       console.log(furnitureResponse.data);
       const trafficResponse = await axios.post('http://localhost:7877/post_house_traffic_info', {
         ...house_traffic_data.value,
         House_ID: House_ID,
-        Traffic: house_traffic_data.value.Traffic.map(t => t.name) 
+        Traffic: house_traffic_data.value.Traffic.map(t => t.name)
       });
       console.log(trafficResponse.data);
       router.push({ path: '/homeold', query: { People_ID } });
@@ -378,15 +378,15 @@ select {
 
 .interests {
   display: flex;
-  flex-direction: column; 
-  align-items: center; 
+  flex-direction: column;
+  align-items: center;
 }
 
 .interest-item-container {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  justify-content: center; 
+  justify-content: center;
 }
 
 .interest-item {
