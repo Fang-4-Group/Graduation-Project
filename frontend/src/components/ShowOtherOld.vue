@@ -1,59 +1,52 @@
 <template>
     <div class="container">
-      <h1 class="user-info">用戶(老人)資訊</h1>
-    
+      <h1 class="user-info">呈現給別人看的用戶資訊(銀)</h1>
+      
       <!-- Add Image Section -->
       <div class="header-left">
         <!--<img src="path_to_your_image.jpg" alt="Your Image" class="header-image">-->
       </div>
-    
-      <!-- Add Button Section -->
-      <div class="header-right">
-        <h2><button class="add-button" @click="goToPage('/updateold')">更改個人資料</button></h2>
-        <h2><button class="add-button" @click="goToPage('/showotherold')">(暫時)給其他用戶看的(銀)</button></h2>
+  
+      <!-- User Info Section -->
+      <div class="section-boxed">
+        <h2>基本資料</h2>
+        <div class="user-info-details">
+          <div class="data-item">
+            <div class="data-item-content">
+              <label>姓名：</label>
+              <span class="data-value">{{ name }}</span>
+            </div>
+            <div class="data-item-content">
+              <label>信箱：</label>
+              <span class="data-value">{{ useremail }}</span>
+            </div>
+          </div>
+        </div>
       </div>
-
-    <!-- User Info Section -->
-    <div class="section-boxed">
-      <h2>基本資料</h2>
-      <div class="user-info-details">
+  
+      <!-- Basic Info Section -->
+      <div class="section-boxed">
+        <h2>生活習慣</h2>
         <div class="data-item">
           <div class="data-item-content">
-            <label>姓名：</label>
-            <span class="data-value">{{ name }}</span>
+            <label>睡覺時間：</label>
+            <span class="data-value">{{ sleepTime }}</span>
           </div>
           <div class="data-item-content">
-            <label>信箱：</label>
-            <span class="data-value">{{ useremail }}</span>
+            <label>飲酒程度：</label>
+            <span class="data-value">{{ drink }}</span>
+          </div>
+          <div class="data-item-content">
+            <label>抽菸程度：</label>
+            <span class="data-value">{{ smoke }}</span>
+          </div>
+          <div class="data-item-content">
+            <label>愛乾淨程度：</label>
+            <span class="data-value">{{ clean_habit }}</span>
           </div>
         </div>
       </div>
-    </div>
-
-    <!-- Basic Info Section -->
-    <div class="section-boxed">
-      <h2>生活習慣</h2>
-      <div class="data-item">
-        <div class="data-item-content">
-          <label>睡覺時間：</label>
-          <span class="data-value">{{ sleepTime }}</span>
-        </div>
-        <div class="data-item-content">
-          <label>飲酒程度：</label>
-          <span class="data-value">{{ drink }}</span>
-        </div>
-        <div class="data-item-content">
-          <label>抽菸程度：</label>
-          <span class="data-value">{{ smoke }}</span>
-        </div>
-        <div class="data-item-content">
-          <label>愛乾淨程度：</label>
-          <span class="data-value">{{ clean_habit }}</span>
-        </div>
-      </div>
-    </div>
-
-
+  
       <!-- Personality Traits Section -->
       <div class="section-boxed">
         <h2>個人特質</h2>
@@ -62,7 +55,7 @@
           <li>{{ mbti }}</li>
         </ul>
       </div>
-
+  
       <!-- Interests Section -->
       <div class="section-boxed">
         <h2>興趣</h2>
@@ -70,53 +63,51 @@
           <li v-for="interest in interests" :key="interest">{{ interest }}</li>
         </ul>
       </div>
-
-        <!-- House Basic Info -->
-        <div class="section-boxed">
-          <h3>房屋資本資料</h3>
-          <ul class="house-list">
-            <li>房屋大小：{{ size }}</li>
-            <li>是否可開火：{{ fire }}</li>
-            <li>是否可議價：{{ canNegotiate }}</li>
-            <li>城市：{{ city }}</li>
-            <li>行政區：{{ district }}</li>
-            <li>路名：{{ street }}</li>
-            <li>樓層：{{ floor }}</li>
-            <li>房屋類別：{{ houseType }}</li>
-          </ul>
-        </div>
-
-        <!-- House Furniture -->
-        <div class="section-boxed">
-          <h3>房屋家具</h3>
-          <ul class="furniture-list">
-            <li v-for="(item, index) in houseFurniture" :key="index">{{ item }}</li>
-          </ul>
-        </div>
-
-        <!-- House Traffic-->
-        <div class="section-boxed">
-          <h3>房屋交通</h3>
-          <ul class="traffic-list">
-            <li v-for="(item, index) in houseTraffic" :key="index">{{ item }}</li>
-          </ul>
-        </div>
+  
+      <!-- House Basic Info -->
+      <div class="section-boxed">
+        <h3>房屋資本資料</h3>
+        <ul class="house-list">
+          <li>房屋大小：{{ size }}</li>
+          <li>是否可開火：{{ fire }}</li>
+          <li>是否可議價：{{ canNegotiate }}</li>
+          <li>城市：{{ city }}</li>
+          <li>行政區：{{ district }}</li>
+          <li>路名：{{ street }}</li>
+          <li>樓層：{{ floor }}</li>
+          <li>房屋類別：{{ houseType }}</li>
+        </ul>
       </div>
+  
+      <!-- House Furniture -->
+      <div class="section-boxed">
+        <h3>房屋家具</h3>
+        <ul class="furniture-list">
+          <li v-for="(item, index) in houseFurniture" :key="index">{{ item }}</li>
+        </ul>
+      </div>
+  
+      <!-- House Traffic -->
+      <div class="section-boxed">
+        <h3>房屋交通</h3>
+        <ul class="traffic-list">
+          <li v-for="(item, index) in houseTraffic" :key="index">{{ item }}</li>
+        </ul>
+      </div>
+    </div>
   </template>
-
+  
   <script setup>
-  import { ref,onMounted } from 'vue';
+  import { ref, onMounted } from 'vue';
   import axios from 'axios';
-  import router from '../router';
   import { useRoute } from 'vue-router';
-
+  
   const route = useRoute();
   const People_ID = route.query.People_ID;
-
-
-  const name = ref("")
-  const useremail = ref("jony12@gmail.com")
-
+  
+  const name = ref("");
+  const useremail = ref("jony12@gmail.com");
+  
   const drink = ref("");
   const smoke = ref("");
   const clean_habit = ref("");
@@ -135,130 +126,117 @@
   const houseFurniture = ref([]);
   const houseTraffic = ref([]);
   const BASE_URL = 'http://localhost:7877';
-
-
+  
   onMounted(async () => {
     try {
-      const name_Response = await axios.get(`${BASE_URL}/get_name/${People_ID}`);
+      const name_Response = await axios.get(`${BASE_URL}/get_name/${People_ID}`); 
       name.value = name_Response.data.name;
-      console.log("Name data fetched:", name_Response.data);
-
+  
       const sleep_Response = await axios.get(`${BASE_URL}/get_sleep_time/${People_ID}`);
-      const s= sleep_Response.data.sleep_time;
-      if(s == 1){
-        sleepTime.value = "晚上7:00~9:00";
-      }else if(s == 2){
-        sleepTime.value = "晚上9:00~11:00";
-      }else if(s == 3){
-        sleepTime.value = "晚上11:00~凌晨1:00";
-      }else if(s == 4){
-        sleepTime.value ="凌晨1:00~3:00";
-      }else if(s == 5){
-        sleepTime.value = "凌晨3:00以後";
-      }
-
+      const s = sleep_Response.data.sleep_time;
+      sleepTime.value = mapSleepTime(s);
+  
       const drink_Response = await axios.get(`${BASE_URL}/get_drink/${People_ID}`);
       const d = drink_Response.data.drink;
-      if(d == 0){
-        drink.value = "從不飲酒";
-      }else if(d == 1){
-        drink.value = "很少飲酒";
-      }else if(d == 2){
-        drink.value = "偶爾小酌";
-      }else if(d == 3){
-        drink.value = "經常飲酒";
-      }else if(d == 4){
-        drink.value ="每天飲酒";
-      }
-
-
+      drink.value = mapDrinkLevel(d);
+  
       const smoke_Response = await axios.get(`${BASE_URL}/get_smoke/${People_ID}`);
       const sm = smoke_Response.data.smoke;
-      if(sm == 0){
-        smoke.value = "從不抽菸";
-      }else if(sm == 1){
-        smoke.value = "很少抽菸";
-      }else if(sm == 2){
-        smoke.value = "偶爾抽菸";
-      }else if(sm == 3){
-        smoke.value = "經常抽菸";
-      }else if(sm == 4){
-        smoke.value ="每天抽菸";
-      }
-
+      smoke.value = mapSmokeLevel(sm);
+  
       const clean_habit_Response = await axios.get(`${BASE_URL}/get_clean_habit/${People_ID}`);
       const c = clean_habit_Response.data.clean_habit;
-      if(c == 1){
-        clean_habit.value = "不愛乾淨";
-      }else if(c == 2){
-        clean_habit.value = "稍微愛乾淨";
-      }else if(c == 3){
-        clean_habit.value = "正常愛乾淨";
-      }else if(c == 4){
-        clean_habit.value ="很愛乾淨";
-      }else if(c == 5){
-        clean_habit.value = "極度潔癖";
-      }
-
+      clean_habit.value = mapCleanHabit(c);
+  
       const characters_Response = await axios.get(`${BASE_URL}/get_characters/${People_ID}`);
       characters.value = characters_Response.data.characters;
-
+  
       const interests_Response = await axios.get(`${BASE_URL}/get_interests/${People_ID}`);
       interests.value = interests_Response.data.interests;
-
+  
       const mbti_Response = await axios.get(`${BASE_URL}/get_mbti/${People_ID}`);
       mbti.value = mbti_Response.data.mbti;
-
+  
       const size_Response = await axios.get(`${BASE_URL}/get_size/${People_ID}`);
       size.value = size_Response.data.size;
-
+  
       const fire_Response = await axios.get(`${BASE_URL}/get_fire/${People_ID}`);
-      if (fire_Response.data.fire == 1)
-        fire.value='是'
-      else
-        fire.value='否'
-
+      fire.value = fire_Response.data.fire == 1 ? '是' : '否';
+  
       const canNegotiate_Response = await axios.get(`${BASE_URL}/get_negotiate/${People_ID}`);
-      if (canNegotiate_Response.data.negotiate_price.fire == 1)
-        canNegotiate.value='是'
-      else
-        canNegotiate.value='否'
-
+      canNegotiate.value = canNegotiate_Response.data.negotiate_price == 1 ? '是' : '否';
+  
       const city_Response = await axios.get(`${BASE_URL}/get_city/${People_ID}`);
       city.value = city_Response.data.city;
-
+  
       const district_Response = await axios.get(`${BASE_URL}/get_district/${People_ID}`);
       district.value = district_Response.data.district;
-
+  
       const street_Response = await axios.get(`${BASE_URL}/get_street/${People_ID}`);
       street.value = street_Response.data.street;
-
+  
       const floor_Response = await axios.get(`${BASE_URL}/get_floor/${People_ID}`);
       floor.value = floor_Response.data.floor;
-
+  
       const houseType_Response = await axios.get(`${BASE_URL}/get_house_type/${People_ID}`);
       houseType.value = houseType_Response.data.type;
-
+  
       const houseFurniture_Response = await axios.get(`${BASE_URL}/get_house_furniture/${People_ID}`);
       houseFurniture.value = houseFurniture_Response.data.furniture;
-
+  
       const houseTraffic_Response = await axios.get(`${BASE_URL}/get_house_traffic/${People_ID}`);
       houseTraffic.value = houseTraffic_Response.data.traffic;
-
+  
     } catch (error) {
       console.error('Error fetching user information:', error);
     }
   });
-
-
-  function goToPage(path) {
-    router.push({
-      path,
-      query: { People_ID: People_ID }
-    });
+  
+  function mapSleepTime(s) {
+    const times = [
+      "晚上7:00~9:00",
+      "晚上9:00~11:00",
+      "晚上11:00~凌晨1:00",
+      "凌晨1:00~3:00",
+      "凌晨3:00以後"
+    ];
+    return times[s - 1] || "未知";
+  }
+  
+  function mapDrinkLevel(d) {
+    const levels = [
+      "從不飲酒",
+      "很少飲酒",
+      "偶爾小酌",
+      "經常飲酒",
+      "每天飲酒"
+    ];
+    return levels[d] || "未知";
+  }
+  
+  function mapSmokeLevel(sm) {
+    const levels = [
+      "從不抽菸",
+      "很少抽菸",
+      "偶爾抽菸",
+      "經常抽菸",
+      "每天抽菸"
+    ];
+    return levels[sm] || "未知";
+  }
+  
+  function mapCleanHabit(c) {
+    const habits = [
+      "不愛乾淨",
+      "稍微愛乾淨",
+      "正常愛乾淨",
+      "很愛乾淨",
+      "極度潔癖"
+    ];
+    return habits[c - 1] || "未知";
   }
   </script>
-
+  
   <style scoped>
 .container {
   max-width: 800px;
@@ -269,8 +247,8 @@
 
 .user-info {
   display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
+  justify-content: center; 
+  margin-bottom: 20px; 
 }
 
 .section-boxed {
@@ -315,7 +293,7 @@
   margin-bottom: 5px;
   padding: 5px 10px;
   border-radius: 20px;
-  background-color: #c2d4dc;
+  background-color: #c2d4dc; 
   color: #333;
   display: inline-block;
 }
@@ -325,7 +303,7 @@
   margin-bottom: 5px;
   padding: 5px 10px;
   border-radius: 20px;
-  background-color: #d9b9b0;
+  background-color: #d9b9b0; 
   color: #333;
   display: inline-block;
 }
@@ -369,3 +347,4 @@
   background-color: #0056b3;
 }
 </style>
+  

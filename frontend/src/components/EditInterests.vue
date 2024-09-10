@@ -5,7 +5,7 @@
       <form @submit.prevent="saveUserData">
         <!-- Interests Section -->
         <div class="form-group" v-for="(interest, index) in editedUserData.interests" :key="index">
-          <label :for="'interest-' + index">興趣：</label>
+          <label :for="'interest-' + index">興：</label>
           <input type="text" :id="'interest-' + index" v-model="editedUserData.interests[index]" required>
         </div>
 
