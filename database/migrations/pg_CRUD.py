@@ -738,8 +738,8 @@ class PosgresqClient:
             try:
                 house_id = house_update_data["House_ID"]
                 basic = house_update_data["Basic"]
-                furniture = house_update_data["Furniture"]
-                traffic = house_update_data["Traffic"]
+                furniture = house_update_data.get("Furniture", None)
+                traffic = house_update_data.get("Traffic", None)
 
                 basic_keys = list(basic.keys())
                 basic_values = list(basic.values())
