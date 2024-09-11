@@ -14,6 +14,9 @@ from src.data_pipeline.prediction import Prediction
 
 from ..services.google_oidc.oidc import OIDCService
 
+import json
+import base64
+
 router = APIRouter()
 oidc_service = OIDCService()
 
@@ -204,6 +207,29 @@ async def login(request: Request):
 
 @router.get("/google-oidc/auth")
 async def auth(request: Request):
+    state = request.session.get("state")
+    if not state:
+        raise HTTPException(status_code=400, detail="State not found in session")  # noqa
+
+    authorization_response = str(request.url)
+
+    try:
+        oidc_service.fetch_token(authorization_response)
+        credentials = oidc_service.flow.credentials
+        request.session["access_token"] = credentials.token
+        userinfo = oidc_service.verify_id_token(credentials.id_token)
+        # Redirect to the frontend with userinfo as a query parameter
+        userinfo_str = json.dumps(userinfo)  # Convert userinfo to JSON string
+        encoded_userinfo = base64.urlsafe_b64encode(
+            userinfo_str.encode()).decode()  # Encode to base64
+        return RedirectResponse(
+            url=f"http://localhost:8081/?userinfo={encoded_userinfo}")
+    except ValueError as e:
+        return HTMLResponse(content=f"Error: Invalid token: {e}", status_code=400)  # noqa
+
+
+@router.get("/google-oidc/auth/old")
+async def auth_old(request: Request):
     state = request.session.get("state")
     if not state:
         raise HTTPException(

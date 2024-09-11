@@ -4,7 +4,7 @@
     
       <!-- Add Image Section -->
       <div class="header-left">
-        <!--<img src="path_to_your_image.jpg" alt="Your Image" class="header-image">-->
+        <img :src="pictureUrl" alt="User Picture" class="header-image">
       </div>
     
       <!-- Add Button Section -->
@@ -113,6 +113,8 @@
   const route = useRoute();
   const People_ID = route.query.People_ID;
 
+ //const userinfo = ref(null);
+ const pictureUrl = ref('');
 
   const name = ref("")
   const useremail = ref("jony12@gmail.com")
@@ -139,6 +141,15 @@
 
   onMounted(async () => {
     try {
+      const encodedUserinfo = route.query.userinfo;
+      if (encodedUserinfo) {
+        try {
+          const decodedUserinfo = JSON.parse(atob(encodedUserinfo));
+          pictureUrl.value = decodedUserinfo.picture; // 獲取 userinfo 中的 picture
+        } catch (error) {
+          console.error('Error decoding userinfo:', error);
+        }
+      }
       const name_Response = await axios.get(`${BASE_URL}/get_name/${People_ID}`);
       name.value = name_Response.data.name;
       console.log("Name data fetched:", name_Response.data);
