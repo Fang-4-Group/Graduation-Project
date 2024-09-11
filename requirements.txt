@@ -17,6 +17,7 @@ pydub==0.25.1
 pymongo
 pytest
 pytest-asyncio
+python-docx
 python-dotenv
 PyYAML==6.0.1
 requests

@@ -6,6 +6,7 @@ from xml.dom.minidom import Document
 
 import requests
 import speech_recognition as sr
+from docx import Document
 from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import FileResponse
 from linebot import LineBotApi
@@ -89,9 +90,9 @@ async def handle_async_audio(event):
 
 async def build_consensus_document(input_text):
     doc = Document()
-    doc.add_heading("青銀共居協議書", 0).alignment = 1  # Large title, centered
+    doc.add_heading("青銀共居協議書", 0).alignment = 1
 
-    sections = input_text.strip().split("**")
+    sections = input_text.strip().split("**")[1:-1]
     for section in sections:
         if section.strip():
             heading, *content = section.split("\n")
@@ -104,6 +105,7 @@ async def build_consensus_document(input_text):
                     line_content = line.strip().lstrip("+").strip()
                     doc.add_paragraph(line_content, style="ListBullet2")
 
+    # TODO: change the file path to cloud storage path
     file_path = "src/chatbot/contract.docx"
     doc.save(file_path)
 
