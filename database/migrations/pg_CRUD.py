@@ -738,6 +738,9 @@ class PosgresqClient:
             try:
                 house_id = house_update_data["House_ID"]
                 basic = house_update_data["Basic"]
+                furniture = house_update_data["Furniture"]
+                traffic = house_update_data["Traffic"]
+
                 basic_keys = list(basic.keys())
                 basic_values = list(basic.values())
 
@@ -753,42 +756,44 @@ class PosgresqClient:
                 await conn.execute(update_query, house_id, *basic_values)
 
                 # Update `HOUSE FURNITURE` table
-                await conn.execute(
-                    """
-                    DELETE FROM "HOUSE_FURNITURE"
-                    WHERE "House_ID" = $1
-                    """,
-                    house_id,
-                )
-
-                for furniture in house_update_data["Furniture"]:
+                if furniture is not None:
                     await conn.execute(
                         """
-                        INSERT INTO "HOUSE_FURNITURE" ("House_ID", "Furniture")
-                        VALUES ($1, $2)
+                        DELETE FROM "HOUSE_FURNITURE"
+                        WHERE "House_ID" = $1
                         """,
                         house_id,
-                        furniture,
                     )
+
+                    for furniture in house_update_data["Furniture"]:
+                        await conn.execute(
+                            """
+                            INSERT INTO "HOUSE_FURNITURE" ("House_ID", "Furniture")
+                            VALUES ($1, $2)
+                            """,
+                            house_id,
+                            furniture,
+                        )
 
                 # Update `HOUSE TRAFFIC` table
-                await conn.execute(
-                    """
-                    DELETE FROM "HOUSE_TRAFFIC"
-                    WHERE "House_ID" = $1
-                    """,
-                    house_id,
-                )
-
-                for traffic in house_update_data["Traffic"]:
+                if traffic is not None:
                     await conn.execute(
                         """
-                        INSERT INTO "HOUSE_TRAFFIC" ("House_ID", "Traffic")
-                        VALUES ($1, $2)
+                        DELETE FROM "HOUSE_TRAFFIC"
+                        WHERE "House_ID" = $1
                         """,
                         house_id,
-                        traffic,
                     )
+
+                    for traffic in house_update_data["Traffic"]:
+                        await conn.execute(
+                            """
+                            INSERT INTO "HOUSE_TRAFFIC" ("House_ID", "Traffic")
+                            VALUES ($1, $2)
+                            """,
+                            house_id,
+                            traffic,
+                        )
 
                 await transaction.commit()
                 return {
