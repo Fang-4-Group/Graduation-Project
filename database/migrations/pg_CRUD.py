@@ -705,6 +705,104 @@ class PosgresqClient:
             except Exception as e:
                 return {"message": f"Error when inserting data: {str(e)}"}
 
+    # Update profile info
+    async def update_user_info(self, user_update_data: dict):
+        async with self.access_db() as conn:
+            try:
+                user_id = user_update_data["People_ID"]
+                data = user_update_data["data"]
+                set_clauses = ", ".join(
+                    [f'"{key}" = ${i+2}' for i, key in enumerate(data.keys())]
+                )  # noqa
+
+                query = f"""
+                UPDATE "PEOPLE"
+                SET {set_clauses}
+                WHERE "People_ID" = $1
+                RETURNING "People_ID"
+                """
+                values = list(data.values())
+
+                await conn.fetch(query, user_id, *values)
+
+                return {
+                    "message": "Data updated successfully",
+                }
+            except Exception as e:
+                return {"message": f"Error when updating data: {str(e)}"}
+
+    async def update_house_info(self, house_update_data: dict):
+        async with self.access_db() as conn:
+            transaction = conn.transaction()
+            await transaction.start()
+            try:
+                house_id = house_update_data["House_ID"]
+                basic = house_update_data["Basic"]
+                furniture = house_update_data.get("Furniture", None)
+                traffic = house_update_data.get("Traffic", None)
+
+                basic_keys = list(basic.keys())
+                basic_values = list(basic.values())
+
+                basic_set_clauses = ", ".join(
+                    [f'"{key}" = ${i+2}' for i, key in enumerate(basic_keys)]
+                )
+                update_query = f"""
+                    UPDATE "HOUSE"
+                    SET {basic_set_clauses}
+                    WHERE "House_ID" = $1
+                    RETURNING "House_ID";
+                """
+                await conn.execute(update_query, house_id, *basic_values)
+
+                # Update `HOUSE FURNITURE` table
+                if furniture is not None:
+                    await conn.execute(
+                        """
+                        DELETE FROM "HOUSE_FURNITURE"
+                        WHERE "House_ID" = $1
+                        """,
+                        house_id,
+                    )
+
+                    for fur in list(furniture):
+                        await conn.execute(
+                            """
+                            INSERT INTO "HOUSE_FURNITURE" ("House_ID", "Furniture")
+                            VALUES ($1, $2)
+                            """,
+                            house_id,
+                            fur,
+                        )
+
+                # Update `HOUSE TRAFFIC` table
+                if traffic is not None:
+                    await conn.execute(
+                        """
+                        DELETE FROM "HOUSE_TRAFFIC"
+                        WHERE "House_ID" = $1
+                        """,
+                        house_id,
+                    )
+
+                    for traff in list(traffic):
+                        await conn.execute(
+                            """
+                            INSERT INTO "HOUSE_TRAFFIC" ("House_ID", "Traffic")
+                            VALUES ($1, $2)
+                            """,
+                            house_id,
+                            traff,
+                        )
+
+                await transaction.commit()
+                return {
+                    "message": "Data updated successfully",
+                }
+            except Exception as e:
+                await transaction.rollback()
+                return {"message": f"Error when updating data: {str(e)}"}
+
     # Recommadation
     async def add_recommendation(self, role: int, recommendation_info: dict):
         async with self.access_db() as conn:
