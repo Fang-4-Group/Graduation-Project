@@ -765,14 +765,14 @@ class PosgresqClient:
                         house_id,
                     )
 
-                    for furniture in house_update_data["Furniture"]:
+                    for fur in list(furniture):
                         await conn.execute(
                             """
                             INSERT INTO "HOUSE_FURNITURE" ("House_ID", "Furniture")
                             VALUES ($1, $2)
                             """,
                             house_id,
-                            furniture,
+                            fur,
                         )
 
                 # Update `HOUSE TRAFFIC` table
@@ -785,14 +785,14 @@ class PosgresqClient:
                         house_id,
                     )
 
-                    for traffic in house_update_data["Traffic"]:
+                    for traff in list(traffic):
                         await conn.execute(
                             """
                             INSERT INTO "HOUSE_TRAFFIC" ("House_ID", "Traffic")
                             VALUES ($1, $2)
                             """,
                             house_id,
-                            traffic,
+                            traff,
                         )
 
                 await transaction.commit()
