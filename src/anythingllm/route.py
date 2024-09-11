@@ -126,42 +126,6 @@ def upload_document(api_key, file_path):
         return None
 
 
-def update_raw_text(api_key, raw_text, title):
-    api_url = f"{base_url}document/raw-text"
-
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": f"Bearer {api_key}",
-        "accept": "application/json",
-    }
-
-    data = {
-        "textContent": raw_text,
-        "metadata": {
-            "title": title,
-            "keyOne": "valueOne",
-            "keyTwo": "valueTwo",
-            "etc": "etc",
-        },
-    }
-
-    response = requests.post(api_url, headers=headers, json=data)
-
-    if response.status_code == 200:
-        try:
-            response_data = response.json()
-            doc_id = response_data["documents"][0]["id"]
-            title = response_data["documents"][0]["title"]
-            # print(f"Success to upload raw text: {title}, {raw_text},{doc_id}")
-            return Doc(doc_id, title)
-        except (KeyError, IndexError, ValueError) as e:
-            # print(f"Unexpected response format: {e}")
-            return None
-    else:
-        # print(f"Failed to upload document: {response.status_code}, {response.text}")
-        return None
-
-
 def update_embeddings(
     api_key, slug, file_path=None, action=None, doc_id=None, title=None
 ):
