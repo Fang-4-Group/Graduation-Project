@@ -12,9 +12,8 @@ import torch.optim as optim
 from dotenv import load_dotenv
 from fastapi.responses import JSONResponse
 from sklearn.metrics.pairwise import cosine_similarity
-from torch import float, long, no_grad, tensor
+from torch import float, long, no_grad, tensor, zeros_like
 from torch_geometric.data import Data
-from torch_geometric.utils import to_networkx
 
 from database.migrations.pg_CRUD import PosgresqClient
 from src.data_pipeline.GAT import GAT
@@ -36,27 +35,22 @@ class EmbeddingModel:
         Keyword arguments:
         target -- 0: for young; 1: for the elderly
         """
-        self.api_url = os.getenv("API_URL")
         self.target = target
         self.USER_ID = []
         self.ITEM_ID = []
         self.epoch_num = 100
         self.place_dict = place_dict
 
-    async def fetch_data(self, session, endpoint: str, item_params: dict = None):
-        if item_params:
-            async with session.post(
-                f"{self.api_url}/{endpoint}", json=item_params
-            ) as response:
-                return await response.json()
-        else:
-            async with session.get(f"{self.api_url}/{endpoint}") as response:
-                return await response.json()
-
     async def get_embedding_data(self):
         userEmbeddingClient = UserEmbedding()
-        df_user = userEmbeddingClient.embedding(0, 3)
+        df_user = await userEmbeddingClient.embedding(0, 3)
+
         logger.info(f"user return type: {type(df_user)}")
+        logger.info(f"user return: {df_user}")
+        df_user = pd.DataFrame(df_user)
+        logger.info(f"user return type: {type(df_user)}")
+        logger.info(f"user return: {df_user}")
+
         itemEmbeddingClient = ItemEmbedding()
         df_house = await itemEmbeddingClient.item_embedding()
         logger.info(f"item return type: {type(df_house)}")
@@ -130,8 +124,10 @@ class EmbeddingModel:
         edge_index = np.array(edge_index).T
         edge_weight = np.array(edge_weight)
 
+        edge_index = tensor(edge_index, dtype=long)
+        edge_weight = tensor(edge_weight, dtype=float)
+
         logger.info(f"edge index: {edge_index}")
-        logger.info(f"edge weight: {edge_weight}")
 
         return edge_index, edge_weight
 
@@ -229,10 +225,24 @@ class EmbeddingModel:
             item_ids=list(item_id_map.keys()),
         )
 
-        edge_index = tensor(edge_index, dtype=long)
-        edge_weight = tensor(edge_weight, dtype=float)
+        # 轉換 user ids 和 item ids
+        new_edge_index = zeros_like(edge_index)
 
-        data = Data(x=x, edge_index=edge_index, edge_attr=edge_weight)
+        # 替換 user ids
+        for i, user_id in enumerate(edge_index[0]):
+            new_edge_index[0, i] = user_id_map.get(
+                user_id.item(), -1
+            )  # 如果找不到，預設為 -1
+
+        # 替換 item ids
+        for i, item_id in enumerate(edge_index[1]):
+            new_edge_index[1, i] = item_id_map.get(
+                item_id.item(), -1
+            )  # 如果找不到，預設為 -1
+
+        logger.info(f"transformed edge index: {new_edge_index}")
+
+        data = Data(x=x, edge_index=new_edge_index, edge_attr=edge_weight)
 
         return data, reverse_user_id_map, reverse_item_id_map
 

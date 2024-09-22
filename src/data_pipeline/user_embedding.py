@@ -1,8 +1,14 @@
+import logging
+
 import numpy as np
 import pandas as pd
-import requests
 
+from database.migrations.pg_CRUD import PosgresqClient
 from src.data_pipeline.utils import kmeans
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 class UserEmbedding:
@@ -11,15 +17,27 @@ class UserEmbedding:
         self.url_young = self.server_path + "get_young_info/"
         self.url_elder = self.server_path + "get_elder_info/"
 
-    def embedding(self, k_mean: bool, n_clusters: int):
+    async def embedding(self, k_mean: bool, n_clusters: int):
         try:
-            response_y = requests.get(self.url_young)
-            result_y = response_y.json()
-            df_young = pd.DataFrame(result_y["message"])
+            client = PosgresqClient()
+            result_y = await client.get_young_info()
+            record_key = list(dict(result_y["message"][0]).keys())
+            # because repeated column name is removed automatically, so it should be add manually
+            record_key.append("People_ID_repeated")
+            df_young = pd.DataFrame(result_y["message"], columns=record_key)
+            df_young.drop(columns=["People_ID_repeated"], inplace=True)
 
-            response_e = requests.get(self.url_elder)
-            result_e = response_e.json()
-            df_elder = pd.DataFrame(result_e["message"])
+            logger.info(f"young info column: {df_young.columns}")
+            logger.info(f"young info: {df_young}")
+
+            result_e = await client.get_elder_info()
+            logger.info(result_e)
+            record_key_y = list(dict(result_e["message"][0]).keys())
+            logger.info(record_key_y)
+            df_elder = pd.DataFrame(result_e["message"], columns=record_key_y)
+
+            logger.info(f"elder info column: {df_elder.columns}")
+            logger.info(f"elder info: {df_elder}")
 
             df = pd.concat([df_young, df_elder], axis=0)
 

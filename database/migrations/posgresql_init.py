@@ -226,13 +226,13 @@ class PosgresqlInitClient:
                     ('AA', 'fake_line_id', 1, 3, 2, 0, 4, 'INTJ', 0, 1, 0, 0, 0, 0, 0, 1, 0, 'sample@.google.com'),
                     ('BB', 'fake_line_id', 0, 4, 1, 3, 3, 'INFP', 1, 1, 0, 1, 1, 0, 0, 0, 1, 'sample@.google.com'),
                     ('CC', 'fake_line_id', 1, 2, 3, 1, 5, 'ISTJ', 0, 1, 1, 0, 0, 0, 1, 0, 0, 'sample@.google.com'),
-                    ('DD', 'fake_line_id', 0, 3, 2, 0, 4, 'ENFP', 0, 0, 1, 0, 1, 1, 1, 0, 1, 'sample@.google.com'),
+                    ('DD', 'fake_line_id', 0, 4, 1, 3, 3, 'ENFP', 1, 1, 0, 0, 1, 0, 0, 0, 1, 'sample@.google.com'),
                     ('EE', 'fake_line_id', 1, 4, 1, 2, 5, 'ENTP', 0, 1, 1, 0, 1, 0, 1, 1, 0, 'sample@.google.com'),
                     ('FF', 'fake_line_id', 0, 2, 3, 4, 0, 'ISFP', 1, 1, 0, 1, 0, 0, 0, 0, 1, 'sample@.google.com'),
                     ('GG', 'fake_line_id', 1, 3, 2, 2, 3, 'ESTJ', 0, 0, 1, 0, 1, 1, 1, 0, 0, 'sample@.google.com'),
                     ('HH', 'fake_line_id', 0, 4, 1, 2, 5, 'INFJ', 0, 1, 0, 0, 1, 0, 0, 0, 1, 'sample@.google.com'),
                     ('II', 'fake_line_id', 1, 2, 3, 1, 4, 'ENTJ', 0, 1, 1, 0, 0, 0, 1, 1, 0, 'sample@.google.com'),
-                    ('JJ', 'fake_line_id', 0, 3, 2, 1, 3, 'ESFP', 1, 0, 1, 0, 1, 0, 1, 0, 1, 'sample@.google.com');
+                    ('JJ', 'fake_line_id', 0, 2, 3, 4, 0, 'ESFP', 1, 1, 0, 1, 0, 0, 1, 0, 1, 'sample@.google.com');
 
                     INSERT INTO "PEOPLE_CHARACTER" ("People_ID", "Character")
                     VALUES
@@ -258,13 +258,13 @@ class PosgresqlInitClient:
                     INSERT INTO "HOUSE" ("People_ID", "Size", "Fire", "Negotiate_Price", "Photo", "City", "District", "Street", "Floor", "Type")
                     VALUES
                     (1, 12.5, 0, 1, 'house1.jpg', '臺北市', '大安區', '新生南路', 2, '公寓'),
-                    (1, 12.5, 0, 1, 'house1.jpg', '臺北市', '大安區', '新生南路', 3, '公寓'),
-                    (3, 15.2, 1, 0, 'house2.jpg', '臺北市', '文山區', '木柵路', 1, '華廈'),
-                    (3, 13, 1, 0, 'house6.jpg', '臺北市', '文山區', '木柵路', 2, '華廈'),
-                    (5, 10.0, 0, 1, 'house3.jpg', '新北市', '新店區', '北宜路', 3, '華廈'),
-                    (5, 12, 0, 1, 'house11.jpg', '新北市', '新店區', '北宜路', 2, '華廈'),
+                    (1, 12.5, 0, 1, 'house1.jpg', '臺北市', '大安區', '新生南路', 2, '公寓'),
+                    (3, 12.2, 0, 1, 'house2.jpg', '臺北市', '文山區', '木柵路', 2, '公寓'),
+                    (3, 13, 0, 1, 'house6.jpg', '臺北市', '文山區', '木柵路', 2, '公寓'),
+                    (5, 10, 0, 1, 'house3.jpg', '新北市', '新店區', '北宜路', 3, '華廈'),
+                    (5, 12, 0, 1, 'house11.jpg', '新北市', '新店區', '北宜路', 3, '華廈'),
                     (7, 18.3, 1, 0, 'house4.jpg', '臺北市', '北投區', '石牌路', 2, '大樓'),
-                    (9, 9.7, 0, 1, 'house5.jpg', '臺北市', '士林區', '中正路', 1, '公寓'),
+                    (9, 10, 0, 1, 'house5.jpg', '臺北市', '士林區', '中正路', 3, '華廈'),
                     (5, 8, 0, 1, 'house7.jpg', '新北市', '新店區', '北宜路', 2, '華廈'),
                     (7, 12, 1, 0, 'house8.jpg', '臺北市', '北投區', '石牌路', 2, '大樓'),
                     (9, 10, 0, 1, 'house9.jpg', '臺北市', '士林區', '中正路', 1, '公寓');
@@ -309,21 +309,20 @@ class PosgresqlInitClient:
                     (3, '新店區'),
                     (4, '士林區'),
                     (4, '北投區'),
-                    (5, '士林區'),
-                    (5, '北投區');
+                    (5, '新店區');
 
                     INSERT INTO "INTERACTION_YOUNG" ("People_ID", "House_Option_1", "House_Option_2", "House_Option_3", "Interaction_Date")
                     VALUES
-                    (4, 2, 5, 10, NOW()),
-                    (2, 2, 5, 8, NOW());
+                    (2, 2, 3, 4, NOW()),
+                    (10, 5, 6, 8, NOW());
 
                     INSERT INTO "INTERACTION_DETAILS_YOUNG" ("Interaction_ID_y", "Item_ID", "Viewed", "Grouped", "Selected")
                     VALUES
                     (1, 2, 1, 1, 0),
-                    (1, 5, 1, 0, 0),
-                    (1, 10, 0, 0, 0),
-                    (2, 2, 1, 0, 0),
-                    (2, 5, 1, 1, 0),
+                    (1, 3, 1, 0, 0),
+                    (1, 4, 1, 1, 1),
+                    (2, 5, 1, 0, 0),
+                    (2, 6, 1, 1, 1),
                     (2, 8, 0, 0, 0);
 
                     INSERT INTO "INTERACTION_ELDERLY" ("People_ID", "People_Option_1", "People_Option_2", "People_Option_3", "Interaction_Date")
