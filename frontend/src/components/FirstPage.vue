@@ -183,6 +183,7 @@
 
 import axios from 'axios';
 import { useRouter, useRoute } from 'vue-router';
+import { ref, onMounted } from 'vue';
 
 const userinfo = ref(null); // 單獨存儲userinfo
 

@@ -220,10 +220,11 @@ async def auth(request: Request):
         userinfo = oidc_service.verify_id_token(credentials.id_token)
         # Redirect to the frontend with userinfo as a query parameter
         userinfo_str = json.dumps(userinfo)  # Convert userinfo to JSON string
+
         encoded_userinfo = base64.urlsafe_b64encode(
-            userinfo_str.encode()).decode()  # Encode to base64
-        return RedirectResponse(
-            url=f"http://localhost:8081/?userinfo={encoded_userinfo}")
+            userinfo_str.encode()).rstrip(b'=').decode()  # Encode to base64
+        return RedirectResponse(url=f"http://localhost:8081/?userinfo={encoded_userinfo}")
+        # return RedirectResponse(url="https://www.google.com/")
     except ValueError as e:
         return HTMLResponse(content=f"Error: Invalid token: {e}", status_code=400)  # noqa
 
