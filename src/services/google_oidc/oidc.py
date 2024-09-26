@@ -1,15 +1,17 @@
 import os
 
+from dotenv import load_dotenv
 from google.auth.transport import requests
 from google.oauth2 import id_token
 from google_auth_oauthlib.flow import Flow
+
+load_dotenv(override=True)
 
 
 class OIDCService:
     def __init__(self):
         self.client_id = os.getenv("GOOGLE_CLIENT_ID")
-        self.redirect_uri = os.getenv("GOOGLE_REDIRECT_URI")
-
+        self.redirect_uri = os.getenv("GOOGLE_BASE_URL") + "/auth"
         self.flow = Flow.from_client_secrets_file(
             "src/services/google_oidc/client.json",
             scopes=[

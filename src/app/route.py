@@ -1,3 +1,7 @@
+import base64
+import json
+import os
+
 from fastapi import APIRouter, HTTPException, Query, Request
 from fastapi.responses import FileResponse, HTMLResponse
 from jinja2 import Environment, FileSystemLoader, TemplateNotFound
@@ -13,9 +17,6 @@ from src.data_pipeline.model import EmbeddingModel
 from src.data_pipeline.prediction import Prediction
 
 from ..services.google_oidc.oidc import OIDCService
-
-import json
-import base64
 
 router = APIRouter()
 oidc_service = OIDCService()
@@ -191,8 +192,9 @@ async def post_house_traffic_info(house_traffic_data: dict):
 @router.get("/google-oidc/")
 async def root(request: Request):
     try:
+        login_url = os.getenv("GOOGLE_BASE_URL") + "/login"
         home_temp = jinja_env.get_template("homepage.html")
-        html_content = home_temp.render()
+        html_content = home_temp.render(login_url=login_url)
         return HTMLResponse(content=html_content)
     except TemplateNotFound as e:
         return HTTPException(status_code=404, detail=f"Template not found: {e}")  # noqa
@@ -209,7 +211,9 @@ async def login(request: Request):
 async def auth(request: Request):
     state = request.session.get("state")
     if not state:
-        raise HTTPException(status_code=400, detail="State not found in session")  # noqa
+        raise HTTPException(
+            status_code=400, detail="State not found in session"
+        )  # noqa
 
     authorization_response = str(request.url)
 
@@ -221,12 +225,17 @@ async def auth(request: Request):
         # Redirect to the frontend with userinfo as a query parameter
         userinfo_str = json.dumps(userinfo)  # Convert userinfo to JSON string
 
-        encoded_userinfo = base64.urlsafe_b64encode(
-            userinfo_str.encode()).rstrip(b'=').decode()  # Encode to base64
-        return RedirectResponse(url=f"http://localhost:8081/?userinfo={encoded_userinfo}")
+        encoded_userinfo = (
+            base64.urlsafe_b64encode(userinfo_str.encode()).rstrip(b"=").decode()
+        )  # Encode to base64
+        return RedirectResponse(
+            url=f"http://localhost:8081/?userinfo={encoded_userinfo}"
+        )
         # return RedirectResponse(url="https://www.google.com/")
     except ValueError as e:
-        return HTMLResponse(content=f"Error: Invalid token: {e}", status_code=400)  # noqa
+        return HTMLResponse(
+            content=f"Error: Invalid token: {e}", status_code=400
+        )  # noqa
 
 
 @router.get("/google-oidc/auth/old")
