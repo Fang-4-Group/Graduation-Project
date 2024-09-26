@@ -5,11 +5,10 @@ import time
 from concurrent.futures import ProcessPoolExecutor
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 
-from fastapi.middleware.cors import CORSMiddleware
-
-
+from src.services.line_oidc.line_oidc_route import line_oidc_router
 
 # 引入 pg api router
 from .app.route import router
@@ -21,12 +20,13 @@ app = FastAPI()
 
 app.add_middleware(SessionMiddleware, secret_key="!secret")
 app.include_router(router)
+app.include_router(line_oidc_router)
 
 origins = [
     "http://localhost",
     "http://localhost:7877",
     "http://localhost:8081",
-    "http://localhost:5432"
+    "http://localhost:5432",
     # 添加您允许的其他域
 ]
 
@@ -36,7 +36,6 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE"],
     allow_headers=["*"],
-    
 )
 
 

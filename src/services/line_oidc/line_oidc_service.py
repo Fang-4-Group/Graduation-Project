@@ -10,13 +10,13 @@ class LineOIDCService:
         self.channel_secret = os.getenv("LINE_OIDC_CHANNEL_SECRET")
         self.redirect_uri = os.getenv("LINE_OIDC_REDIRECT_URI")
 
-    async def generate_auth_url(self):
+    def generate_auth_url(self):
         state = str(uuid.uuid4())
         return (
-            f"https://access.line.me/oauth2/v2.1/authorize?response_type=code&"
-            f"client_id={self.channel_id}&"
-            f"redirect_uri={self.redirect_uri}&"
-            f"state={state}&scope=profile%20openid"
+            "https://access.line.me/oauth2/v2.1/authorize?response_type=code&"
+            + f"client_id={self.channel_id}&"
+            + f"redirect_uri={self.redirect_uri}&"
+            + f"state={state}&scope=profile%20openid"
         )
 
     async def __exchange_code_for_token(self, code: str):

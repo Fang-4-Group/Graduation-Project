@@ -2,22 +2,22 @@ from dotenv import load_dotenv
 from fastapi import APIRouter, Request
 from fastapi.responses import RedirectResponse
 
-from services.line_oidc.line_oidc_service import LineOIDCService
+from src.services.line_oidc.line_oidc_service import LineOIDCService
 
 load_dotenv()
 
-router = APIRouter(prefix="/line-oidc")
+line_oidc_router = APIRouter(prefix="/line-oidc")
 
 service = LineOIDCService()
 
 
-@router.get("/")
+@line_oidc_router.get("/")
 async def line_login():
     auth_url = service.generate_auth_url()
     return RedirectResponse(auth_url)
 
 
-@router.get("/callback")
+@line_oidc_router.get("/callback")
 async def handle_callback(request: Request):
     code = request.query_params.get("code")
     token_response = await service.exchange_code_for_token(code)
