@@ -2,6 +2,7 @@ aiohttp
 asyncpg
 datasets
 fastapi[all]
+firebase-admin
 google-auth
 google-auth-oauthlib
 httpx
