@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 from fastapi.responses import JSONResponse
 
 # from sklearn.metrics.pairwise import cosine_similarity
-from torch import float, long, no_grad, save, tensor, zeros_like
+from torch import float, load, long, no_grad, save, tensor, zeros_like
 from torch_geometric.data import Data
 from torch_geometric.utils import negative_sampling
 
@@ -43,6 +43,7 @@ class EmbeddingModel:
         self.epoch_num = 100
         self.place_dict = place_dict
         self.client = PosgresqClient()
+        self.model_train = False
 
     async def get_embedding_data(self):
         userEmbeddingClient = UserEmbedding()
@@ -250,6 +251,10 @@ class EmbeddingModel:
         return data, reverse_user_id_map, reverse_item_id_map
 
     async def train_model(self, data):
+        folder_path = "src/data_pipeline/model"
+        if not os.path.exists(folder_path):
+            os.makedirs(folder_path)
+
         # 正樣本邊 (來自圖的邊)
         pos_edge = data.edge_index
 
@@ -274,18 +279,21 @@ class EmbeddingModel:
             optimizer.step()
             return loss.item()
 
-        for epoch in range(self.epoch_num):
-            loss = train()
-            if epoch % 10 == 0:
-                logger.info(f"Epoch {epoch + 1}, Loss: {loss:.4f}")
+        if self.model_train:
+            for epoch in range(self.epoch_num):
+                loss = train()
+                if epoch % 10 == 0:
+                    logger.info(f"Epoch {epoch + 1}, Loss: {loss:.4f}")
+        else:
+            logger.info("load model")
+            files = os.listdir("src/data_pipeline/model/")
+            logger.info(files)
+            model.load_state_dict(load("src/data_pipeline/model/" + files[-1]))
 
         model.eval()
         # model 輸出
         now = datetime.now()
         timestamp = now.strftime("%Y%m%d_%H%M%S")
-        folder_path = "src/data_pipeline/model"
-        if not os.path.exists(folder_path):
-            os.makedirs(folder_path)
 
         save(model.state_dict(), f"{folder_path}/{timestamp}.pth")
 
