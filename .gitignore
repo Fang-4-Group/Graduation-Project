@@ -6,3 +6,5 @@ myvenv/
 ngrok/
 src/services/google_oidc/client.json
 src/data_pipeline/graph/*
+src/data_pipeline/model/*
+src/data_pipeline/similarity_matrix/*

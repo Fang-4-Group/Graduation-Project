@@ -96,12 +96,12 @@ async def posgresql_init():
     client = PosgresqlInitClient()
     response_c = await client.create_table()
     response_a = await client.add_fk_setting()
-    response_i = await client.insert_data()
+    response_i = await client.insert_data_by_sql_file()
     response_d = await client.insert_district_data()
     return {
         "create table": f"{response_c['message']}",
         "add FK": f"{response_a['message']}",
-        "insert data": f"{response_i['message']}",
+        "insert data by sql": f"{response_i['message']}",
         "insert district data": f"{response_d['message']}",
     }
 
@@ -387,11 +387,17 @@ async def add_recommendation(role: int, recommendation_info: dict):
     return result
 
 
-@router.post("/get_recommendation/{role}")
-async def get_recommendation(role: int, condition: dict = None):
-    item_ids = condition["Item_ID"]
+@router.post("/get_recommendation/{role}/{id}")
+async def get_recommendation(role: int, id: int):
     client = PosgresqClient()
-    result = await client.get_recommendation(role, item_ids)
+    result = await client.get_recommendation(role, id)
+    return result
+
+
+@router.get("/get_single_house/{id}")
+async def get_single_house(id: int):
+    client = PosgresqClient()
+    result = await client.get_single_house(id)
     return result
 
 

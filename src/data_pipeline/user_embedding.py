@@ -21,11 +21,8 @@ class UserEmbedding:
         try:
             client = PosgresqClient()
             result_y = await client.get_young_info()
-            record_key = list(dict(result_y["message"][0]).keys())
-            # because repeated column name is removed automatically, so it should be add manually
-            record_key.append("People_ID_repeated")
-            df_young = pd.DataFrame(result_y["message"], columns=record_key)
-            df_young.drop(columns=["People_ID_repeated"], inplace=True)
+            record_dicts = [dict(record) for record in result_y["message"]]
+            df_young = pd.DataFrame(record_dicts)
 
             logger.info(f"young info column: {df_young.columns}")
             logger.info(f"young info: {df_young}")
@@ -40,6 +37,8 @@ class UserEmbedding:
             logger.info(f"elder info: {df_elder}")
 
             df = pd.concat([df_young, df_elder], axis=0)
+
+            logger.info(f"Check: {df[df.Role == 0]}")
 
             df["M1"] = df["Mbti"].str[0]
             df["M2"] = df["Mbti"].str[1]

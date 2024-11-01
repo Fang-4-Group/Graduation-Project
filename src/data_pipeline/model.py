@@ -11,9 +11,11 @@ import torch.nn.functional as F
 import torch.optim as optim
 from dotenv import load_dotenv
 from fastapi.responses import JSONResponse
-from sklearn.metrics.pairwise import cosine_similarity
-from torch import float, long, no_grad, tensor, zeros_like
+
+# from sklearn.metrics.pairwise import cosine_similarity
+from torch import float, long, no_grad, save, tensor, zeros_like
 from torch_geometric.data import Data
+from torch_geometric.utils import negative_sampling
 
 from database.migrations.pg_CRUD import PosgresqClient
 from src.data_pipeline.GAT import GAT
@@ -40,13 +42,11 @@ class EmbeddingModel:
         self.ITEM_ID = []
         self.epoch_num = 100
         self.place_dict = place_dict
+        self.client = PosgresqClient()
 
     async def get_embedding_data(self):
         userEmbeddingClient = UserEmbedding()
         df_user = await userEmbeddingClient.embedding(0, 3)
-
-        logger.info(f"user return type: {type(df_user)}")
-        logger.info(f"user return: {df_user}")
         df_user = pd.DataFrame(df_user)
         logger.info(f"user return type: {type(df_user)}")
         logger.info(f"user return: {df_user}")
@@ -54,11 +54,15 @@ class EmbeddingModel:
         itemEmbeddingClient = ItemEmbedding()
         df_house = await itemEmbeddingClient.item_embedding()
         logger.info(f"item return type: {type(df_house)}")
+        logger.info(f"item return: {df_house}")
         return df_user, df_house
 
     def process_data(self, df_user, df_house):
         df_role_0 = df_user[df_user["Role"] == 0]
         df_role_1 = df_user[df_user["Role"] == 1]
+
+        logger.info(f"df_role_0: {df_role_0}")
+        logger.info(f"df_role_1: {df_role_1}")
 
         young_user_features = df_role_0.iloc[
             :, df_role_0.columns.get_loc("Sleep_Time") :
@@ -94,8 +98,7 @@ class EmbeddingModel:
         return young_user_features, elder_user_features, house_features
 
     async def fetch_and_process_interactiom(self):
-        client = PosgresqClient()
-        interaction = await client.get_whole_interaction(self.target)
+        interaction = await self.client.get_whole_interaction(self.target)
         interaction = [dict(record) for record in interaction]
         logger.info(f"interaction: {interaction}")
 
@@ -151,7 +154,7 @@ class EmbeddingModel:
             logger.info(f"{source} - {target}")
 
             # 加入邊並標記權重
-            G.add_edge(source, target, weight=edge_weight[i])
+            G.add_edge(source, target, weight=int(edge_weight[i]))
 
         # 設置節點顏色
         node_colors = [G.nodes[node]["color"] for node in G.nodes]
@@ -247,29 +250,45 @@ class EmbeddingModel:
         return data, reverse_user_id_map, reverse_item_id_map
 
     async def train_model(self, data):
+        # 正樣本邊 (來自圖的邊)
+        pos_edge = data.edge_index
+
+        # 負樣本邊 (隨機生成負樣本)
+        neg_edge = negative_sampling(
+            edge_index=data.edge_index, num_nodes=data.num_nodes
+        )
+
         model = GAT(
             num_features=data.x.shape[1],
             hidden_channels=8,
             num_embeding=8,
             heads=1,
         )
-        optimizer = optim.Adam(model.parameters(), lr=0.01)
+        optimizer = optim.Adam(model.parameters(), lr=0.001)
 
         def train():
             model.train()
             optimizer.zero_grad()
-            out = model(data)
-            loss = F.mse_loss(out[data.edge_index[0]], out[data.edge_index[1]])
+            loss = model.bpr_loss(data, pos_edge, neg_edge)
             loss.backward()
             optimizer.step()
             return loss.item()
 
         for epoch in range(self.epoch_num):
             loss = train()
-            if epoch % 20 == 0:
+            if epoch % 10 == 0:
                 logger.info(f"Epoch {epoch + 1}, Loss: {loss:.4f}")
 
         model.eval()
+        # model 輸出
+        now = datetime.now()
+        timestamp = now.strftime("%Y%m%d_%H%M%S")
+        folder_path = "src/data_pipeline/model"
+        if not os.path.exists(folder_path):
+            os.makedirs(folder_path)
+
+        save(model.state_dict(), f"{folder_path}/{timestamp}.pth")
+
         with no_grad():
             embeddings = model(data)
 
@@ -280,6 +299,11 @@ class EmbeddingModel:
         logger.info(f"Shape After Embedding")
         logger.info(f"user: {user_embeddings.shape}")
         logger.info(f"item: {item_embeddings.shape}")
+
+        logger.info(f"Embedding:")
+        logger.info(f"user: {user_embeddings}")
+        logger.info(f"item: {item_embeddings}")
+
         return user_embeddings, item_embeddings
 
     async def recommend(
@@ -288,12 +312,32 @@ class EmbeddingModel:
         item_embeddings,
         reverse_user_id_map,
         reverse_item_id_map,
-        K=2,
+        K=3,
     ):
-        similarity_matrix = cosine_similarity(
-            user_embeddings.numpy(), item_embeddings.numpy()
-        )
+        similarity_matrix = np.dot(user_embeddings.numpy(), item_embeddings.numpy().T)
         logger.info(f"Similarity Matrix:\n{similarity_matrix}")
+
+        # Similarity Matrix 輸出
+        now = datetime.now()
+        timestamp = now.strftime("%Y%m%d_%H%M%S")
+        folder_path = "src/data_pipeline/similarity_matrix"
+        if not os.path.exists(folder_path):
+            os.makedirs(folder_path)
+
+        similarity_df = pd.DataFrame(
+            similarity_matrix,
+            index=[
+                reverse_user_id_map[user_id]
+                for user_id in range(user_embeddings.shape[0])
+            ],
+            columns=[
+                reverse_item_id_map[item_id]
+                for item_id in range(item_embeddings.shape[0])
+            ],
+        )
+
+        # 保存 CSV 文件
+        similarity_df.to_csv(f"{folder_path}/{timestamp}.csv")
 
         top_k_recommendations = np.argsort(-similarity_matrix, axis=1)[:, :K]
 
@@ -305,6 +349,10 @@ class EmbeddingModel:
             original_recs = [reverse_item_id_map[item_id] for item_id in recs]
             recommendations[original_user] = original_recs
             logger.info(f"User {original_user}: {original_recs}")
+
+            await self.client.add_recommendation(
+                self.target, {"People_ID": original_user, "Item_ID": original_recs}
+            )
 
         return JSONResponse(content=recommendations)
 

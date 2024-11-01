@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 from contextlib import asynccontextmanager
 
@@ -6,6 +7,10 @@ import asyncpg
 from dotenv import load_dotenv
 
 load_dotenv()
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 class PosgresqlInitClient:
@@ -226,13 +231,13 @@ class PosgresqlInitClient:
                     ('AA', 'fake_line_id', 1, 3, 2, 0, 4, 'INTJ', 0, 1, 0, 0, 0, 0, 0, 1, 0, 'sample@.google.com'),
                     ('BB', 'fake_line_id', 0, 4, 1, 3, 3, 'INFP', 1, 1, 0, 1, 1, 0, 0, 0, 1, 'sample@.google.com'),
                     ('CC', 'fake_line_id', 1, 2, 3, 1, 5, 'ISTJ', 0, 1, 1, 0, 0, 0, 1, 0, 0, 'sample@.google.com'),
-                    ('DD', 'fake_line_id', 0, 4, 1, 3, 3, 'ENFP', 1, 1, 0, 0, 1, 0, 0, 0, 1, 'sample@.google.com'),
+                    ('DD', 'fake_line_id', 0, 4, 1, 3, 3, 'INFP', 1, 1, 0, 0, 1, 0, 0, 0, 1, 'sample@.google.com'),
                     ('EE', 'fake_line_id', 1, 4, 1, 2, 5, 'ENTP', 0, 1, 1, 0, 1, 0, 1, 1, 0, 'sample@.google.com'),
-                    ('FF', 'fake_line_id', 0, 2, 3, 4, 0, 'ISFP', 1, 1, 0, 1, 0, 0, 0, 0, 1, 'sample@.google.com'),
+                    ('FF', 'fake_line_id', 0, 2, 3, 4, 0, 'ESFP', 1, 1, 0, 1, 0, 0, 0, 0, 1, 'sample@.google.com'),
                     ('GG', 'fake_line_id', 1, 3, 2, 2, 3, 'ESTJ', 0, 0, 1, 0, 1, 1, 1, 0, 0, 'sample@.google.com'),
-                    ('HH', 'fake_line_id', 0, 4, 1, 2, 5, 'INFJ', 0, 1, 0, 0, 1, 0, 0, 0, 1, 'sample@.google.com'),
+                    ('HH', 'fake_line_id', 0, 4, 1, 2, 5, 'ENFJ', 0, 1, 0, 0, 1, 0, 0, 0, 1, 'sample@.google.com'),
                     ('II', 'fake_line_id', 1, 2, 3, 1, 4, 'ENTJ', 0, 1, 1, 0, 0, 0, 1, 1, 0, 'sample@.google.com'),
-                    ('JJ', 'fake_line_id', 0, 2, 3, 4, 0, 'ESFP', 1, 1, 0, 1, 0, 0, 1, 0, 1, 'sample@.google.com');
+                    ('JJ', 'fake_line_id', 0, 2, 3, 4, 0, 'ISFP', 1, 1, 0, 1, 0, 0, 1, 0, 1, 'sample@.google.com');
 
                     INSERT INTO "PEOPLE_CHARACTER" ("People_ID", "Character")
                     VALUES
@@ -314,7 +319,8 @@ class PosgresqlInitClient:
                     INSERT INTO "INTERACTION_YOUNG" ("People_ID", "House_Option_1", "House_Option_2", "House_Option_3", "Interaction_Date")
                     VALUES
                     (2, 2, 3, 4, NOW()),
-                    (10, 5, 6, 8, NOW());
+                    (10, 5, 6, 8, NOW()),
+                    (4, 5, 6, 8, NOW());
 
                     INSERT INTO "INTERACTION_DETAILS_YOUNG" ("Interaction_ID_y", "Item_ID", "Viewed", "Grouped", "Selected")
                     VALUES
@@ -323,7 +329,10 @@ class PosgresqlInitClient:
                     (1, 4, 1, 1, 1),
                     (2, 5, 1, 0, 0),
                     (2, 6, 1, 1, 1),
-                    (2, 8, 0, 0, 0);
+                    (2, 8, 0, 0, 0),
+                    (3, 2, 0, 0, 0),
+                    (3, 3, 1, 0, 0),
+                    (3, 4, 1, 1, 1);
 
                     INSERT INTO "INTERACTION_ELDERLY" ("People_ID", "People_Option_1", "People_Option_2", "People_Option_3", "Interaction_Date")
                     VALUES
@@ -352,8 +361,8 @@ class PosgresqlInitClient:
         async with self.access_db() as conn:
             try:
                 json_file_path = [
-                    r"database/migrations/data/taipei_district_lat_lon.json",
-                    r"database/migrations/data/newtaipei_district_lat_lon.json",  # noqa
+                    r"database/migrations/data/lat_lon_data/taipei_district_lat_lon.json",
+                    r"database/migrations/data/lat_lon_data/newtaipei_district_lat_lon.json",  # noqa
                 ]
                 for path in json_file_path:
                     with open(path, "r", encoding="utf-8") as file:
@@ -395,4 +404,35 @@ class PosgresqlInitClient:
             except Exception as e:
                 return {
                     "message": f"Error when selecting data: {str(e)}",
+                }
+
+    async def insert_data_by_sql_file(self):
+        async with self.access_db() as conn:
+            try:
+                directory = "database/migrations/data/sample_data"
+                sql_files = [
+                    "people.sql",
+                    "house.sql",
+                    "interaction_young.sql",
+                    "other.sql",
+                ]
+                sql_statements = []
+                for filename in sql_files:
+                    logger.info(filename)
+                    file_path = os.path.join(directory, filename)
+                    with open(file_path, "r") as file:
+                        sql_statements.append(file.read())
+
+                for script in sql_statements:
+                    commands = script.split(";")
+                    for command in commands:
+                        command = command.strip()
+                        if command:
+                            await conn.execute(command)
+                return {
+                    "message": "success to insert data",
+                }
+            except Exception as e:
+                return {
+                    "message": f"Error when inserting data by sql: {str(e)}",
                 }
