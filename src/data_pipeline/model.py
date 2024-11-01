@@ -31,7 +31,7 @@ load_dotenv()
 
 
 class EmbeddingModel:
-    def __init__(self, target: int, place_dict: dict = None):
+    def __init__(self, target: int, place_dict: dict = None, train: int = 1):
         """sumary_line
 
         Keyword arguments:
@@ -43,7 +43,7 @@ class EmbeddingModel:
         self.epoch_num = 100
         self.place_dict = place_dict
         self.client = PosgresqClient()
-        self.model_train = False
+        self.model_train = train
 
     async def get_embedding_data(self):
         userEmbeddingClient = UserEmbedding()

@@ -387,7 +387,7 @@ async def add_recommendation(role: int, recommendation_info: dict):
     return result
 
 
-@router.post("/get_recommendation/{role}/{id}")
+@router.get("/get_recommendation/{role}/{id}")
 async def get_recommendation(role: int, id: int):
     client = PosgresqClient()
     result = await client.get_recommendation(role, id)
@@ -415,9 +415,9 @@ async def get_pref_house_lst(people_id: int):
 
 
 # Model
-@router.post("/embedding_model/{target}")
-async def embeddingModel(target: int, place_dict: dict = None):
-    model = EmbeddingModel(target, place_dict)
+@router.post("/embedding_model/{target}/{train}")
+async def embeddingModel(target: int, place_dict: dict = None, train: int = 1):
+    model = EmbeddingModel(target, place_dict, train)
     result = await model.run()
     return result
 
