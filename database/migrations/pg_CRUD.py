@@ -43,10 +43,11 @@ class PosgresqClient:
             try:
                 query = """
                         SELECT
-                            *
+                            PEO."People_ID" AS "People_ID",
+                            PEO.*
                         FROM
                             "PEOPLE" AS PEO
-                            JOIN "PREFERENCE" AS PRE ON PEO."People_ID" = PRE."People_ID"
+                            LEFT JOIN "PREFERENCE" AS PRE ON PEO."People_ID" = PRE."People_ID"
                         WHERE
                             PEO."Role" = 0
                         """  # noqa
@@ -55,7 +56,7 @@ class PosgresqClient:
                     ORDER BY RANDOM()
                     LIMIT {amount}
                     """
-
+                logger.info(f"query: {query}")
                 data = await conn.fetch(query)
                 return {"message": data}
             except Exception as e:
@@ -189,6 +190,25 @@ class PosgresqClient:
                 logger.info("Query: %s", query)
                 data = await conn.fetch(query, *params)
                 return {"message": data}
+            except Exception as e:
+                return {
+                    "message": f"Error when selecting data: {str(e)}",
+                }
+
+    async def get_single_house(self, id: int = None) -> dict:  # noqa
+        async with self.access_db() as conn:
+            try:
+                query = """
+                    SELECT
+                        *
+                    FROM
+                        "HOUSE" AS h
+                    WHERE
+                        h."House_ID" = $1
+                """
+
+                data = await conn.fetch(query, id)
+                return data
             except Exception as e:
                 return {
                     "message": f"Error when selecting data: {str(e)}",
@@ -837,7 +857,7 @@ class PosgresqClient:
             except Exception as e:
                 return {"message": f"Error when inserting data: {str(e)}"}
 
-    async def get_recommendation(self, role: int, item_ids: list = []):
+    async def get_recommendation(self, role: int, id: int):
         async with self.access_db() as conn:
             try:
                 sql = "SELECT * FROM "
@@ -850,14 +870,28 @@ class PosgresqClient:
                         "message": "Please use valid role number, 0 for young and 1 for elderly"  # noqa
                     }
 
-                sql += 'WHERE "Item_ID" = ANY($1::int[]);'
+                sql += """
+                    WHERE "People_ID" = $1
+                    ORDER BY "Timestamp" DESC
+                    LIMIT 3;
+                    """
 
                 data = await conn.fetch(
                     sql,
-                    item_ids,
+                    id,
                 )
 
-                return data
+                output = []
+                for record in data:
+                    record = dict(record)
+                    item = await self.get_single_house(int(record["Item_ID"]))
+                    item = dict(item[0])
+                    item["URL"] = (
+                        f"http://localhost:8081/showotheryoung?People_ID={item['People_ID']}"
+                    )
+                    output.append(item)
+
+                return output
 
             except Exception as e:
                 return {"message": f"Error when inserting data: {str(e)}"}
