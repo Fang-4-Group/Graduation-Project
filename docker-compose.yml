@@ -26,6 +26,9 @@ services:
       MONGO_URI: ${MONGO_URI}
       MONGO_DB_NAME: ${MONGO_DB_NAME}
       MONGO_DB_COLLECTION: ${MONGO_DB_COLLECTION}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      GOOGLE_REDIRECT_URI: ${GOOGLE_REDIRECT_URI}
 
 
   postgres_db:
@@ -76,3 +79,4 @@ volumes:
   postgres-data:
   pgadmin-data:
   mongodb-data:
+

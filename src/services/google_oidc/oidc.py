@@ -19,6 +19,8 @@ class OIDCService:
             ],
             redirect_uri=self.redirect_uri,
         )
+        print(self.client_id)
+        print(self.redirect_uri)
 
     def get_authorization_url(self):
         return self.flow.authorization_url()

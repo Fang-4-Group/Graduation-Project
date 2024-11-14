@@ -180,8 +180,12 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+
 import axios from 'axios';
+import { useRouter, useRoute } from 'vue-router';
+import { ref, onMounted } from 'vue';
+
+const userinfo = ref(null); // 單獨存儲userinfo
 
 const All_MBTI = ref({
   EI:'',
@@ -245,6 +249,14 @@ const interests = [
 
 const selectedInterests = ref([]);
 
+onMounted(() => {
+  const userinfoEncoded = route.query.userinfo;
+  if (userinfoEncoded) {
+    const userinfoStr = atob(userinfoEncoded);
+    userinfo.value = JSON.parse(userinfoStr);
+  }
+});
+
 function updateInterests() {
   interests.forEach(interest => {
     user_data.value[interest.key] = selectedInterests.value.includes(interest.key) ? 1 : 0;
@@ -261,9 +273,9 @@ function toggleInterest(interestKey) {
   updateInterests();
 }
 
-import { useRouter } from 'vue-router';
-
 const router = useRouter();
+
+const route = useRoute();
 
 async function submitForm() {
 
@@ -292,9 +304,9 @@ async function submitForm() {
         Traffic: house_traffic_data.value.Traffic.map(t => t.name)
       });
       console.log(trafficResponse.data);
-      router.push({ path: '/homeold', query: { People_ID } });
+      router.push({ path: '/homeold', query: { People_ID, userinfo: btoa(JSON.stringify(userinfo.value)) } });
     } else {
-      router.push({ path: '/homeyoung', query: { People_ID } });
+      router.push({ path: '/homeyoung', query: { People_ID, userinfo: btoa(JSON.stringify(userinfo.value)) } });
     }
   } catch (error) {
     console.error('Error submitting form:', error);
