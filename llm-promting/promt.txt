@@ -1,0 +1,47 @@
+You have access to a conversation file, `conversation.json`, stored in the RAG database. This file contains a dialogue between different users discussing rental details. Based on this conversation, please fill out the following form accurately.
+
+---
+
+Form:
+
+# 屋主基本資料：
+- 姓名:
+- 年齡:
+- 出生年月:
+- 聯絡資料電話:
+- 聯絡資料電郵:
+
+# 租客基本資料：
+- 姓名:
+- 年齡:
+- 出生年月:
+- 聯絡資料電話:
+- 聯絡資料電郵:
+
+# 租賃資料：
+## 房屋地址:
+- 房屋坪數:
+- 格局:
+- 租房時將附帶之家具/設備(沙發/床鋪/熱水壺等):
+
+# 行政法律細節
+- 看房時間跟方式:
+- 房租與繳納週期/方式(房租金額/月繳年繳/現金或是匯款):
+- 水電瓦斯費用歸屬:
+- 修繕/升級費用歸屬(更換水管/燈具等):
+- 其他雜項費用(網路/管理等):
+- 訂金與押金金額，和訂金與押金歸還方式:
+- 保險相關保費(住宅/租屋火險等):
+- 提前解約(退租)之處理方式(上述各類費用歸還與否):
+- 各項規定(寵物/開伙等):
+    - 是否可養寵物:
+    - 自行裝修之許可/範圍:
+    - 是否可以合租/轉租:
+    - 是否可以開伙做飯(電磁爐等):
+    - 是否允許留宿:
+    - 租客可否自行換鎖:
+    - 其他規定:
+
+---
+
+Retrieve and analyze the conversation file from the RAG database to extract the necessary details to fill in the form. Begin by filling in the basic details of 屋主 and 租客, followed by the house details, furniture information, and other discussion points as per the conversation. Provide any missing details as “Not discussed” if they were not covered in the conversation. Output only the filled form in Traditional Chinese.
