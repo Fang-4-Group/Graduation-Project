@@ -389,6 +389,16 @@ async def add_recommendation(role: int, recommendation_info: dict):
 
 @router.get("/get_recommendation/{role}/{id}")
 async def get_recommendation(role: int, id: int):
+    """
+    根據使用者 id 獲取推薦資料
+
+    參數：
+    role (int):
+        - 0 年輕人
+        - 1 年長者
+
+    id (int): 使用者 id
+    """
     client = PosgresqClient()
     result = await client.get_recommendation(role, id)
     return result
@@ -417,6 +427,16 @@ async def get_pref_house_lst(people_id: int):
 # Model
 @router.post("/embedding_model/{target}/{train}")
 async def embeddingModel(target: int, place_dict: dict = None, train: int = 1):
+    """
+    參數：
+    target (int):
+        - 0 表示為年輕人提供推薦
+        - 1 表示為年長者提供推薦
+
+    train (int): 模型選擇方式
+        - 0 表示使用舊的模型
+        - 1 表示重新訓練一個新模型
+    """
     model = EmbeddingModel(target, place_dict, train)
     result = await model.run()
     return result

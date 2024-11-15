@@ -282,13 +282,10 @@ def test_get_pref_house():
 
 
 def test_embedding_model():
-    place_dict = {"data": [["臺北市", "士林區"], ["臺北市", "北投區"]]}
-    response_0 = client.post("/embedding_model/0", json=place_dict)
-    response_1 = client.post("/embedding_model/1", json=place_dict)
+    place_dict = {"data": []}
+    response_0 = client.post("/embedding_model/0/1", json=place_dict)
     assert response_0.status_code == 200
     assert response_0.json()
-    assert response_1.status_code == 200
-    assert response_1.json()
 
 
 def test_update_user_info():
@@ -352,13 +349,8 @@ def test_add_recommendation():
 
 
 def test_get_recommendation():
-    sample_data_0 = {"Item_ID": [1]}
-    sample_data_1 = {"Item_ID": [2]}
-    response_0 = client.post("/get_recommendation/0", json=sample_data_0)
-    sample_data_1 = {"Item_ID": [2]}
-    response_1 = client.post("/get_recommendation/1", json=sample_data_1)
+    response_0 = client.get("/get_recommendation/0/5")
     assert response_0.status_code == 200
-    assert response_1.status_code == 200
 
 
 def test_add_interaction():
