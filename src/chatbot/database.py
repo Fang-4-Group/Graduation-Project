@@ -4,15 +4,15 @@ import pymongo
 from dotenv import load_dotenv
 
 load_dotenv()
-mongo_uri = str(os.getenv("MONGO_DB_URI"))
 
 # Initialize the MongoDB client
+mongo_uri = str(os.getenv("MONGO_DB_URI"))
 client = pymongo.MongoClient(mongo_uri)
 db = client[os.getenv("MONGO_DB_NAME")]
 collection = db[os.getenv("MONGO_DB_COLLECTION")]
 
 
-def save_group_msg_to_db(group_id, message_detail):
+def save_group_chat_records_to_db(group_id, message_detail):
     # Convert Pydantic model to dictionary
     msg_detail_dict = message_detail.dict()
 

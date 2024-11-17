@@ -1,36 +1,134 @@
+import json
+import logging
 import os
 from datetime import datetime
 
 import requests
+from dotenv import load_dotenv
 from linebot import LineBotApi
 
 import src.chatbot.models as models
-from src.chatbot.database import save_group_msg_to_db
+from src.chatbot.database import (
+    get_group_chat_records_by_id,
+    save_group_chat_records_to_db,
+)
 from src.chatbot.message_templates.buttom_template import create_check_button
 from src.chatbot.message_templates.carousel_template import (  # noqa
     create_houses_carousel,
 )
 
+from .logconfig import setup_logging
+
+setup_logging()
+load_dotenv()
+
 line_bot_api = LineBotApi(os.getenv("CHANNEL_ACCESS_TOKEN"))
 
 
-def save_group_msg(user_id, group_id, msg):
+def save_group_chat_records(user_id, group_id, msg):
     profile = line_bot_api.get_group_member_profile(group_id, user_id)
     user_name = profile.display_name
 
-    #  Contruct msg data structure
     msg_detail = models.MsgDetail(
         UserId=user_id, UserName=user_name, MsgText=msg, Time=datetime.now()
     )
-
-    # Save msg to DB
     try:
-        result = save_group_msg_to_db(group_id, msg_detail)
+        result = save_group_chat_records_to_db(group_id, msg_detail)
     except Exception as e:
         result = f"Exception: {e}"
     return result
 
 
+def group_chat_records_to_file(group_id):
+    try:
+        chat_record_list = get_group_chat_records_by_id(group_id)
+        os.makedirs("./src/chatbot/group_chat_records/", exist_ok=True)
+        with open(
+            f"./src/chatbot/group_chat_records/{group_id}.json", "w"
+        ) as file:  # noqa
+            json.dump(chat_record_list, file, indent=4)
+    except Exception as e:
+        print(f"Failed to transfer chat records to file: {e}")
+
+
+def __create_rag_workspace(group_id):
+    url = f'{os.getenv("BASE_URL")}workspace/new'
+    headers = {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "Authorization": f'Bearer {os.getenv("API_KEY")}',
+    }
+    data = {"name": f"{group_id}'s workspace"}
+
+    response = requests.post(url, headers=headers, json=data)
+    response_data = response.json()
+    slug = response_data["workspace"]["slug"]
+    return slug
+
+
+def __upload_group_chat_records_file(file_path):
+    url = f'{os.getenv("BASE_URL")}document/upload'
+    files = {"file": open(file_path, "rb")}
+    headers = {
+        "accept": "application/json",
+        "Content-Type": "multipart/form-data",
+    }
+    response = requests.post(url, files=files, headers=headers)
+    response_data = response.json()
+    doc_id = response_data["documents"][0]["id"]
+    return doc_id
+
+
+def __group_chat_summarize():
+    pass
+
+
+def __update_rag_embeddings(slug_id, doc_id, file_name):
+    url = f'{os.getenv("BASE_URL")}workspace/{slug_id}/update-embeddings'
+    headers = {
+        "accept": "application/json",
+        "Content-Type": "application/json",
+    }
+    data = {
+        "adds": [f"custom-documents/{file_name}-{doc_id}.json"],
+        "deletes": [""],
+    }  # noqa
+    response = requests.post(url, json=data, headers=headers)
+    return response.json()
+
+
+def generate_summarized_checklist(group_id, user_id, msg):
+    response = __create_rag_workspace(group_id)
+    response_data = response.json()
+    slug_id = response_data["workspace"]["slug"]
+    logging.info(f"Successfully created workspace. [slug id: {slug_id}]")
+
+    # Update file to RAG
+    file_path = f"./src/chatbot/group_chat_records/{group_id}.json"
+    doc_id = __upload_group_chat_records_file(file_path)
+    logging.info(f"Successfully update file to rag. [doc_id: {doc_id}]")
+
+    # Update embeddings
+    embeddings_response = __update_rag_embeddings(slug_id, doc_id, group_id)
+    logging.info(f"Successfully update embeddings. {embeddings_response}")
+
+    # Summarize
+    # TODO: integrate summarize method
+
+    return response
+
+
+def summary_checklist():
+    buttom_message = create_check_button()
+    return buttom_message
+
+
+def call_llm_api():
+    result = "call_llm_api()"
+    return result
+
+
+# Recommendation related services
 def house_recommendation():
     your_ip = os.getenv("HOUSE_RECOMMEND_API")
     user_id = 2
@@ -43,14 +141,4 @@ def house_recommendation():
     except requests.HTTPError as http_err:
         error_message = f"API Request Failed: {http_err}"
         result = error_message
-    return result
-
-
-def summary_checklist():
-    buttom_message = create_check_button()
-    return buttom_message
-
-
-def call_llm_api():
-    result = "call_llm_api()"
     return result

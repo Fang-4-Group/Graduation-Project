@@ -6,9 +6,10 @@ ENV WORKDIR /srv/graduation-project
 WORKDIR ${WORKDIR}
 
 # Install necessary system dependencies
-RUN apt-get update
-RUN apt-get install -y wget unzip
-RUN rm -rf /var/lib/apt/lists/*
+RUN apt-get update && \
+    apt-get install -y ffmpeg && \
+    apt-get install -y wget unzip flac && \
+    rm -rf /var/lib/apt/lists/*
 
 # Set up Python environment
 # Copy and install base dependencies
