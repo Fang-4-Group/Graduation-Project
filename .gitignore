@@ -5,4 +5,4 @@ myvenv/
 ./frontend/node_modules
 ngrok/
 src/services/google_oidc/client.json
-/src/chatbot/chat_records/
+/src/chatbot/group_chat_records/

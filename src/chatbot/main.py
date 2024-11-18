@@ -76,7 +76,7 @@ def text_msg_handler(event):
         # Update chat records to RAG and summarize
         if group_message == "@check":
             # result = summary_checklist()
-            result = generate_summarized_checklist(group_id, user_id, msg)
+            result = generate_summarized_checklist(group_id)
             line_bot_api.reply_message(event.reply_token, result)
 
 

@@ -24,11 +24,20 @@ load_dotenv()
 
 line_bot_api = LineBotApi(os.getenv("CHANNEL_ACCESS_TOKEN"))
 
+json_headers = {
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+    "Authorization": f'Bearer {os.getenv("API_KEY")}',
+}
+multipart_headers = {
+    "Accept": "application/json",
+    "Authorization": f'Bearer {os.getenv("API_KEY")}',
+}
+
 
 def save_group_chat_records(user_id, group_id, msg):
     profile = line_bot_api.get_group_member_profile(group_id, user_id)
     user_name = profile.display_name
-
     msg_detail = models.MsgDetail(
         UserId=user_id, UserName=user_name, MsgText=msg, Time=datetime.now()
     )
@@ -53,59 +62,56 @@ def group_chat_records_to_file(group_id):
 
 def __create_rag_workspace(group_id):
     url = f'{os.getenv("BASE_URL")}workspace/new'
-    headers = {
-        "Accept": "application/json",
-        "Content-Type": "application/json",
-        "Authorization": f'Bearer {os.getenv("API_KEY")}',
-    }
     data = {"name": f"{group_id}'s workspace"}
-
-    response = requests.post(url, headers=headers, json=data)
+    response = requests.post(url, headers=json_headers, json=data)
     response_data = response.json()
-    slug = response_data["workspace"]["slug"]
-    return slug
+    slug_id = response_data.get("workspace", {}).get("slug")
+    if slug_id is not None:
+        return slug_id
+    else:
+        error = response_data.get("error", None)
+        logging.error(f"Failed to create workspace: {error}")
+        raise Exception(f"Failed to create workspace: {error}")
 
 
-def __upload_group_chat_records_file(file_path):
+def __upload_group_chat_records_file(group_id):
     url = f'{os.getenv("BASE_URL")}document/upload'
-    files = {"file": open(file_path, "rb")}
-    headers = {
-        "accept": "application/json",
-        "Content-Type": "multipart/form-data",
-    }
-    response = requests.post(url, files=files, headers=headers)
-    response_data = response.json()
-    doc_id = response_data["documents"][0]["id"]
-    return doc_id
+    file_path = f"./src/chatbot/group_chat_records/{group_id}.json"
+    with open(file_path, "rb") as file:
+        files = {"file": (os.path.basename(file_path), file)}
+        response = requests.post(url, files=files, headers=multipart_headers)
+        response_data = response.json()
+        print("RESPONSE DATA: ", response_data)
+        doc_id = response_data["documents"][0]["id"]
+        return doc_id
 
 
-def __group_chat_summarize():
-    pass
+def __group_chat_summarize(slug_id):
+    with open("llm-promting/prompt.txt", "r", encoding="utf-8") as file:
+        prompt_message = file.read().strip()
+
+    url = f'{os.getenv("BASE_URL")}workspace/{slug_id}/chat'
+    data = {"message": prompt_message, "mode": "chat"}
+    response = requests.post(url, json=data, headers=json_headers)
+    return response.json()
 
 
 def __update_rag_embeddings(slug_id, doc_id, file_name):
     url = f'{os.getenv("BASE_URL")}workspace/{slug_id}/update-embeddings'
-    headers = {
-        "accept": "application/json",
-        "Content-Type": "application/json",
-    }
     data = {
         "adds": [f"custom-documents/{file_name}-{doc_id}.json"],
         "deletes": [""],
     }  # noqa
-    response = requests.post(url, json=data, headers=headers)
+    response = requests.post(url, json=data, headers=json_headers)
     return response.json()
 
 
-def generate_summarized_checklist(group_id, user_id, msg):
-    response = __create_rag_workspace(group_id)
-    response_data = response.json()
-    slug_id = response_data["workspace"]["slug"]
+def generate_summarized_checklist(group_id):
+    slug_id = __create_rag_workspace(group_id)
     logging.info(f"Successfully created workspace. [slug id: {slug_id}]")
 
     # Update file to RAG
-    file_path = f"./src/chatbot/group_chat_records/{group_id}.json"
-    doc_id = __upload_group_chat_records_file(file_path)
+    doc_id = __upload_group_chat_records_file(group_id)
     logging.info(f"Successfully update file to rag. [doc_id: {doc_id}]")
 
     # Update embeddings
@@ -113,9 +119,10 @@ def generate_summarized_checklist(group_id, user_id, msg):
     logging.info(f"Successfully update embeddings. {embeddings_response}")
 
     # Summarize
-    # TODO: integrate summarize method
+    summarize_response = __group_chat_summarize(slug_id)
+    logging.info(f"Successfully update embeddings. {summarize_response}")
 
-    return response
+    return summarize_response
 
 
 def summary_checklist():
