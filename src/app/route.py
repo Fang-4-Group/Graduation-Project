@@ -96,12 +96,12 @@ async def posgresql_init():
     client = PosgresqlInitClient()
     response_c = await client.create_table()
     response_a = await client.add_fk_setting()
-    response_i = await client.insert_data()
+    response_i = await client.insert_data_by_sql_file()
     response_d = await client.insert_district_data()
     return {
         "create table": f"{response_c['message']}",
         "add FK": f"{response_a['message']}",
-        "insert data": f"{response_i['message']}",
+        "insert data by sql": f"{response_i['message']}",
         "insert district data": f"{response_d['message']}",
     }
 
@@ -387,11 +387,27 @@ async def add_recommendation(role: int, recommendation_info: dict):
     return result
 
 
-@router.post("/get_recommendation/{role}")
-async def get_recommendation(role: int, condition: dict = None):
-    item_ids = condition["Item_ID"]
+@router.get("/get_recommendation/{role}/{id}")
+async def get_recommendation(role: int, id: int):
+    """
+    根據使用者 id 獲取推薦資料
+
+    參數：
+    role (int):
+        - 0 年輕人
+        - 1 年長者
+
+    id (int): 使用者 id
+    """
     client = PosgresqClient()
-    result = await client.get_recommendation(role, item_ids)
+    result = await client.get_recommendation(role, id)
+    return result
+
+
+@router.get("/get_single_house/{id}")
+async def get_single_house(id: int):
+    client = PosgresqClient()
+    result = await client.get_single_house(id)
     return result
 
 
@@ -409,9 +425,19 @@ async def get_pref_house_lst(people_id: int):
 
 
 # Model
-@router.post("/embedding_model/{target}")
-async def embeddingModel(target: int, place_dict: dict = None):
-    model = EmbeddingModel(target, place_dict)
+@router.post("/embedding_model/{target}/{train}")
+async def embeddingModel(target: int, place_dict: dict = None, train: int = 1):
+    """
+    參數：
+    target (int):
+        - 0 表示為年輕人提供推薦
+        - 1 表示為年長者提供推薦
+
+    train (int): 模型選擇方式
+        - 0 表示使用舊的模型
+        - 1 表示重新訓練一個新模型
+    """
+    model = EmbeddingModel(target, place_dict, train)
     result = await model.run()
     return result
 

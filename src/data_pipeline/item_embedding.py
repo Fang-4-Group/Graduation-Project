@@ -62,6 +62,13 @@ class ItemEmbedding:
                 # 刪除原始的 Fire, Negotiate_Price, Type 列
                 df.drop(columns=["Type"], inplace=True)
 
+                # minmax 縮放
+                data_min, data_max = df["Size"].min(), df["Size"].max()
+                df["Size"] = (df["Size"] - data_min) / (data_max - data_min)
+
+                data_min, data_max = df["Floor"].min(), df["Floor"].max()
+                df["Floor"] = (df["Floor"] - data_min) / (data_max - data_min)
+
                 # 替换NaN和Infinity值
                 df.replace([np.inf, -np.inf], np.nan, inplace=True)
                 df.fillna(0, inplace=True)
