@@ -40,7 +40,7 @@ def save_group_msg(user_id, group_id, msg):
 def house_recommendation():
     your_ip = os.getenv("HOUSE_RECOMMEND_API")
     user_id = 2
-    url = f"http://{your_ip}:7877/get_recommendation/0/{user_id}"
+    url = f"{your_ip}/get_recommendation/0/{user_id}"
     try:
         response = requests.get(url)
         data_list = response.json()

@@ -89,7 +89,8 @@
   import { ref, onMounted } from 'vue';
   import axios from 'axios';
   import { useRoute } from 'vue-router';
-  const BASE_URL = 'http://localhost:7877';
+  const BASE_URL = 'https://fang5-group.tw';
+
   
   const route = useRoute();
   const People_ID = route.query.People_ID;

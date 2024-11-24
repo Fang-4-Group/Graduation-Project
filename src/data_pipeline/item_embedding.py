@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 class ItemEmbedding:
     def __init__(self):
-        self.server_path = "http://localhost:7877/"
+        self.server_path = "https://fang5-group.tw/"
         self.url_item = self.server_path + "get_house_info/"
 
     async def fetch_data(self, session, url):
