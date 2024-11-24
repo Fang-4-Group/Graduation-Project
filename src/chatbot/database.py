@@ -3,7 +3,8 @@ import os
 import pymongo
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(override=True)
+mongo_uri = str(os.getenv("MONGO_DB_URI"))
 
 # Initialize the MongoDB client
 mongo_uri = str(os.getenv("MONGO_DB_URI"))

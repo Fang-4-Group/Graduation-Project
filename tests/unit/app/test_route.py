@@ -92,33 +92,17 @@ def test_get_district_geocoding():
     assert response.json()
 
 
-def test_embedding():
-    k_mean = 1
-    n_clusters = 3
-    par = f"?k_mean={k_mean}&n_clusters={n_clusters}"
-    response = client.get(f"user_embedding/{par}")
-    assert response.status_code == 200
-    assert response.json()  # assure that there are content in response
-
-
 def test_get_house_info():
     response = client.get("/get_house_info/")
     assert response.status_code == 200
     assert response.json()
 
 
-def test_item_embedding():
-    response = client.get("/item_embedding/")
-    assert response.status_code == 200
-    assert response.json()
-    assert response.json()  # assure that there are content in response
-
-
 def test_get_name():
     people_id = 1
     response = client.get(f"/get_name/{people_id}")
     assert response.status_code == 200
-    assert response.json()  # 確保回應有內容
+    assert response.json()
 
 
 def test_get_sleep_time():
@@ -294,4 +278,114 @@ def test_post_house_traffic_info():
 def test_get_pref_house():
     people_id = 2
     response = client.get(f"/get_pref_house_lst/{people_id}")
+    assert response.status_code == 200
+
+
+def test_embedding_model():
+    place_dict = {"data": []}
+    response_0 = client.post("/embedding_model/0/1", json=place_dict)
+    assert response_0.status_code == 200
+    assert response_0.json()
+
+
+def test_update_user_info():
+    sample_data = {
+        "People_ID": 1,
+        "data": {
+            "Name": "湯螞蟻",
+            "Sleep_Time": 1,
+            "Drink": 1,
+            "Smoke": 1,
+            "Clean": 1,
+            "Mbti": "ENFP",
+            "Shopping": 1,
+            "Movie": 1,
+            "Travel": 1,
+            "Music": 1,
+            "Read": 1,
+            "Game": 1,
+            "PE": 1,
+            "Science": 1,
+            "Food": 1,
+        },
+    }
+    response = client.post("/update_user_info/", json=sample_data)
+    assert response.status_code == 200
+
+
+def test_update_house_info():
+    sample_data = {
+        "House_ID": 1,
+        "Basic": {
+            "Size": 10,
+            "Fire": 1,
+            "Negotiate_Price": 0,
+            "City": "更新臺北市",
+            "District": "更新文山區",
+            "Street": "木柵路",
+            "Floor": 3,
+            "Type": "公寓",
+        },
+        "Furniture": ["更新沙發", "更新書桌"],
+        "Traffic": ["更新捷運", "更新公車"],
+    }
+    response = client.post("/update_house_info/", json=sample_data)
+    assert response.status_code == 200
+
+
+def test_add_recommendation():
+    sample_data_0 = {
+        "People_ID": 2,
+        "Item_ID": [1, 3],
+    }
+    sample_data_1 = {
+        "People_ID": 1,
+        "Item_ID": [2, 4],
+    }
+    response_0 = client.post("/add_recommendation/0", json=sample_data_0)
+    response_1 = client.post("/add_recommendation/1", json=sample_data_1)
+    assert response_0.status_code == 200
+    assert response_1.status_code == 200
+
+
+def test_get_recommendation():
+    response_0 = client.get("/get_recommendation/0/5")
+    assert response_0.status_code == 200
+
+
+def test_add_interaction():
+    sample_data_y = {"People_ID": 2, "Options": [7, 8, 10]}
+    sample_data_e = {"People_ID": 1, "Options": [2, 4, 10]}
+
+    response_y = client.post("/add_interaction/0", json=sample_data_y)
+    response_e = client.post("/add_interaction/1", json=sample_data_e)
+
+    assert response_y.status_code == 200
+    assert response_e.status_code == 200
+
+
+def test_update_viewed():
+    sample_data = {"Detail_ID": 2}
+    response = client.post("/update_viewed/0", json=sample_data)
+    assert response.status_code == 200
+    assert response.json() == {"message": "Update Successfully"}
+
+
+def test_update_grouped():
+    sample_data = {"Detail_ID": 2}
+    response = client.post("/update_grouped/0", json=sample_data)
+    assert response.status_code == 200
+    assert response.json() == {"message": "Update Successfully"}
+
+
+def test_update_selected():
+    sample_data = {"Detail_ID": 2}
+    response = client.post("/update_selected/0", json=sample_data)
+    assert response.status_code == 200
+    assert response.json() == {"message": "Update Successfully"}
+
+
+def test_get_elder_info_by_id():
+    house_id = 1
+    response = client.get(f"/get_elder_info_by_house_id/{house_id}")
     assert response.status_code == 200

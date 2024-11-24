@@ -1,10 +1,16 @@
 <template>
   <div class="container">
     <h1 class="user-info">用戶(年輕人)資訊</h1>
-    
+
     <!-- Add Image Section -->
-    <div class="header">
-      <img src="path_to_your_image.jpg" alt="Your Image" class="header-image">
+    <div class="header-left">
+      <!--<img src="path_to_your_image.jpg" alt="Your Image" class="header-image">-->
+    </div>
+    
+    <!-- Add Button Section -->
+    <div class="header-right">
+      <h2><button class="add-button" @click="goToPage('/updateyoung')">更改個人資料</button></h2>
+      <h2><button class="add-button" @click="goToPage('/showotheryoung')">(暫時)給其他用戶看的(青)</button></h2>
     </div>
 
     <!-- User Info Section -->
@@ -26,7 +32,7 @@
 
     <!-- Basic Info Section -->
     <div class="section-boxed">
-      <h2>生活習慣 <button class="add-button" @click="goToPage('/editbasic')">新增</button></h2>
+      <h2>生活習慣</h2>
       <div class="data-item">
         <div class="data-item-content">
           <label>睡覺時間：</label>
@@ -49,7 +55,7 @@
 
     <!-- Personality Traits Section -->
     <div class="section-boxed">
-      <h2>個人特質 <button class="add-button" @click="goToPage('/editpersonality')">新增</button></h2>
+      <h2>個人特質 </h2>
       <ul class="traits-list">
         <li v-for="trait in characters" :key="trait">{{ trait }}</li>
         <li>{{ mbti }}</li>
@@ -58,7 +64,7 @@
 
     <!-- Interests Section -->
     <div class="section-boxed">
-      <h2>興趣 <button class="add-button" @click="goToPage('/editinterests')">新增</button></h2>
+      <h2>興趣</h2>
       <ul class="interests-list">
         <li v-for="interest in interests" :key="interest">{{ interest }}</li>
       </ul>
@@ -69,7 +75,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
-import router from '../router'; 
+import router from '../router';
 import { useRoute } from 'vue-router';
 
 const route = useRoute();
@@ -78,51 +84,96 @@ const People_ID = route.query.People_ID;
 const name = ref()
 const useremail = ref("kevin@gmail.com")
 
-const drink = ref(0);
-const smoke = ref(0);
-const clean_habit = ref(0);
-const sleepTime = ref(0);
+const drink = ref("");
+const smoke = ref("");
+const clean_habit = ref("");
+const sleepTime = ref("");
 const characters = ref([]);
 const interests = ref([]);
 const mbti = ref();
-const preference_furniture = ref([]);
-const preference_house_place = ref([]);
+//const preference_furniture = ref([]);
+//const preference_house_place = ref([]);
 const BASE_URL = 'http://localhost:7877';
 
 
 onMounted(async () => {
   try {
 
-    const name_Response = await axios.get(`${BASE_URL}/get_name/${People_ID}`); 
+    const name_Response = await axios.get(`${BASE_URL}/get_name/${People_ID}`);
     name.value = name_Response.data.name;
     console.log("Name data fetched:", name_Response.data);
 
-    const sleep_Response = await axios.get(`${BASE_URL}/get_sleep_time/${People_ID}`); 
-    sleepTime.value = sleep_Response.data.sleep_time;
+    const sleep_Response = await axios.get(`${BASE_URL}/get_sleep_time/${People_ID}`);
+    const s= sleep_Response.data.sleep_time;
+    if(s == 1){
+      sleepTime.value = "晚上7:00~9:00";
+    }else if(s == 2){
+      sleepTime.value = "晚上9:00~11:00";
+    }else if(s == 3){
+      sleepTime.value = "晚上11:00~凌晨1:00";
+    }else if(s == 4){
+      sleepTime.value ="凌晨1:00~3:00";
+    }else if(s == 5){
+      sleepTime.value = "凌晨3:00以後";
+    }
 
-    const drink_Response = await axios.get(`${BASE_URL}/get_drink/${People_ID}`); 
-    drink.value = drink_Response.data.drink;
+    const drink_Response = await axios.get(`${BASE_URL}/get_drink/${People_ID}`);
+    const d = drink_Response.data.drink;
+      if(d == 0){
+        drink.value = "從不飲酒";
+      }else if(d == 1){
+        drink.value = "很少飲酒";
+      }else if(d == 2){
+        drink.value = "偶爾小酌";
+      }else if(d == 3){
+        drink.value = "經常飲酒";
+      }else if(d == 4){
+        drink.value ="每天飲酒";
+      }
 
-    const smoke_Response = await axios.get(`${BASE_URL}/get_smoke/${People_ID}`); 
-    smoke.value = smoke_Response.data.smoke;
+    const smoke_Response = await axios.get(`${BASE_URL}/get_smoke/${People_ID}`);
+    const sm = smoke_Response.data.smoke;
+    if(sm == 0){
+      smoke.value = "從不抽菸";
+    }else if(sm == 1){
+      smoke.value = "很少抽菸";
+    }else if(sm == 2){
+      smoke.value = "偶爾抽菸";
+    }else if(sm == 3){
+      smoke.value = "經常抽菸";
+    }else if(sm == 4){
+      smoke.value ="每天抽菸";
+    }
 
-    const clean_habit_Response = await axios.get(`${BASE_URL}/get_clean_habit/${People_ID}`); 
-    clean_habit.value = clean_habit_Response.data.clean_habit;
 
-    const characters_Response = await axios.get(`${BASE_URL}/get_characters/${People_ID}`); 
+    const clean_habit_Response = await axios.get(`${BASE_URL}/get_clean_habit/${People_ID}`);
+    const c = clean_habit_Response.data.clean_habit;
+    if(c == 1){
+      clean_habit.value = "不愛乾淨";
+    }else if(c == 2){
+      clean_habit.value = "稍微愛乾淨";
+    }else if(c == 3){
+      clean_habit.value = "正常愛乾淨";
+    }else if(c == 4){
+      clean_habit.value ="很愛乾淨";
+    }else if(c == 5){
+      clean_habit.value = "極度潔癖";
+    }
+
+    const characters_Response = await axios.get(`${BASE_URL}/get_characters/${People_ID}`);
     characters.value = characters_Response.data.characters;
 
-    const interests_Response = await axios.get(`${BASE_URL}/get_interests/${People_ID}`); 
+    const interests_Response = await axios.get(`${BASE_URL}/get_interests/${People_ID}`);
     interests.value = interests_Response.data.interests;
 
-    const mbti_Response = await axios.get(`${BASE_URL}/get_mbti/${People_ID}`); 
+    const mbti_Response = await axios.get(`${BASE_URL}/get_mbti/${People_ID}`);
     mbti.value = mbti_Response.data.mbti;
 
-    const preference_furniture_Response = await axios.get(`${BASE_URL}/get_preference_furniture/${People_ID}`); 
-    preference_furniture.value = preference_furniture_Response.data.message;  
+    // const preference_furniture_Response = await axios.get(`${BASE_URL}/get_preference_furniture/${People_ID}`); 
+    // preference_furniture.value = preference_furniture_Response.data.message;  
 
-    const preference_house_place_Response = await axios.get(`${BASE_URL}/get_preference_house_place/${People_ID}`); 
-    preference_house_place.value = preference_house_place_Response.data.message; 
+    // const preference_house_place_Response = await axios.get(`${BASE_URL}/get_preference_house_place/${People_ID}`); 
+    // preference_house_place.value = preference_house_place_Response.data.message; 
 
   } catch (error) {
     console.error('Error fetching user information:', error);
@@ -130,8 +181,11 @@ onMounted(async () => {
 });
 
 function goToPage(path) {
-    router.push({ path, query: { from: '/homeyoung' } });
-  }
+  router.push({
+    path,
+    query: { People_ID: People_ID }
+  });
+}
 </script>
 
 <style scoped>
@@ -152,6 +206,10 @@ function goToPage(path) {
   padding: 20px;
   margin-bottom: 20px;
   border-radius: 10px;
+  display: flex;
+  flex-direction: column; /* 使內容垂直排列 */
+  position: relative; /* 使 .add-button 能夠定位在右側 */
+  margin-bottom: 20px; /* 增加下邊距 */
 }
 
 .data-item {
@@ -200,18 +258,35 @@ function goToPage(path) {
   display: inline-block;
 }
 
-.header {
+.header-left {
   text-align: left;
+  margin-bottom: 20px;
+}
+.header-right {
+  text-align: right;
   margin-bottom: 20px;
 }
 
 .header-image {
   width: 100%;
-  max-width: 200px; 
+  max-width: 200px;
 }
 
 .add-button {
-  float: right;
-  margin-top: -10px;
+  padding: 8px 16px;
+  background-color: #606973;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  transition: background-color 0.3s ease;
 }
+
+.add-button:hover {
+  background-color: #0056b3;
+}
+
 </style>

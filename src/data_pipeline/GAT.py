@@ -15,3 +15,15 @@ class GAT(torch.nn.Module):
         x = F.elu(x)
         x = self.conv2(x, edge_index)
         return x
+
+    def bpr_loss(self, data, pos_edge, neg_edge):
+        # Extract node embeddings from the GAT model
+        emb = self.forward(data)
+
+        # Positive and negative pairs embeddings
+        pos_scores = (emb[pos_edge[0]] * emb[pos_edge[1]]).sum(dim=1)
+        neg_scores = (emb[neg_edge[0]] * emb[neg_edge[1]]).sum(dim=1)
+
+        # BPR loss computation
+        loss = -torch.log(torch.sigmoid(pos_scores - neg_scores)).mean()
+        return loss

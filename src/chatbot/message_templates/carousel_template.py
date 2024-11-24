@@ -68,6 +68,17 @@ def create_houses_carousel(data_list):
                         "color": "#666666",
                         "wrap": True,
                     },
+                    {
+                        "type": "button",
+                        "action": {
+                            "type": "uri",
+                            "label": "查看更多",
+                            "uri": "https://example.com",
+                        },
+                        "style": "primary",
+                        "color": "#905c44",
+                        "margin": "md",
+                    },
                 ],
             },
         }

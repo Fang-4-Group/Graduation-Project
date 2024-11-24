@@ -1,3 +1,4 @@
+import asyncio
 import logging
 import os
 
@@ -8,6 +9,7 @@ from fastapi.responses import JSONResponse
 from linebot import LineBotApi
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import (  # noqa
+    AudioMessage,
     MessageEvent,
     PostbackEvent,
     TextMessage,
@@ -19,6 +21,7 @@ from src.chatbot.services import (  # noqa
     call_llm_api,
     generate_summarized_checklist,
     group_chat_records_to_file,
+    handle_async_audio,
     house_recommendation,
     save_group_chat_records,
 )
@@ -88,6 +91,11 @@ def handle_postback(event):
         line_bot_api.reply_message(
             event.reply_token, TextSendMessage(text=result)
         )  # noqa
+
+
+@handler.add(MessageEvent, message=AudioMessage)
+def audio_msg_handler(event):
+    asyncio.create_task(handle_async_audio(event))
 
 
 app.include_router(router)

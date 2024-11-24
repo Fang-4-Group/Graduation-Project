@@ -1,3 +1,4 @@
+import logging
 import os
 from contextlib import asynccontextmanager
 
@@ -5,6 +6,10 @@ import asyncpg
 from dotenv import load_dotenv
 
 load_dotenv()
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 class PosgresqClient:
@@ -38,10 +43,11 @@ class PosgresqClient:
             try:
                 query = """
                         SELECT
-                            *
+                            PEO."People_ID" AS "People_ID",
+                            PEO.*
                         FROM
                             "PEOPLE" AS PEO
-                            JOIN "PREFERENCE" AS PRE ON PEO."People_ID" = PRE."People_ID"
+                            LEFT JOIN "PREFERENCE" AS PRE ON PEO."People_ID" = PRE."People_ID"
                         WHERE
                             PEO."Role" = 0
                         """  # noqa
@@ -50,7 +56,7 @@ class PosgresqClient:
                     ORDER BY RANDOM()
                     LIMIT {amount}
                     """
-
+                logger.info(f"query: {query}")
                 data = await conn.fetch(query)
                 return {"message": data}
             except Exception as e:
@@ -158,18 +164,51 @@ class PosgresqClient:
                     "message": f"Error when selecting data: {str(e)}",
                 }
 
-    async def get_house_info(self) -> dict:
+    async def get_house_info(
+        self, city: str = None, district: str = None
+    ) -> dict:  # noqa
         async with self.access_db() as conn:
             try:
-                data = await conn.fetch(
-                    """
+                query = """
                     SELECT
                         *
                     FROM
                         "HOUSE"
-                    """
-                )
+                """
+                conditions = []
+                params = []
+
+                if city:
+                    conditions.append('"City" = $1')
+                    params.append(city)
+                if district:
+                    conditions.append('"District" = $2')
+                    params.append(district)
+
+                if conditions:
+                    query += " WHERE " + " AND ".join(conditions)
+                logger.info("Query: %s", query)
+                data = await conn.fetch(query, *params)
                 return {"message": data}
+            except Exception as e:
+                return {
+                    "message": f"Error when selecting data: {str(e)}",
+                }
+
+    async def get_single_house(self, id: int = None) -> dict:  # noqa
+        async with self.access_db() as conn:
+            try:
+                query = """
+                    SELECT
+                        *
+                    FROM
+                        "HOUSE" AS h
+                    WHERE
+                        h."House_ID" = $1
+                """
+
+                data = await conn.fetch(query, id)
+                return data
             except Exception as e:
                 return {
                     "message": f"Error when selecting data: {str(e)}",
@@ -182,7 +221,7 @@ class PosgresqClient:
                     """
                     SELECT "Name" FROM "PEOPLE" WHERE "People_ID" = $1;
                     """,
-                    people_id
+                    people_id,
                 )
                 return {"name": data}
             except Exception as e:
@@ -232,12 +271,11 @@ class PosgresqClient:
                     SELECT "Drink"
                     FROM "PEOPLE" WHERE "People_ID" = $1;
                     """,
-                    people_id
+                    people_id,
                 )
                 return {"drink": data}
             except Exception as e:
-                return {"error":
-                        f"Error retrieving drink habit: {str(e)}"}
+                return {"error": f"Error retrieving drink habit: {str(e)}"}
 
     async def get_smoke(self, people_id: int) -> dict:
         async with self.access_db() as conn:
@@ -251,8 +289,7 @@ class PosgresqClient:
                 )
                 return {"smoke": data}
             except Exception as e:
-                return {"error":
-                        f"Error retrieving smoke habit: {str(e)}"}
+                return {"error": f"Error retrieving smoke habit: {str(e)}"}
 
     async def get_clean_habit(self, people_id: int) -> dict:
         async with self.access_db() as conn:
@@ -356,7 +393,7 @@ class PosgresqClient:
                 return {"negotiate_price": data}
             except Exception as e:
                 return {"error": f"Error retrieving negotiate price: {str(e)}"}
-    
+
     async def get_city(self, people_id: int) -> dict:
         async with self.access_db() as conn:
             try:
@@ -364,12 +401,12 @@ class PosgresqClient:
                     """
                     SELECT "City" FROM "HOUSE" WHERE "People_ID" = $1;
                     """,
-                    people_id
+                    people_id,
                 )
                 return {"city": data}
             except Exception as e:
                 return {"error": f"Error retrieving city: {str(e)}"}
-    
+
     async def get_district(self, people_id: int) -> dict:
         async with self.access_db() as conn:
             try:
@@ -377,12 +414,12 @@ class PosgresqClient:
                     """
                     SELECT "District" FROM "HOUSE" WHERE "People_ID" = $1;
                     """,
-                    people_id
+                    people_id,
                 )
                 return {"district": data}
             except Exception as e:
                 return {"error": f"Error retrieving district: {str(e)}"}
-    
+
     async def get_street(self, people_id: int) -> dict:
         async with self.access_db() as conn:
             try:
@@ -390,7 +427,7 @@ class PosgresqClient:
                     """
                     SELECT "Street" FROM "HOUSE" WHERE "People_ID" = $1;
                     """,
-                    people_id
+                    people_id,
                 )
                 return {"street": data}
             except Exception as e:
@@ -431,8 +468,9 @@ class PosgresqClient:
                     WHERE "House_ID" = (
                         SELECT "House_ID" FROM "HOUSE"
                         WHERE "People_ID" = $1
+                        LIMIT 1
                     );
-                    """,
+                     """,
                     people_id,
                 )
                 furniture = [row["Furniture"] for row in data]
@@ -447,8 +485,9 @@ class PosgresqClient:
                     """
                     SELECT "Traffic" FROM "HOUSE_TRAFFIC"
                     WHERE "House_ID" = (
-                        SELECT "House_ID" FROM "HOUSE"
-                        WHERE "People_ID" = $1
+                    SELECT "House_ID" FROM "HOUSE"
+                    WHERE "People_ID" = $1
+                    LIMIT 1
                     );
                     """,
                     people_id,
@@ -457,6 +496,23 @@ class PosgresqClient:
                 return {"traffic": traffic}
             except Exception as e:
                 return {"error": f"Error retrieving house traffic: {str(e)}"}
+
+    async def get_elder_info_by_house_id(self, house_id: int) -> dict:
+        async with self.access_db() as conn:
+            try:
+                data = await conn.fetch(
+                    """
+                    SELECT * FROM "PEOPLE"
+                    WHERE "People_ID" = (
+                        SELECT "People_ID" FROM "HOUSE"
+                        WHERE "House_ID" = $1
+                    );
+                    """,
+                    house_id,
+                )
+                return data
+            except Exception as e:
+                return {"error": f"Error retrieving elder info: {str(e)}"}
 
     async def update_sleep_time(
         self, people_id: int, new_sleep_time: int
@@ -666,5 +722,330 @@ class PosgresqClient:
                 return {
                     "message": "Data inserted successfully",
                 }
+            except Exception as e:
+                return {"message": f"Error when inserting data: {str(e)}"}
+
+    # Update profile info
+    async def update_user_info(self, user_update_data: dict):
+        async with self.access_db() as conn:
+            try:
+                user_id = user_update_data["People_ID"]
+                data = user_update_data["data"]
+                set_clauses = ", ".join(
+                    [f'"{key}" = ${i+2}' for i, key in enumerate(data.keys())]
+                )  # noqa
+
+                query = f"""
+                UPDATE "PEOPLE"
+                SET {set_clauses}
+                WHERE "People_ID" = $1
+                RETURNING "People_ID"
+                """
+                values = list(data.values())
+
+                await conn.fetch(query, user_id, *values)
+
+                return {
+                    "message": "Data updated successfully",
+                }
+            except Exception as e:
+                return {"message": f"Error when updating data: {str(e)}"}
+
+    async def update_house_info(self, house_update_data: dict):
+        async with self.access_db() as conn:
+            transaction = conn.transaction()
+            await transaction.start()
+            try:
+                house_id = house_update_data["House_ID"]
+                basic = house_update_data["Basic"]
+                furniture = house_update_data.get("Furniture", None)
+                traffic = house_update_data.get("Traffic", None)
+
+                basic_keys = list(basic.keys())
+                basic_values = list(basic.values())
+
+                basic_set_clauses = ", ".join(
+                    [f'"{key}" = ${i+2}' for i, key in enumerate(basic_keys)]
+                )
+                update_query = f"""
+                    UPDATE "HOUSE"
+                    SET {basic_set_clauses}
+                    WHERE "House_ID" = $1
+                    RETURNING "House_ID";
+                """
+                await conn.execute(update_query, house_id, *basic_values)
+
+                # Update `HOUSE FURNITURE` table
+                if furniture is not None:
+                    await conn.execute(
+                        """
+                        DELETE FROM "HOUSE_FURNITURE"
+                        WHERE "House_ID" = $1
+                        """,
+                        house_id,
+                    )
+
+                    for fur in list(furniture):
+                        await conn.execute(
+                            """
+                            INSERT INTO "HOUSE_FURNITURE" ("House_ID", "Furniture")
+                            VALUES ($1, $2)
+                            """,
+                            house_id,
+                            fur,
+                        )
+
+                # Update `HOUSE TRAFFIC` table
+                if traffic is not None:
+                    await conn.execute(
+                        """
+                        DELETE FROM "HOUSE_TRAFFIC"
+                        WHERE "House_ID" = $1
+                        """,
+                        house_id,
+                    )
+
+                    for traff in list(traffic):
+                        await conn.execute(
+                            """
+                            INSERT INTO "HOUSE_TRAFFIC" ("House_ID", "Traffic")
+                            VALUES ($1, $2)
+                            """,
+                            house_id,
+                            traff,
+                        )
+
+                await transaction.commit()
+                return {
+                    "message": "Data updated successfully",
+                }
+            except Exception as e:
+                await transaction.rollback()
+                return {"message": f"Error when updating data: {str(e)}"}
+
+    # Recommadation
+    async def add_recommendation(self, role: int, recommendation_info: dict):
+        async with self.access_db() as conn:
+            try:
+                people_id = recommendation_info["People_ID"]
+                item_Ids = recommendation_info["Item_ID"]
+                sql = "INSERT INTO "
+                if role == 0:
+                    sql += '"RECOMMENDATIONS_YOUNG"'
+                elif role == 1:
+                    sql += '"RECOMMENDATIONS_ELDERLY"'
+                else:
+                    return {
+                        "message": "Please use valid role number, 0 for young and 1 for elderly"  # noqa
+                    }
+
+                sql += """ ("People_ID", "Item_ID", "Timestamp")
+                        VALUES ($1, $2, CURRENT_TIMESTAMP)
+                        """
+
+                for item_id in item_Ids:
+                    await conn.execute(
+                        sql,
+                        people_id,
+                        item_id,
+                    )
+
+                return {
+                    "message": f"People id {people_id}'s recommendation inserted successfully",  # noqa
+                }
+
+            except Exception as e:
+                return {"message": f"Error when inserting data: {str(e)}"}
+
+    async def get_recommendation(self, role: int, id: int):
+        async with self.access_db() as conn:
+            try:
+                sql = "SELECT * FROM "
+                if role == 0:
+                    sql += '"RECOMMENDATIONS_YOUNG"'
+                elif role == 1:
+                    sql += '"RECOMMENDATIONS_ELDERLY"'
+                else:
+                    return {
+                        "message": "Please use valid role number, 0 for young and 1 for elderly"  # noqa
+                    }
+
+                sql += """
+                    WHERE "People_ID" = $1
+                    ORDER BY "Timestamp" DESC
+                    LIMIT 3;
+                    """
+
+                data = await conn.fetch(
+                    sql,
+                    id,
+                )
+
+                output = []
+                for record in data:
+                    record = dict(record)
+                    item = await self.get_single_house(int(record["Item_ID"]))
+                    item = dict(item[0])
+                    item["URL"] = (
+                        f"http://localhost:8081/showotheryoung?People_ID={item['People_ID']}"
+                    )
+                    output.append(item)
+
+                return output
+
+            except Exception as e:
+                return {"message": f"Error when inserting data: {str(e)}"}
+
+    async def add_interaction(self, role: int, interaction_info: dict):
+        async with self.access_db() as conn:
+            try:
+                sql = "INSERT INTO "
+                if role == 0:
+                    sql += """"INTERACTION_YOUNG"
+                        ("People_ID", "House_Option_1", "House_Option_2", "House_Option_3", "Interaction_Date")
+                        VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP)
+                        RETURNING "Interaction_ID_y"
+                        """  # noqa
+                    key = "Interaction_ID_y"
+                elif role == 1:
+                    sql += """"INTERACTION_ELDERLY"
+                        ("People_ID", "People_Option_1", "People_Option_2", "People_Option_3", "Interaction_Date")
+                        VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP)
+                        RETURNING "Interaction_ID_e"
+                        """  # noqa
+                    key = "Interaction_ID_e"
+                else:
+                    return {"message": "Please input valid role"}
+
+                data = await conn.fetch(
+                    sql,
+                    interaction_info["People_ID"],
+                    interaction_info["Options"][0],
+                    interaction_info["Options"][1],
+                    interaction_info["Options"][2],
+                )
+                return {
+                    "message": "Data inserted successfully",
+                    "Interaction_ID": data[0][key],
+                }
+
+            except Exception as e:
+                return {"message": f"Error when inserting data: {str(e)}"}
+
+    async def add_interaction_detail(self, role: int, detail_info: dict):
+        async with self.access_db() as conn:
+            try:
+                if role == 0:
+                    sql = """INSERT INTO "INTERACTION_DETAILS_YOUNG"
+                            ("Interaction_ID_y", "Item_ID")
+                            VALUES ($1, $2)
+                            """  # noqa
+                    role = "Young"
+                elif role == 1:
+                    sql = """INSERT INTO "INTERACTION_DETAILS_ELDERLY"
+                            ("Interaction_ID_e", "Item_ID")
+                            VALUES ($1, $2)
+                            """  # noqa
+                    role = "Elderly"
+                else:
+                    return {"message": "Please input valid role"}
+                for option_id in detail_info["Options"]:
+                    await conn.execute(
+                        sql, detail_info["Interaction_ID"], option_id
+                    )  # noqa
+
+                return {
+                    "role": role,
+                    "message": f"Initial detail for Interaction ID {detail_info['Interaction_ID']} inserted successfully",  # noqa
+                }
+
+            except Exception as e:
+                return {"message": f"Error when inserting data: {str(e)}"}
+
+    async def update_field(self, role: int, detail_id: int, field: str):
+        valid_fields = ["Viewed", "Grouped", "Selected"]
+        if field not in valid_fields:
+            return {"message": "Invalid field name"}
+        async with self.access_db() as conn:
+            try:
+                if role == 0:
+                    sql = f"""
+                        UPDATE "INTERACTION_DETAILS_YOUNG"
+                        SET "{field}" = 1
+                        WHERE "Detail_ID_y" = $1
+                        """
+                elif role == 1:
+                    sql = f"""
+                        UPDATE ""INTERACTION_DETAILS_ELDERLY""
+                        SET "{field}" = 1
+                        WHERE "Detail_ID_e" = $1
+                        """
+                else:
+                    return {"message": "Please input valid role number"}
+
+                await conn.execute(
+                    sql,
+                    detail_id,
+                )
+                return {"message": "Update Successfully"}
+            except Exception as e:
+                return {"message": f"Error when inserting data: {str(e)}"}
+
+    async def get_interaction(self, role: int, detail_id: int):
+        async with self.access_db() as conn:
+            try:
+                if role == 0:
+                    sql = """SELECT * FROM "INTERACTION_DETAILS_YOUNG"
+                        WHERE "Detail_ID_y" = $1
+                        """
+                elif role == 1:
+                    sql = """SELECT * FROM "INTERACTION_DETAILS_ELDERLY"
+                        WHERE "Detail_ID_e" = $1
+                        """
+                else:
+                    return {
+                        "message": "Please use valid role number, 0 for young and 1 for elderly"  # noqa
+                    }
+
+                data = await conn.fetch(
+                    sql,
+                    detail_id,
+                )
+
+                return data
+
+            except Exception as e:
+                return {"message": f"Error when inserting data: {str(e)}"}
+
+    async def get_whole_interaction(self, role: int):
+        async with self.access_db() as conn:
+            try:
+                if role == 0:
+                    sql = """
+                        SELECT
+                            inte_y."People_ID", detail_y.*
+                        FROM
+                            "INTERACTION_DETAILS_YOUNG" AS detail_y
+                            LEFT JOIN "INTERACTION_YOUNG" AS inte_y
+                            ON detail_y."Interaction_ID_y" = inte_y."Interaction_ID_y"
+                        """
+                elif role == 1:
+                    sql = """
+                        SELECT
+                            inte_e."People_ID" , detail_e.*
+                        FROM
+                            "INTERACTION_DETAILS_ELDERLY" AS detail_e
+                            LEFT JOIN "INTERACTION_ELDERLY" AS inte_e
+                            ON detail_e."Interaction_ID_e" = inte_e."Interaction_ID_e"
+                        """
+                else:
+                    return {
+                        "message": "Please use valid role number, 0 for young and 1 for elderly"  # noqa
+                    }
+
+                data = await conn.fetch(sql)
+
+                return data
+
             except Exception as e:
                 return {"message": f"Error when inserting data: {str(e)}"}

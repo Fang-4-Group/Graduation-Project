@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 from contextlib import asynccontextmanager
 
@@ -6,6 +7,10 @@ import asyncpg
 from dotenv import load_dotenv
 
 load_dotenv()
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 class PosgresqlInitClient:
@@ -43,8 +48,10 @@ class PosgresqlInitClient:
                     CREATE SCHEMA public;
                     CREATE TABLE IF NOT EXISTS "PEOPLE" (
                         "People_ID" SERIAL PRIMARY KEY,
+                        "Line_ID" varchar,
                         "Name" varchar,
                         "Role" integer,
+                        "Mail" varchar,
                         "Sleep_Time" integer,
                         "Drink" integer,
                         "Smoke" integer,
@@ -111,6 +118,74 @@ class PosgresqlInitClient:
                         "Longitude" FLOAT,
                         "Latitude" FLOAT
                     );
+
+                    CREATE TABLE IF NOT EXISTS "RECOMMENDATIONS_YOUNG" (
+                        "Recommendation_ID" SERIAL PRIMARY KEY,
+                        "People_ID" INT,
+                        "Item_ID" INT,
+                        "Score" FLOAT,
+                        "Timestamp" TIMESTAMP,
+                        FOREIGN KEY ("People_ID") REFERENCES "PEOPLE" ("People_ID"),
+                        FOREIGN KEY ("Item_ID") REFERENCES "HOUSE" ("House_ID")
+                    );
+
+                    CREATE TABLE IF NOT EXISTS "RECOMMENDATIONS_ELDERLY" (
+                        "Recommendation_ID" SERIAL PRIMARY KEY,
+                        "People_ID" INT,
+                        "Item_ID" INT,
+                        "Score" FLOAT,
+                        "Timestamp" TIMESTAMP,
+                        FOREIGN KEY ("People_ID") REFERENCES "PEOPLE" ("People_ID"),
+                        FOREIGN KEY ("Item_ID") REFERENCES "PEOPLE" ("People_ID")
+                    );
+
+                    CREATE TABLE "INTERACTION_YOUNG" (
+                        "Interaction_ID_y" SERIAL PRIMARY KEY,
+                        "People_ID" INT,
+                        "House_Option_1" INT,
+                        "House_Option_2" INT,
+                        "House_Option_3" INT,
+                        "Interaction_Date" TIMESTAMP,
+                        FOREIGN KEY ("People_ID") REFERENCES "PEOPLE"("People_ID"),
+                        FOREIGN KEY ("House_Option_1") REFERENCES "HOUSE"("House_ID"),
+                        FOREIGN KEY ("House_Option_2") REFERENCES "HOUSE"("House_ID"),
+                        FOREIGN KEY ("House_Option_3") REFERENCES "HOUSE"("House_ID")
+                    );
+
+                    CREATE TABLE "INTERACTION_DETAILS_YOUNG" (
+                        "Detail_ID_y" SERIAL PRIMARY KEY,
+                        "Interaction_ID_y" INT,
+                        "Item_ID" INT,
+                        "Viewed"  INT DEFAULT 0,
+                        "Grouped" INT DEFAULT 0,
+                        "Selected" INT DEFAULT 0,
+                        FOREIGN KEY ("Interaction_ID_y") REFERENCES "INTERACTION_YOUNG"("Interaction_ID_y"),
+                        FOREIGN KEY ("Item_ID") REFERENCES "HOUSE"("House_ID")
+                    );
+
+                    CREATE TABLE "INTERACTION_ELDERLY" (
+                        "Interaction_ID_e" SERIAL PRIMARY KEY,
+                        "People_ID" INT,
+                        "People_Option_1" INT,
+                        "People_Option_2" INT,
+                        "People_Option_3" INT,
+                        "Interaction_Date" TIMESTAMP,
+                        FOREIGN KEY ("People_ID") REFERENCES "PEOPLE"("People_ID"),
+                        FOREIGN KEY ("People_Option_1") REFERENCES "PEOPLE"("People_ID"),
+                        FOREIGN KEY ("People_Option_2") REFERENCES "PEOPLE"("People_ID"),
+                        FOREIGN KEY ("People_Option_3") REFERENCES "PEOPLE"("People_ID")
+                    );
+
+                    CREATE TABLE "INTERACTION_DETAILS_ELDERLY" (
+                        "Detail_ID_e" SERIAL PRIMARY KEY,
+                        "Interaction_ID_e" INT,
+                        "Item_ID" INT,
+                        "Viewed" INT DEFAULT 0,
+                        "Grouped" INT DEFAULT 0,
+                        "Selected" INT DEFAULT 0,
+                        FOREIGN KEY ("Interaction_ID_e") REFERENCES "INTERACTION_ELDERLY"("Interaction_ID_e"),
+                        FOREIGN KEY ("Item_ID") REFERENCES "PEOPLE"("People_ID")
+                    );
                     """  # noqa
                 )
                 return {"message": "success to create all tables"}
@@ -151,18 +226,18 @@ class PosgresqlInitClient:
             try:
                 await conn.execute(
                     """
-                    INSERT INTO "PEOPLE" ("Name", "Role", "Sleep_Time", "Drink", "Smoke", "Clean", "Mbti", "Shopping", "Movie", "Travel", "Music", "Read", "Game", "PE", "Science", "Food")
+                    INSERT INTO "PEOPLE" ("Name", "Line_ID", "Role", "Sleep_Time", "Drink", "Smoke", "Clean", "Mbti", "Shopping", "Movie", "Travel", "Music", "Read", "Game", "PE", "Science", "Food", "Mail")
                     VALUES
-                    ('AA', 1, 3, 2, 0, 4, 'INTJ', 0, 1, 0, 0, 0, 0, 0, 1, 0),
-                    ('BB', 0, 4, 1, 3, 3, 'INFP', 1, 1, 0, 1, 1, 0, 0, 0, 1),
-                    ('CC', 1, 2, 3, 1, 5, 'ISTJ', 0, 1, 1, 0, 0, 0, 1, 0, 0),
-                    ('DD', 0, 3, 2, 0, 4, 'ENFP', 0, 0, 1, 0, 1, 1, 1, 0, 1),
-                    ('EE', 1, 4, 1, 2, 5, 'ENTP', 0, 1, 1, 0, 1, 0, 1, 1, 0),
-                    ('FF', 0, 2, 3, 4, 0, 'ISFP', 1, 1, 0, 1, 0, 0, 0, 0, 1),
-                    ('GG', 1, 3, 2, 2, 3, 'ESTJ', 0, 0, 1, 0, 1, 1, 1, 0, 0),
-                    ('HH', 0, 4, 1, 2, 5, 'INFJ', 0, 1, 0, 0, 1, 0, 0, 0, 1),
-                    ('II', 1, 2, 3, 1, 4, 'ENTJ', 0, 1, 1, 0, 0, 0, 1, 1, 0),
-                    ('JJ', 0, 3, 2, 1, 3, 'ESFP', 1, 0, 1, 0, 1, 0, 1, 0, 1);
+                    ('AA', 'fake_line_id', 1, 3, 2, 0, 4, 'INTJ', 0, 1, 0, 0, 0, 0, 0, 1, 0, 'sample@.google.com'),
+                    ('BB', 'fake_line_id', 0, 4, 1, 3, 3, 'INFP', 1, 1, 0, 1, 1, 0, 0, 0, 1, 'sample@.google.com'),
+                    ('CC', 'fake_line_id', 1, 2, 3, 1, 5, 'ISTJ', 0, 1, 1, 0, 0, 0, 1, 0, 0, 'sample@.google.com'),
+                    ('DD', 'fake_line_id', 0, 4, 1, 3, 3, 'INFP', 1, 1, 0, 0, 1, 0, 0, 0, 1, 'sample@.google.com'),
+                    ('EE', 'fake_line_id', 1, 4, 1, 2, 5, 'ENTP', 0, 1, 1, 0, 1, 0, 1, 1, 0, 'sample@.google.com'),
+                    ('FF', 'fake_line_id', 0, 2, 3, 4, 0, 'ESFP', 1, 1, 0, 1, 0, 0, 0, 0, 1, 'sample@.google.com'),
+                    ('GG', 'fake_line_id', 1, 3, 2, 2, 3, 'ESTJ', 0, 0, 1, 0, 1, 1, 1, 0, 0, 'sample@.google.com'),
+                    ('HH', 'fake_line_id', 0, 4, 1, 2, 5, 'ENFJ', 0, 1, 0, 0, 1, 0, 0, 0, 1, 'sample@.google.com'),
+                    ('II', 'fake_line_id', 1, 2, 3, 1, 4, 'ENTJ', 0, 1, 1, 0, 0, 0, 1, 1, 0, 'sample@.google.com'),
+                    ('JJ', 'fake_line_id', 0, 2, 3, 4, 0, 'ISFP', 1, 1, 0, 1, 0, 0, 1, 0, 1, 'sample@.google.com');
 
                     INSERT INTO "PEOPLE_CHARACTER" ("People_ID", "Character")
                     VALUES
@@ -188,15 +263,15 @@ class PosgresqlInitClient:
                     INSERT INTO "HOUSE" ("People_ID", "Size", "Fire", "Negotiate_Price", "Photo", "City", "District", "Street", "Floor", "Type")
                     VALUES
                     (1, 12.5, 0, 1, 'house1.jpg', '臺北市', '大安區', '新生南路', 2, '公寓'),
-                    (1, 12.5, 0, 1, 'house1.jpg', '臺北市', '大安區', '新生南路', 3, '公寓'),
-                    (3, 15.2, 1, 0, 'house2.jpg', '臺北市', '文山區', '木柵路', 1, '華廈'),
-                    (3, 13, 1, 0, 'house6.jpg', '臺北市', '文山區', '木柵路', 2, '華廈'),
-                    (5, 10.0, 0, 1, 'house3.jpg', '新北市', '新店區', '北宜路', 3, '華廈'),
-                    (5, 12, 0, 1, 'house11.jpg', '新北市', '新店區', '北宜路', 2, '華廈'),
-                    (7, 18.3, 1, 0, 'house4.jpg', '新北市', '北投區', '石牌路', 2, '大樓'),
-                    (9, 9.7, 0, 1, 'house5.jpg', '臺北市', '士林區', '中正路', 1, '公寓'),
+                    (1, 12.5, 0, 1, 'house1.jpg', '臺北市', '大安區', '新生南路', 2, '公寓'),
+                    (3, 12.2, 0, 1, 'house2.jpg', '臺北市', '文山區', '木柵路', 2, '公寓'),
+                    (3, 13, 0, 1, 'house6.jpg', '臺北市', '文山區', '木柵路', 2, '公寓'),
+                    (5, 10, 0, 1, 'house3.jpg', '新北市', '新店區', '北宜路', 3, '華廈'),
+                    (5, 12, 0, 1, 'house11.jpg', '新北市', '新店區', '北宜路', 3, '華廈'),
+                    (7, 18.3, 1, 0, 'house4.jpg', '臺北市', '北投區', '石牌路', 2, '大樓'),
+                    (9, 10, 0, 1, 'house5.jpg', '臺北市', '士林區', '中正路', 3, '華廈'),
                     (5, 8, 0, 1, 'house7.jpg', '新北市', '新店區', '北宜路', 2, '華廈'),
-                    (7, 12, 1, 0, 'house8.jpg', '新北市', '北投區', '石牌路', 2, '大樓'),
+                    (7, 12, 1, 0, 'house8.jpg', '臺北市', '北投區', '石牌路', 2, '大樓'),
                     (9, 10, 0, 1, 'house9.jpg', '臺北市', '士林區', '中正路', 1, '公寓');
 
                     INSERT INTO "HOUSE_FURNITURE" ("House_ID", "Furniture")
@@ -239,8 +314,39 @@ class PosgresqlInitClient:
                     (3, '新店區'),
                     (4, '士林區'),
                     (4, '北投區'),
-                    (5, '士林區'),
-                    (5, '北投區');
+                    (5, '新店區');
+
+                    INSERT INTO "INTERACTION_YOUNG" ("People_ID", "House_Option_1", "House_Option_2", "House_Option_3", "Interaction_Date")
+                    VALUES
+                    (2, 2, 3, 4, NOW()),
+                    (10, 5, 6, 8, NOW()),
+                    (4, 5, 6, 8, NOW());
+
+                    INSERT INTO "INTERACTION_DETAILS_YOUNG" ("Interaction_ID_y", "Item_ID", "Viewed", "Grouped", "Selected")
+                    VALUES
+                    (1, 2, 1, 1, 0),
+                    (1, 3, 1, 0, 0),
+                    (1, 4, 1, 1, 1),
+                    (2, 5, 1, 0, 0),
+                    (2, 6, 1, 1, 1),
+                    (2, 8, 0, 0, 0),
+                    (3, 2, 0, 0, 0),
+                    (3, 3, 1, 0, 0),
+                    (3, 4, 1, 1, 1);
+
+                    INSERT INTO "INTERACTION_ELDERLY" ("People_ID", "People_Option_1", "People_Option_2", "People_Option_3", "Interaction_Date")
+                    VALUES
+                    (1, 2, 4, 10, NOW()),
+                    (3, 2, 8, 10, NOW());
+
+                    INSERT INTO "INTERACTION_DETAILS_ELDERLY" ("Interaction_ID_e", "Item_ID", "Viewed", "Grouped", "Selected")
+                    VALUES
+                    (1, 2, 1, 0, 0),
+                    (1, 4, 1, 0, 0),
+                    (1, 10, 0, 0, 0),
+                    (2, 2, 1, 0, 0),
+                    (2, 8, 1, 1, 0),
+                    (2, 10, 0, 0, 0);
                     """  # noqa
                 )
                 return {
@@ -255,8 +361,8 @@ class PosgresqlInitClient:
         async with self.access_db() as conn:
             try:
                 json_file_path = [
-                    r"database/migrations/data/taipei_district_lat_lon.json",
-                    r"database/migrations/data/newtaipei_district_lat_lon.json",  # noqa
+                    r"database/migrations/data/lat_lon_data/taipei_district_lat_lon.json",
+                    r"database/migrations/data/lat_lon_data/newtaipei_district_lat_lon.json",  # noqa
                 ]
                 for path in json_file_path:
                     with open(path, "r", encoding="utf-8") as file:
@@ -298,4 +404,35 @@ class PosgresqlInitClient:
             except Exception as e:
                 return {
                     "message": f"Error when selecting data: {str(e)}",
+                }
+
+    async def insert_data_by_sql_file(self):
+        async with self.access_db() as conn:
+            try:
+                directory = "database/migrations/data/sample_data"
+                sql_files = [
+                    "people.sql",
+                    "house.sql",
+                    "interaction_young.sql",
+                    "other.sql",
+                ]
+                sql_statements = []
+                for filename in sql_files:
+                    logger.info(filename)
+                    file_path = os.path.join(directory, filename)
+                    with open(file_path, "r") as file:
+                        sql_statements.append(file.read())
+
+                for script in sql_statements:
+                    commands = script.split(";")
+                    for command in commands:
+                        command = command.strip()
+                        if command:
+                            await conn.execute(command)
+                return {
+                    "message": "success to insert data",
+                }
+            except Exception as e:
+                return {
+                    "message": f"Error when inserting data by sql: {str(e)}",
                 }
