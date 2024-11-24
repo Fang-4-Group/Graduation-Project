@@ -332,6 +332,25 @@ def test_update_house_info():
     response = client.post("/update_house_info/", json=sample_data)
     assert response.status_code == 200
 
+def test_update_house_info_recover():
+    sample_data = {
+        "House_ID": 1,
+        "Basic": {
+            "Size": 10,
+            "Fire": 1,
+            "Negotiate_Price": 0,
+            "City": "臺北市",
+            "District": "文山區",
+            "Street": "木柵路",
+            "Floor": 3,
+            "Type": "公寓",
+        },
+        "Furniture": ["沙發", "書桌"],
+        "Traffic": ["捷運", "公車"],
+    }
+    response = client.post("/update_house_info/", json=sample_data)
+    assert response.status_code == 200
+
 
 def test_add_recommendation():
     sample_data_0 = {

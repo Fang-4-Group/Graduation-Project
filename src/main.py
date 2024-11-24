@@ -26,8 +26,9 @@ origins = [
     "http://localhost",
     "http://localhost:7877",
     "http://localhost:8081",
-    "http://localhost:5432"
-    # 添加您允许的其他域
+    "http://localhost:5432",
+    "https://form.fang5-group.tw",
+    "https://fang5-group.tw" 
 ]
 
 app.add_middleware(

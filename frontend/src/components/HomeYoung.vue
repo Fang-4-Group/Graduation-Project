@@ -93,7 +93,7 @@ const interests = ref([]);
 const mbti = ref();
 //const preference_furniture = ref([]);
 //const preference_house_place = ref([]);
-const BASE_URL = 'http://localhost:7877';
+const BASE_URL = 'https://fang5-group.tw';
 
 
 onMounted(async () => {

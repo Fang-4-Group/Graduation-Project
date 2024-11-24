@@ -270,23 +270,23 @@ async function submitForm() {
   try {
     user_data.value.Mbti = All_MBTI.value.EI + All_MBTI.value.SN + All_MBTI.value.FT + All_MBTI.value.PJ;
 
-    const userResponse = await axios.post('http://localhost:7877/post_user_basic_info', user_data.value);
+    const userResponse = await axios.post('https://fang5-group.tw/post_user_basic_info', user_data.value);
     console.log(userResponse.data);
     const People_ID = userResponse.data.People_ID;
 
     if (user_data.value.Role === 1) {
-      const houseResponse = await axios.post('http://localhost:7877/post_house_info', {
+      const houseResponse = await axios.post('https://fang5-group.tw/post_house_info', {
         ...house_data.value,
         People_ID: People_ID
       });
       const House_ID = houseResponse.data.House_ID;
-      const furnitureResponse = await axios.post('http://localhost:7877/post_house_furniture_info', {
+      const furnitureResponse = await axios.post('https://fang5-group.tw/post_house_furniture_info', {
         ...house_furn_data.value,
         House_ID: House_ID,
         Furniture: house_furn_data.value.Furniture.map(f => f.name)
       });
       console.log(furnitureResponse.data);
-      const trafficResponse = await axios.post('http://localhost:7877/post_house_traffic_info', {
+      const trafficResponse = await axios.post('https://fang5-group.tw/post_house_traffic_info', {
         ...house_traffic_data.value,
         House_ID: House_ID,
         Traffic: house_traffic_data.value.Traffic.map(t => t.name)
