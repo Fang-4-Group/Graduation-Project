@@ -11,3 +11,4 @@
 10. [pgAdmin4 Setup](./docs/10-pgAdmin4-Setup.md)
 11. [MongoDB Extension Setup for Visual Studio Code](./docs/11-MongoDB-Extension-Setup-for-Visual-Studio-Code.md)
 12. [GNN Model Setup](./docs/12-model-setup.md)
+13. [anythingllm-api](./docs/13-anythingllm-api.md)
