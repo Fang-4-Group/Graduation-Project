@@ -18,6 +18,14 @@ from linebot.models import TextSendMessage
 from pydub import AudioSegment
 
 import src.chatbot.models as models
+from src.anythingllm.route import (
+    creat_new_thread,
+    create_workspace,
+    get_documents,
+    send_chat_message,
+    update_embedding,
+    upload_document,
+)
 from src.chatbot.database import (
     get_group_chat_records_by_id,
     save_group_chat_records_to_db,
@@ -32,17 +40,10 @@ from .logconfig import setup_logging
 setup_logging()
 load_dotenv()
 
+base_url = os.getenv("BASE_URL")
+api_key = os.getenv("API_KEY")
+default_path = os.getenv("DEFAULT_PATH")
 line_bot_api = LineBotApi(os.getenv("CHANNEL_ACCESS_TOKEN"))
-
-json_headers = {
-    "Accept": "application/json",
-    "Content-Type": "application/json",
-    "Authorization": f'Bearer {os.getenv("API_KEY")}',
-}
-multipart_headers = {
-    "Accept": "application/json",
-    "Authorization": f'Bearer {os.getenv("API_KEY")}',
-}
 
 
 def save_group_chat_records(user_id, group_id, msg):
@@ -70,74 +71,29 @@ def group_chat_records_to_file(group_id):
         print(f"Failed to transfer chat records to file: {e}")
 
 
-def __create_rag_workspace(group_id):
-    url = f'{os.getenv("BASE_URL")}workspace/new'
-    data = {"name": f"{group_id}'s workspace"}
-    response = requests.post(url, headers=json_headers, json=data)
-    response_data = response.json()
-    slug_id = response_data.get("workspace", {}).get("slug")
-    if slug_id is not None:
-        return slug_id
-    else:
-        error = response_data.get("error", None)
-        logging.error(f"Failed to create workspace: {error}")
-        raise Exception(f"Failed to create workspace: {error}")
-
-
-def __upload_group_chat_records_file(group_id):
-    url = f'{os.getenv("BASE_URL")}document/upload'
-    file_path = f"./src/chatbot/group_chat_records/{group_id}.json"
-    with open(file_path, "rb") as file:
-        files = {"file": (os.path.basename(file_path), file)}
-        response = requests.post(url, files=files, headers=multipart_headers)
-        response_data = response.json()
-        print("RESPONSE DATA: ", response_data)
-        doc_id = response_data["documents"][0]["id"]
-        return doc_id
-
-
-def __group_chat_summarize(slug_id):
-    with open("llm-promting/prompt.txt", "r", encoding="utf-8") as file:
-        prompt_message = file.read().strip()
-
-    url = f'{os.getenv("BASE_URL")}workspace/{slug_id}/chat'
-    data = {"message": prompt_message, "mode": "chat"}
-    response = requests.post(url, json=data, headers=json_headers)
-    return response.json()
-
-
-def __update_rag_embeddings(slug_id, doc_id, file_name):
-    url = f'{os.getenv("BASE_URL")}workspace/{slug_id}/update-embeddings'
-    data = {
-        "adds": [f"custom-documents/{file_name}-{doc_id}.json"],
-        "deletes": [""],
-    }  # noqa
-    response = requests.post(url, json=data, headers=json_headers)
-    return response.json()
-
-
 def generate_summarized_checklist(group_id):
-    slug_id = __create_rag_workspace(group_id)
-    logging.info(f"Successfully created workspace. [slug id: {slug_id}]")
+    # Integrate anythingllm api
+    workspace = create_workspace(api_key, workspace_name=group_id)
+    upload_document(api_key=api_key, file_path=f"{default_path}/{group_id}.json")
+    doc = get_documents()
+    update_embedding(api_key, workspace.get_slug(), doc.get_doc_id())
+    thread_id = creat_new_thread(workspace.get_slug())
+    file_path = "./llm-promting/promt.txt"
+    with open(file_path, "r", encoding="utf-8") as file:
+        prompt = file.read()
+        ans = send_chat_message(
+            api_key,
+            workspace.get_slug(),
+            thread_id=thread_id,
+            message=prompt,
+            mode="chat",
+        )
+    return ans
 
-    # Update file to RAG
-    doc_id = __upload_group_chat_records_file(group_id)
-    logging.info(f"Successfully update file to rag. [doc_id: {doc_id}]")
 
-    # Update embeddings
-    embeddings_response = __update_rag_embeddings(slug_id, doc_id, group_id)
-    logging.info(f"Successfully update embeddings. {embeddings_response}")
-
-    # Summarize
-    summarize_response = __group_chat_summarize(slug_id)
-    logging.info(f"Successfully update embeddings. {summarize_response}")
-
-    return summarize_response
-
-
-def summary_checklist():
-    buttom_message = create_check_button()
-    return buttom_message
+# def summary_checklist():
+#     buttom_message = create_check_button()
+#     return buttom_message
 
 
 def call_llm_api():
