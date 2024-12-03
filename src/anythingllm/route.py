@@ -8,12 +8,21 @@ from dotenv import load_dotenv
 
 import requests
 
-# testing setup
+""" # testing setup
 file_path = "C:/Users/User/Desktop/api_test.txt"
 message = "how to install mod?"
 # env
 base_url = "http://localhost:3001/api/"
-api_key = "17FYQX0-BZA4W8T-M7KH3AY-VW7035V"
+api_key = "17FYQX0-BZA4W8T-M7KH3AY-VW7035V" """
+
+# Define your API parameters
+load_dotenv()
+base_url = os.getenv("BASE_URL")
+api_key = os.getenv("API_KEY")
+default_path = os.getenv("DEFAULT_PATH")
+
+# test
+message = "how to install mod?"
 
 
 class Workspace:
@@ -180,7 +189,7 @@ def send_chat_message(api_key, slug_id, thread_id, message, mode="chat"):
 
 if __name__ == "__main__":
     workspace = create_workspace(api_key=api_key, workspace_name="api_test")
-    upload_document(api_key=api_key, file_path=file_path)
+    upload_document(api_key=api_key, file_path=default_path)
     doc = get_documents()
     update_embedding(api_key, workspace.get_slug(), doc.get_doc_id())
     thread_id = creat_new_thread(workspace.get_slug())
@@ -189,16 +198,9 @@ if __name__ == "__main__":
     )
     print(ans)
 
-
-# Define your API parameters
-load_dotenv()
-base_url = os.getenv("BASE_URL")
-api_key = os.getenv("API_KEY")
-default_path = os.getenv("DEFAULT_PATH")
-
 if __name__ == "__main__":
     workspace = create_workspace(api_key=api_key, workspace_name="api_test")
-    upload_document(api_key=api_key, file_path=file_path)
+    upload_document(api_key=api_key, file_path=default_path)
     doc = get_documents()
     update_embedding(api_key, workspace.get_slug(), doc.get_doc_id())
     thread_id = creat_new_thread(workspace.get_slug())
