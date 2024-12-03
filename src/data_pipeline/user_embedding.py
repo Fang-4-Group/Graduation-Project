@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 class UserEmbedding:
     def __init__(self):
-        self.server_path = "http://localhost:7877/"
+        self.server_path = "https://fang5-group.tw/"
         self.url_young = self.server_path + "get_young_info/"
         self.url_elder = self.server_path + "get_elder_info/"
 

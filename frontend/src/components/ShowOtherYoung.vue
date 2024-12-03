@@ -84,7 +84,7 @@
   const characters = ref([]);
   const interests = ref([]);
   const mbti = ref();
-  const BASE_URL = 'http://localhost:7877';
+  const BASE_URL = 'https://fang5-group.tw';
   
   onMounted(async () => {
     try {

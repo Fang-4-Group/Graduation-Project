@@ -12,13 +12,13 @@ def create_houses_carousel(data_list):
                 "type": "box",
                 "layout": "vertical",
                 "contents": [
-                    {
-                        "type": "image",
-                        "url": f"https://yourimagestorage.com/{data['Photo']}",
-                        "size": "full",
-                        "aspectMode": "cover",
-                        "aspectRatio": "320:213",
-                    },
+                    # {
+                    #     "type": "image",
+                    #     "url": f"https://yourimagestorage.com/{data['Photo']}",
+                    #     "size": "full",
+                    #     "aspectMode": "cover",
+                    #     "aspectRatio": "320:213",
+                    # },
                     {
                         "type": "text",
                         "text": f"{data['City']}, {data['District']}",
@@ -73,7 +73,7 @@ def create_houses_carousel(data_list):
                         "action": {
                             "type": "uri",
                             "label": "查看更多",
-                            "uri": "https://example.com",
+                            "uri": data["URL"],
                         },
                         "style": "primary",
                         "color": "#905c44",

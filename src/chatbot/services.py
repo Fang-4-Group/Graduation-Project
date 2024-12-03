@@ -149,11 +149,11 @@ def call_llm_api():
 def house_recommendation():
     your_ip = os.getenv("HOUSE_RECOMMEND_API")
     user_id = 2
-    url = f"http://{your_ip}:7877/get_pref_house_lst/{user_id}"
+    url = f"{your_ip}/get_recommendation/0/{user_id}"
     try:
         response = requests.get(url)
         data_list = response.json()
-        carousel_message = create_houses_carousel(data_list["data"])
+        carousel_message = create_houses_carousel(data_list)
         result = carousel_message
     except requests.HTTPError as http_err:
         error_message = f"API Request Failed: {http_err}"
