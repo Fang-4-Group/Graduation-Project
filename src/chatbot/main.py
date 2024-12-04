@@ -23,6 +23,7 @@ from src.chatbot.services import (  # noqa
     group_chat_records_to_file,
     handle_async_audio,
     house_recommendation,
+    normal_chat,
     save_group_chat_records,
 )
 
@@ -36,6 +37,9 @@ router = APIRouter(prefix="/linebot")
 
 line_bot_api = LineBotApi(os.getenv("CHANNEL_ACCESS_TOKEN"))
 handler = WebhookHandler(os.getenv("CHANNEL_SECRET"))
+
+base_url = os.getenv("BASE_URL")
+api_key = os.getenv("API_KEY")
 
 
 @router.post("/callback")
@@ -66,6 +70,11 @@ def text_msg_handler(event):
         if user_message == "@推薦":
             result = house_recommendation()
             line_bot_api.reply_message(event.reply_token, result)
+        else:
+            result = normal_chat(user_id, user_message)
+            response = result["textResponse"]
+            line_bot_api.reply_message(event.reply_token, TextMessage(text=response))
+
     elif source_type == "group":  # group chat
         group_id = event.source.group_id
         group_message = event.message.text

@@ -46,6 +46,17 @@ default_path = os.getenv("DEFAULT_PATH")
 line_bot_api = LineBotApi(os.getenv("CHANNEL_ACCESS_TOKEN"))
 
 
+def normal_chat(user_id, user_message):
+    workspace = create_workspace(api_key, user_id)
+    slug = workspace.get_slug()
+    # print("SLUG: ", slug)
+    thread_id = creat_new_thread(slug)
+    # print("THREAD ID: ", thread_id)
+    response = send_chat_message(api_key, slug, thread_id, user_message, mode="chat")
+    # print("RESPONSE: ", response)
+    return response
+
+
 def save_group_chat_records(user_id, group_id, msg):
     profile = line_bot_api.get_group_member_profile(group_id, user_id)
     user_name = profile.display_name
