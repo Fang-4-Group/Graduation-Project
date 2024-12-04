@@ -18,6 +18,7 @@ from linebot.models import (  # noqa
 from linebot.webhook import WebhookHandler
 
 from src.chatbot.services import (  # noqa
+    build_consensus_document,
     call_llm_api,
     generate_summarized_checklist,
     group_chat_records_to_file,
@@ -89,7 +90,9 @@ def text_msg_handler(event):
         if group_message == "@check":
             result = generate_summarized_checklist(group_id)
             response = result["textResponse"]
-            line_bot_api.reply_message(event.reply_token, TextMessage(text=response))
+            print("CHECK RESPONSE: ", response)
+            url = build_consensus_document(response, group_id)
+            line_bot_api.reply_message(event.reply_token, TextMessage(text=url))
 
 
 @handler.add(PostbackEvent)

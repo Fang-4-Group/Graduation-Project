@@ -7,12 +7,14 @@ from datetime import datetime
 from io import BytesIO
 from xml.dom.minidom import Document
 
+import firebase_admin
 import requests
 import speech_recognition as sr
 from docx import Document
 from dotenv import load_dotenv
 from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import FileResponse
+from firebase_admin import credentials, storage
 from linebot import LineBotApi
 from linebot.models import TextSendMessage
 from pydub import AudioSegment
@@ -49,11 +51,8 @@ line_bot_api = LineBotApi(os.getenv("CHANNEL_ACCESS_TOKEN"))
 def normal_chat(user_id, user_message):
     workspace = create_workspace(api_key, user_id)
     slug = workspace.get_slug()
-    # print("SLUG: ", slug)
     thread_id = creat_new_thread(slug)
-    # print("THREAD ID: ", thread_id)
     response = send_chat_message(api_key, slug, thread_id, user_message, mode="chat")
-    # print("RESPONSE: ", response)
     return response
 
 
@@ -83,7 +82,7 @@ def group_chat_records_to_file(group_id):
 
 
 def generate_summarized_checklist(group_id):
-    # Integrate anythingllm api
+    # Integrate anythingllm api to generate consensus doc
     workspace = create_workspace(api_key, workspace_name=group_id)
     upload_document(api_key=api_key, file_path=f"{default_path}/{group_id}.json")
     doc = get_documents()
@@ -164,25 +163,54 @@ async def handle_async_audio(event):
         print(f"Errors occurred when handling async audio: {e}")
 
 
-async def build_consensus_document(input_text):
+def __save_document_to_firebase(file_path, group_id):
+    cred = credentials.Certificate(
+        "src/firebase/fang5-group-firebase-adminsdk-d81ae-4c09d6c55f.json"
+    )
+    firebase_admin.initialize_app(cred, {"storageBucket": "fang5-group.appspot.com"})
+
+    blob_name = f"uploads/consensus-{group_id}.docx"  # Firebase Storage 中的檔案路徑
+
+    # 獲取儲存桶（bucket）並上傳文件
+    bucket = storage.bucket()
+    blob = bucket.blob(blob_name)
+    blob.upload_from_filename(file_path)
+
+    # 設置該文件的公開訪問權限
+    blob.make_public()
+
+    # 獲取文件的公開 URL
+    url = blob.public_url
+
+    print(f"File uploaded successfully. URL: {url}")
+    return url
+
+
+def build_consensus_document(input_text, group_id):
+    # Generate consensus document
     doc = Document()
     doc.add_heading("青銀共居協議書", 0).alignment = 1
 
-    sections = input_text.strip().split("**")[1:-1]
+    sections = input_text.strip().split("#")[1:]
     for section in sections:
         if section.strip():
             heading, *content = section.split("\n")
             doc.add_heading(heading.strip(), level=2)
             for line in content:
-                if line.strip().startswith("*"):
-                    line_content = line.strip().lstrip("*").strip()
+                if line.strip().startswith("-"):
+                    line_content = line.strip().lstrip("-").strip()
                     doc.add_paragraph(line_content, style="ListBullet")
                 elif line.strip().startswith("+"):
                     line_content = line.strip().lstrip("+").strip()
-                    doc.add_paragraph(line_content, style="ListBullet2")
+                    doc.add_paragraph(line_content, style="ListBullet")
+                elif line.strip().startswith("*"):
+                    line_content = line.strip().lstrip("*").strip()
+                    doc.add_paragraph(line_content, style="ListBullet")
+                else:
+                    line_content = line.strip()
+                    doc.add_paragraph(line_content)
 
-    # TODO: change the file path to cloud storage path
-    file_path = "src/chatbot/contract.docx"
+    file_path = f"src/firebase/consensus-{group_id}.docx"
     doc.save(file_path)
-
-    return FileResponse(path=file_path, filename="Rental_Contract.docx")
+    url = __save_document_to_firebase(file_path, group_id)
+    return url
