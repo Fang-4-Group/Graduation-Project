@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 import requests
 
 """ # testing setup
-file_path = "C:/Users/User/Desktop/api_test.txt"
+default_path = "C:/Users/User/Desktop/api_test.txt"
 message = "how to install mod?"
 # env
 base_url = "http://localhost:3001/api/"
