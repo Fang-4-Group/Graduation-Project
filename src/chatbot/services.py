@@ -164,9 +164,7 @@ async def handle_async_audio(event):
 
 
 def __save_document_to_firebase(file_path, group_id):
-    cred = credentials.Certificate(
-        "src/firebase/fang5-group-firebase-adminsdk-d81ae-4c09d6c55f.json"
-    )
+    cred = credentials.Certificate(os.getenv("FIREBASE_KEY"))
     firebase_admin.initialize_app(cred, {"storageBucket": "fang5-group.appspot.com"})
 
     blob_name = f"uploads/consensus-{group_id}.docx"  # Firebase Storage 中的檔案路徑
