@@ -3,8 +3,11 @@ myvenv/
 .env
 *.pyc
 ./frontend/node_modules
-ngrok/
+ngrok*
 src/services/google_oidc/client.json
+/src/chatbot/group_chat_records/
 src/data_pipeline/graph/*
 src/data_pipeline/model/*
 src/data_pipeline/similarity_matrix/*
+src/firebase
+app.log

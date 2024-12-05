@@ -183,6 +183,7 @@ def send_chat_message(api_key, slug_id, thread_id, message, mode="chat"):
         print("Chat message sent successfully.")
         return response.json()
     else:
+        print("ERROR: ", response.text)
         print(f"Failed to send chat message: {response.status_code}")
         return None
 
