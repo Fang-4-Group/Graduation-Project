@@ -49,11 +49,16 @@ line_bot_api = LineBotApi(os.getenv("CHANNEL_ACCESS_TOKEN"))
 
 
 def normal_chat(user_id, user_message):
-    workspace = create_workspace(api_key, user_id)
-    slug = workspace.get_slug()
-    thread_id = creat_new_thread(slug)
-    response = send_chat_message(api_key, slug, thread_id, user_message, mode="chat")
-    return response
+    try:
+        workspace = create_workspace(api_key, user_id)
+        slug = workspace.get_slug()
+        thread_id = creat_new_thread(slug)
+        response = send_chat_message(
+            api_key, slug, thread_id, user_message, mode="chat"
+        )
+        return response
+    except Exception as e:
+        print(f"Failed to reply normal chat: {e}")
 
 
 def save_group_chat_records(user_id, group_id, msg):
@@ -83,22 +88,25 @@ def group_chat_records_to_file(group_id):
 
 def generate_summarized_checklist(group_id):
     # Integrate anythingllm api to generate consensus doc
-    workspace = create_workspace(api_key, workspace_name=group_id)
-    upload_document(api_key=api_key, file_path=f"{default_path}/{group_id}.json")
-    doc = get_documents()
-    update_embedding(api_key, workspace.get_slug(), doc.get_doc_id())
-    thread_id = creat_new_thread(workspace.get_slug())
-    file_path = "./llm-promting/promt.txt"
-    with open(file_path, "r", encoding="utf-8") as file:
-        prompt = file.read()
-        ans = send_chat_message(
-            api_key,
-            workspace.get_slug(),
-            thread_id=thread_id,
-            message=prompt,
-            mode="chat",
-        )
-    return ans
+    try:
+        workspace = create_workspace(api_key, workspace_name=group_id)
+        upload_document(api_key=api_key, file_path=f"{default_path}/{group_id}.json")
+        doc = get_documents()
+        update_embedding(api_key, workspace.get_slug(), doc.get_doc_id())
+        thread_id = creat_new_thread(workspace.get_slug())
+        file_path = "./llm-promting/promt.txt"
+        with open(file_path, "r", encoding="utf-8") as file:
+            prompt = file.read()
+            ans = send_chat_message(
+                api_key,
+                workspace.get_slug(),
+                thread_id=thread_id,
+                message=prompt,
+                mode="chat",
+            )
+        return ans
+    except Exception as e:
+        print(f"Failed to generate summarized checklist: {e}")
 
 
 # def summary_checklist():
@@ -164,24 +172,29 @@ async def handle_async_audio(event):
 
 
 def __save_document_to_firebase(file_path, group_id):
-    cred = credentials.Certificate(os.getenv("FIREBASE_KEY"))
-    firebase_admin.initialize_app(cred, {"storageBucket": "fang5-group.appspot.com"})
+    try:    
+        cred = credentials.Certificate(os.getenv("FIREBASE_KEY"))
+        firebase_admin.initialize_app(cred, {"storageBucket": "fang5-group.appspot.com"})
 
-    blob_name = f"uploads/consensus-{group_id}.docx"  # Firebase Storage 中的檔案路徑
+        blob_name = (
+            f"uploads/consensus-{group_id}.docx"  # Firebase Storage 中的檔案路徑
+        )
 
-    # 獲取儲存桶（bucket）並上傳文件
-    bucket = storage.bucket()
-    blob = bucket.blob(blob_name)
-    blob.upload_from_filename(file_path)
+        # 獲取儲存桶（bucket）並上傳文件
+        bucket = storage.bucket()
+        blob = bucket.blob(blob_name)
+        blob.upload_from_filename(file_path)
 
-    # 設置該文件的公開訪問權限
-    blob.make_public()
+        # 設置該文件的公開訪問權限
+        blob.make_public()
 
-    # 獲取文件的公開 URL
-    url = blob.public_url
+        # 獲取文件的公開 URL
+        url = blob.public_url
 
-    print(f"File uploaded successfully. URL: {url}")
-    return url
+        print(f"File uploaded successfully. URL: {url}")
+        return url
+    except Exception as e:
+        print(f"Failed to save document to firebase: {e}")
 
 
 def build_consensus_document(input_text, group_id):
@@ -207,8 +220,10 @@ def build_consensus_document(input_text, group_id):
                 else:
                     line_content = line.strip()
                     doc.add_paragraph(line_content)
-
-    file_path = f"src/firebase/consensus-{group_id}.docx"
-    doc.save(file_path)
-    url = __save_document_to_firebase(file_path, group_id)
-    return url
+    try:
+        file_path = f"src/firebase/consensus-{group_id}.docx"
+        doc.save(file_path)
+        url = __save_document_to_firebase(file_path, group_id)
+        return url
+    except Exception as e:
+        print(f"Failed to build consensus document: {e}")
